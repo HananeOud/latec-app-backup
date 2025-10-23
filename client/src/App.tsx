@@ -48,6 +48,7 @@ export function Chat() {
       role: "user" | "system" | "assistant";
       content: string;
       traceId?: string;
+      structured_data?: any;
     }[]
   >([]);
   const [input, setInput] = useState("");
@@ -80,35 +81,46 @@ export function Chat() {
     };
     setMessages([...messages, userMessage]);
     const endpoint = ENDPOINTS.find(
-      (endpoint) => endpoint.endpointName === selectedAgent,
+      (endpoint) => endpoint.endpointName === selectedAgent
     );
+
+    // Strip traceId from messages before sending to API
+    // (it's only used for UI feedback display)
+    const cleanMessages = messages.map(({ role, content }) => ({
+      role,
+      content,
+    }));
 
     if (endpoint != null) {
       mutateModelServing(
         {
           endpoint_name: endpoint.endpointName,
-          messages: [...messages, { role: "user", content: input }],
+          messages: [...cleanMessages, { role: "user", content: input }],
+          endpoint_type: endpoint.type,
         },
         {
           onSuccess: (data) => {
-            const responseMessage = data?.choices[0].message;
+            const responseMessage = data?.choices[0].message as any;
             setMessages((prev) => [
               ...prev,
               {
                 traceId: "",
                 role: "assistant",
                 content: responseMessage.content,
+                structured_data: responseMessage.structured_data,
               },
             ]);
           },
-        },
+        }
       );
       setInput("");
       return;
     } else {
       mutateCustom(
         {
-          inputs: { messages: [...messages, { role: "user", content: input }] },
+          inputs: {
+            messages: [...cleanMessages, { role: "user", content: input }],
+          },
         },
         {
           onSuccess: (data) => {
@@ -122,7 +134,7 @@ export function Chat() {
               },
             ]);
           },
-        },
+        }
       );
     }
 
@@ -143,7 +155,7 @@ export function Chat() {
   return (
     <TooltipProvider>
       <SidebarProvider>
-        <AppSidebar 
+        <AppSidebar
           selectedAgent={selectedAgent}
           setSelectedAgent={setSelectedAgent}
           setMessages={setMessages}
@@ -151,106 +163,111 @@ export function Chat() {
           experimentIsLoading={experimentIsLoading}
         />
         <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="flex flex-col w-full max-w-md shadow-sm h-[600px]">
-          <CardHeader className="flex flex-row items-center">
-            <div className="flex items-center gap-4">
-              <Avatar className="size-8 border">
-                <AvatarImage src="/avatars/assistant.png" alt="Assistant" />
-                <AvatarFallback>AI</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-medium leading-none">Databricks Agent</p>
-                <p className="text-xs text-muted-foreground">Ready to help</p>
-              </div>
-            </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="ml-auto size-8 rounded-full"
-                  onClick={() => setMessages([])}
-                >
-                  <Plus className="size-4" />
-                  <span className="sr-only">New conversation</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>New conversation</p>
-              </TooltipContent>
-            </Tooltip>
-          </CardHeader>
-
-          <CardContent className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full w-full">
-              <div className="flex flex-col gap-4 p-1 min-h-full">
-                <div className="flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-muted">
-                  <MessageContent content="Hi, how can I help you today?" />
+          <Card className="flex flex-col w-full max-w-5xl shadow-sm h-[calc(100vh-2rem)]">
+            <CardHeader className="flex flex-row items-center">
+              <div className="flex items-center gap-4">
+                <Avatar className="size-8 border">
+                  <AvatarImage src="/avatars/assistant.png" alt="Assistant" />
+                  <AvatarFallback>AI</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-sm font-medium leading-none">
+                    Databricks Agent
+                  </p>
+                  <p className="text-xs text-muted-foreground">Ready to help</p>
                 </div>
-                {messages.map((msg, i) => (
-                  <div key={i} className="flex flex-col gap-2">
-                    <div
-                      ref={i === messages.length - 1 ? lastMessageRef : null}
-                      className={`flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ${
-                        msg.role === "user"
-                          ? "bg-primary text-primary-foreground ml-auto"
-                          : "bg-muted"
-                      }`}
-                    >
-                      <MessageContent content={msg.content} />
-                    </div>
-                    {msg.role === "assistant" && (
-                      <div className="flex justify-start">
-                        <Feedback traceId={msg.traceId || ""} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isLoading && (
-                  <div
-                    ref={lastMessageRef}
-                    className="flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-muted"
-                  >
-                    <span className="italic">Typing...</span>
-                  </div>
-                )}
               </div>
-            </ScrollArea>
-          </CardContent>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="ml-auto size-8 rounded-full"
+                    onClick={() => setMessages([])}
+                  >
+                    <Plus className="size-4" />
+                    <span className="sr-only">New conversation</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>New conversation</p>
+                </TooltipContent>
+              </Tooltip>
+            </CardHeader>
 
-          {isError && (
-            <div className="px-6 pb-2">
-              <p className="text-red-500 text-sm">{isError}</p>
-            </div>
-          )}
+            <CardContent className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full">
+                <div className="flex flex-col gap-4 p-1 min-h-full">
+                  <div className="flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-muted">
+                    <MessageContent content="Hi, how can I help you today?" />
+                  </div>
+                  {messages.map((msg, i) => (
+                    <div key={i} className="flex flex-col gap-2">
+                      <div
+                        ref={i === messages.length - 1 ? lastMessageRef : null}
+                        className={`flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm ${
+                          msg.role === "user"
+                            ? "bg-primary text-primary-foreground ml-auto"
+                            : "bg-muted"
+                        }`}
+                      >
+                        <MessageContent
+                          content={msg.content}
+                          structured_data={msg.structured_data}
+                        />
+                      </div>
+                      {msg.role === "assistant" && (
+                        <div className="flex justify-start">
+                          <Feedback traceId={msg.traceId || ""} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {isLoading && (
+                    <div
+                      ref={lastMessageRef}
+                      className="flex w-fit max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm bg-muted"
+                    >
+                      <span className="italic">Typing...</span>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
 
-          <CardFooter className="flex items-center">
-            <form
-              className="relative w-full"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendMessage();
-              }}
-            >
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 pr-10"
-                autoComplete="off"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="absolute top-1/2 right-2 size-6 -translate-y-1/2 rounded-full"
-                disabled={isLoading || !input.trim()}
+            {isError && (
+              <div className="px-6 pb-2">
+                <p className="text-red-500 text-sm">{isError}</p>
+              </div>
+            )}
+
+            <CardFooter className="flex items-center">
+              <form
+                className="relative w-full"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendMessage();
+                }}
               >
-                <ArrowUp className="size-3.5" />
-                <span className="sr-only">Send</span>
-              </Button>
-            </form>
-          </CardFooter>
-        </Card>
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-1 pr-10"
+                  autoComplete="off"
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="absolute top-1/2 right-2 size-6 -translate-y-1/2 rounded-full"
+                  disabled={isLoading || !input.trim()}
+                >
+                  <ArrowUp className="size-3.5" />
+                  <span className="sr-only">Send</span>
+                </Button>
+              </form>
+            </CardFooter>
+          </Card>
         </main>
       </SidebarProvider>
     </TooltipProvider>
@@ -279,7 +296,7 @@ export const Feedback = ({ traceId }: { traceId: string }) => {
         onError: () => {
           setPendingFeedback(null);
         },
-      },
+      }
     );
   };
 
@@ -294,8 +311,8 @@ export const Feedback = ({ traceId }: { traceId: string }) => {
           feedback === true
             ? "bg-green-50 border-green-200 text-green-700 hover:bg-green-50"
             : pendingFeedback === true && isFeedbackLoading
-              ? "bg-blue-50 border-blue-200"
-              : ""
+            ? "bg-blue-50 border-blue-200"
+            : ""
         }`}
       >
         {pendingFeedback === true && isFeedbackLoading ? (
@@ -313,8 +330,8 @@ export const Feedback = ({ traceId }: { traceId: string }) => {
           feedback === false
             ? "bg-red-50 border-red-200 text-red-700 hover:bg-red-50"
             : pendingFeedback === false && isFeedbackLoading
-              ? "bg-blue-50 border-blue-200"
-              : ""
+            ? "bg-blue-50 border-blue-200"
+            : ""
         }`}
       >
         {pendingFeedback === false && isFeedbackLoading ? (

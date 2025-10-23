@@ -1,11 +1,17 @@
 """Authentication utilities for Databricks SDK."""
 
 import os
+from pathlib import Path
 
 from databricks.sdk import WorkspaceClient
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='.env.local')
+# Load .env.local if it exists, otherwise fall back to environment variables
+env_file = Path('.env.local')
+if env_file.exists():
+  load_dotenv(dotenv_path='.env.local')
+elif Path('.env').exists():
+  load_dotenv(dotenv_path='.env')
 
 
 def get_workspace_client() -> WorkspaceClient:

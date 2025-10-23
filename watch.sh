@@ -4,19 +4,32 @@ set -e
 
 
 # source .env and .env.local if they exist
+# Use set -a to auto-export all variables
 if [ -f ".env" ]; then
   echo "Loading .env"
-  export $(grep -v '^#' .env | xargs)
+  set -a
+  source .env
+  set +a
 fi
 if [ -f ".env.local" ]; then
   echo "Loading .env.local"
-  export $(grep -v '^#' .env.local | xargs)
+  set -a
+  source .env.local
+  set +a
 fi
 
-if [ ! -z "$DATABRICKS_CONFIG_PROFILE" ]; then
-  databricks auth login --profile $DATABRICKS_CONFIG_PROFILE
+# Skip interactive login if we have DATABRICKS_HOST and DATABRICKS_TOKEN in env
+# The SDK will use these automatically
+if [ -z "$DATABRICKS_HOST" ] || [ -z "$DATABRICKS_TOKEN" ]; then
+  echo "⚠️  DATABRICKS_HOST or DATABRICKS_TOKEN not set in environment"
+  echo "Running databricks auth login..."
+  if [ ! -z "$DATABRICKS_CONFIG_PROFILE" ]; then
+    databricks auth login --profile $DATABRICKS_CONFIG_PROFILE
+  else
+    databricks auth login
+  fi
 else
-  databricks auth login
+  echo "✅ Using DATABRICKS_HOST and DATABRICKS_TOKEN from environment"
 fi
 
 uv run python -m scripts.make_fastapi_client

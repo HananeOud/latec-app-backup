@@ -25,8 +25,6 @@ from .tracing import (
   setup_mlflow_tracing,
 )
 
-load_dotenv(dotenv_path='.env.local')
-
 # Configure logging for Databricks Apps monitoring
 # Logs written to stdout/stderr will be available in Databricks Apps UI and /logz endpoint
 logging.basicConfig(
@@ -38,6 +36,20 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# Load .env.local if it exists, otherwise fall back to environment variables
+# This allows running with either a local config file or system environment
+env_file = Path('.env.local')
+if env_file.exists():
+  load_dotenv(dotenv_path='.env.local')
+  logger.info('Loaded configuration from .env.local')
+else:
+  # Try loading from .env as fallback
+  if Path('.env').exists():
+    load_dotenv(dotenv_path='.env')
+    logger.info('Loaded configuration from .env')
+  else:
+    logger.info('No .env file found, using environment variables')
 
 app = FastAPI()
 
@@ -78,24 +90,27 @@ class ExperimentInfo(BaseModel):
 async def experiment():
   """Get the MLFlow experiment info."""
   host = os.getenv('DATABRICKS_HOST', '')
-  
+
   # In production, we might not have DATABRICKS_HOST, so get it from SDK
   if not host:
     try:
       from databricks.sdk import WorkspaceClient
+
       w = WorkspaceClient()
       host = w.config.host
     except Exception:
       # Fallback to a default or empty
       host = ''
-  
+
   # Ensure the host has https:// prefix
   if host and not host.startswith('https://'):
     host = f'https://{host}'
-  
+
   return ExperimentInfo(
     experiment_id=get_mlflow_experiment_id(),
-    link=f'{host}/ml/experiments/{get_mlflow_experiment_id()}?compareRunsMode=TRACES' if host else None,
+    link=f'{host}/ml/experiments/{get_mlflow_experiment_id()}?compareRunsMode=TRACES'
+    if host
+    else None,
   )
 
 
@@ -218,12 +233,13 @@ class EndpointRequestOptions(BaseModel):
   # Kwargs to the agent function.
   endpoint_name: str
   messages: list[dict[str, str]]
+  endpoint_type: str = 'openai-chat'  # Default to OpenAI format
 
 
 @app.post(f'{API_PREFIX}/invoke_endpoint')
 async def invoke_endpoint(options: EndpointRequestOptions):
   """Agent API."""
-  return model_serving_endpoint(options.endpoint_name, options.messages)
+  return model_serving_endpoint(options.endpoint_name, options.messages, options.endpoint_type)
 
 
 if not IS_DEV:

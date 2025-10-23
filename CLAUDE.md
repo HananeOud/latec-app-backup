@@ -1,21 +1,24 @@
 # Project Memory
 
 ## Package Management
+
 - Use `uv` for Python package management instead of `pip` directly
 - This project uses uv for dependency management and virtual environment handling
 - When changing Python dependencies, always use `uv add` or `uv remove` commands instead of editing pyproject.toml directly
 
 ## Frontend Setup
+
 - **Always use Bun for frontend operations** - faster than npm/yarn and eliminates dependency conflicts
 - Client uses shadcn/ui components with proper TypeScript configuration
 - Development: `bun start` or `bun dev` in the client directory
-- Build process: `bun run build` in the client directory  
+- Build process: `bun run build` in the client directory
 - Package management: Use `bun add` and `bun remove` instead of npm
 - shadcn components can be added with: `npx shadcn@latest add <component-name>`
 - **TypeScript path aliases**: Use canonical `@/` imports (e.g., `import { Button } from "@/components/ui/button"`)
 - **Build system**: Vite and TypeScript are configured for "@/" alias support automatically
 
 ## Development Server Management
+
 - Use "start server" command to run the development server using `./watch.sh` in a detached screen session
 - The dev server runs both the FastAPI backend (port 8000) and React frontend (Vite dev server) with hot reload
 - Server status can be checked with "server status" or "is server running" commands
@@ -25,7 +28,9 @@
 - The server automatically opens http://localhost:8000 when started
 
 ## API Endpoint Testing Methodology
+
 When adding or testing endpoints, use this workflow:
+
 1. **Test the endpoint** with curl:
    ```bash
    curl -X POST http://localhost:8000/api/agent \
@@ -40,35 +45,48 @@ When adding or testing endpoints, use this workflow:
 4. **Confirm MLflow tracing** is working (trace_id should be present)
 
 ## Hot Reload Development Workflow
+
 The development server supports real-time code changes:
+
 1. **Add debug prints** to server code (e.g., `print(f"🔥 ENDPOINT HIT: {data}")`)
 2. **uvicorn auto-reloads** the server when Python files change
 3. **Test immediately** with curl - no manual restart needed
 4. **Verify functionality** through response content and status codes
 5. **Clean up debug code** when done testing
-Note: Screen capture may not always show real-time output clearly, but process monitoring and endpoint testing provide reliable verification.
+   Note: Screen capture may not always show real-time output clearly, but process monitoring and endpoint testing provide reliable verification.
 
 ## Development Server Troubleshooting
+
 - **Profile errors in watch.sh**: The script handles optional DATABRICKS_CONFIG_PROFILE - if not set, uses default auth
 - **Screen output capture**: Use `ps aux | grep uvicorn` and direct endpoint testing rather than relying solely on screen hardcopy
 - **Port conflicts**: Check `lsof -i :8000` to verify server is listening correctly
 - **Process verification**: Multiple uvicorn processes are normal (parent/child from --reload mode)
 
 ## Testing
+
 - When making changes to the agent code in `server/agents/databricks_assistant.py`, use `./test_agent.sh` (or `uv run python test_agent.py`) to test the agent directly without starting the full web application
 - This executes the actual databricks_assistant.py code and allows for faster iteration and debugging of agent behavior
 - The test script shows both the full JSON response and just the content for easier reading
 - For full UI testing, use the development server (see Development Server Management section)
 
-## Setup
-- Use `./setup.sh` to interactively create/configure the .env.local file with all required environment variables
+## Setup & Environment Configuration
+
+- **Three ways to configure the app:**
+  1. **Interactive setup**: Run `./setup.sh` to create/configure .env.local file
+  2. **Manual setup**: Copy `env.template` to `.env.local` and fill in values
+  3. **Environment variables**: The app automatically falls back to system environment variables if no .env.local file exists
+- **Required variables**: DATABRICKS_HOST, DATABRICKS_TOKEN, MLFLOW_EXPERIMENT_ID
+- **For deployment**: Also need DATABRICKS_APP_NAME and LHA_SOURCE_CODE_PATH
+- See `env.template` for complete documentation of all configuration options
 
 ## Code Formatting
+
 - Use `./fix.sh` to format all code according to the project's style guidelines
 - This runs ruff formatting/linting for Python files and prettier for TypeScript/JavaScript files
 - Run this before committing code to ensure consistent formatting
 
 ## Build System & Generated Files
+
 - **Never commit build artifacts**: `client/build/` contains Vite build output (ignored in .gitignore)
 - **API client is auto-generated**: `client/src/fastapi_client/` is generated from OpenAPI spec via `uv run python -m scripts.make_fastapi_client`
 - **Lock files**: `uv.lock` should be committed to ensure reproducible dependency versions across all developers
@@ -76,9 +94,11 @@ Note: Screen capture may not always show real-time output clearly, but process m
 - When adding new FastAPI endpoints, the TypeScript client updates automatically
 
 ## Git Operations
+
 - Use `git pp` instead of `git push` for pushing changes
 
 ## Deployment
+
 - When the user says "deploy", use `./deploy.sh` command
 - **Automated app.yaml configuration**: Deploy script automatically updates `app.yaml` with `MLFLOW_EXPERIMENT_ID` from `.env.local`
 - **Automated verification**: After running deploy.sh, programmatically check deployment success by:
@@ -92,6 +112,7 @@ Note: Screen capture may not always show real-time output clearly, but process m
   - WorkspaceClient() handles auth chain automatically in production
 
 ## Production Monitoring
+
 - **App URL Pattern**: After deployment, apps are accessible at `https://{app-name}-{deployment-id}.{region}.databricksapps.com`
 - **Key Monitoring Endpoints**:
   1. **App Logs**: `{app-url}/logz` - Real-time application logs (requires browser authentication)
@@ -109,6 +130,7 @@ Note: Screen capture may not always show real-time output clearly, but process m
   - Check for any dependency warnings in deployment output
 
 ## Reading Databricks Apps Logs
+
 - **Log Access Method**: Databricks Apps logs require OAuth authentication and are accessible through:
   1. Web UI: `https://{app-url}/logz` (requires browser authentication)
   2. WebSocket stream: `wss://{app-url}/logz/stream` (requires authenticated session)
@@ -124,6 +146,7 @@ Note: Screen capture may not always show real-time output clearly, but process m
 ## Viewing the UI with Playwright
 
 To view and interact with the development UI:
+
 1. Ensure the dev server is running: `./dev.sh`
 2. Use Playwright MCP tools:
    - Navigate: `mcp__playwright__browser_navigate` to `http://localhost:5433`
