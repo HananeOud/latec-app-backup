@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import path from 'path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,9 +18,9 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'build',
+    outDir: "build",
     // Ensure assets are relative to the base path for flexible deployment
-    assetsDir: 'assets',
+    assetsDir: "assets",
     // Generate sourcemaps for debugging in production
     sourcemap: true,
     // Optimize chunk size for better loading performance
@@ -28,13 +28,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           // Separate vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom', 'react-query'],
-          'ui-vendor': ['lucide-react', 'recharts'],
+          "react-vendor": ["react", "react-dom", "react-query"],
+          "ui-vendor": ["lucide-react", "recharts"],
         },
       },
     },
   },
   // Base path can be configured for deployment
   // The host app should set this if needed (e.g., '/agent-monitoring/')
-  base: './',
-})
+  base: "./",
+});

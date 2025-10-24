@@ -11,6 +11,6 @@
       "type": "openai-chat"
     }
   ],
-  "apiBaseUrl": "/api"
+  "apiBaseUrl": "/api/agent-monitoring/api"
 }
 

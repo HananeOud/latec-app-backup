@@ -134,17 +134,20 @@ The development server supports real-time code changes:
 The app can be integrated into other React applications (e.g., `dbdemos-genai`) as a compiled standalone component with runtime configuration.
 
 ### Integration Branch
+
 - **Branch**: `dbdemos_genai_integration` - dedicated branch for host app integration work
 - Contains all changes for runtime configuration and deployment script
 
 ### Key Components
 
 1. **Runtime Configuration** (`client/src/config.ts`)
+
    - Loads `app_config.json` at runtime
    - Falls back to default config in development
    - Allows host app to dynamically configure endpoints
 
 2. **Dynamic Endpoints** (`client/src/endpoints.ts`)
+
    - Exports `getEndpoints()` function instead of static array
    - Reads endpoints from loaded configuration
    - Supports two endpoint types:
@@ -152,6 +155,7 @@ The app can be integrated into other React applications (e.g., `dbdemos-genai`) 
      - `openai-chat`: OpenAI-compatible chat endpoints
 
 3. **Build Configuration** (`client/vite.config.ts`)
+
    - Base path set to `./` for flexible deployment
    - Code splitting for vendor libraries
    - Sourcemaps enabled for production debugging
@@ -194,6 +198,7 @@ The host app should provide `app_config.json` in the deployment directory:
 ### API Requirements
 
 The host app must provide these backend endpoints:
+
 - `POST /api/invoke_endpoint` - Invoke agent/model endpoint
 - `GET /api/tracing_experiment` - Get MLflow experiment info
 - `POST /api/log_feedback` - Log user feedback

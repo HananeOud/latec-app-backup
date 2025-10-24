@@ -36,7 +36,7 @@ const DEFAULT_CONFIG: AppConfig = {
       type: "databricks-agent",
     },
   ],
-  apiBaseUrl: undefined, // Uses relative URLs in development
+  apiBaseUrl: "/api/agent-monitoring/api", // Base URL for API calls when deployed in host app
 };
 
 let cachedConfig: AppConfig | null = null;
