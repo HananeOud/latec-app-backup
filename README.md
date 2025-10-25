@@ -2,7 +2,9 @@
 
 A production-ready template for building and deploying AI agents with Databricks Apps. Features MLflow tracing, a modern React chat interface, and flexible deployment options including host app integration.
 
-<img width="1304" height="974" alt="Screenshot 2025-10-25 at 14 01 11" src="https://github.com/user-attachments/assets/0b839c01-66f5-472d-a201-ffeeaf06cd86" />
+## Video Overview
+
+<img width="913" alt="Screenshot 2025-10-25 at 14 01 11" src="https://github.com/user-attachments/assets/0b839c01-66f5-472d-a201-ffeeaf06cd86" />
 
 ## Quick Start
 
