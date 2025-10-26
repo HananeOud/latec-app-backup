@@ -12,7 +12,7 @@
 #
 # Arguments:
 #   output_directory - Optional. Where to place the built app.
-#                      Defaults to ./dist/assistant-app-app
+#                      Defaults to ./dist/assistant-app
 #
 # The script will:
 #   1. Build the React frontend
@@ -54,7 +54,7 @@ error() {
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 CLIENT_DIR="$PROJECT_ROOT/client"
-OUTPUT_DIR="${1:-$PROJECT_ROOT/dist/assistant-app-app}"
+OUTPUT_DIR="${1:-$PROJECT_ROOT/dist/assistant-app}"
 
 info "Starting build process..."
 info "Project root: $PROJECT_ROOT"
