@@ -1,17 +1,12 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  Settings,
-  Bot,
-  Database,
-  Link,
-} from "lucide-react"
+import * as React from "react";
+import { Settings, Bot, Database, Link } from "lucide-react";
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
-import { type Endpoint } from "@/endpoints"
+import { NavDocuments } from "@/components/nav-documents";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
+import { type Endpoint } from "@/endpoints";
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +15,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { getBrandLogoUrl, getBrandName } from "@/lib/brandConfig";
 
 const data = {
   user: {
@@ -30,7 +26,7 @@ const data = {
   },
   navSecondary: [
     {
-      title: "Settings", 
+      title: "Settings",
       url: "#",
       icon: Settings,
     },
@@ -43,7 +39,7 @@ const data = {
     },
     {
       name: "MLFlow Experiment",
-      url: "#", 
+      url: "#",
       icon: Database,
     },
     {
@@ -52,9 +48,9 @@ const data = {
       icon: Link,
     },
   ],
-}
+};
 
-export function AppSidebar({ 
+export function AppSidebar({
   children,
   selectedAgent,
   setSelectedAgent,
@@ -62,38 +58,76 @@ export function AppSidebar({
   experiment,
   experimentIsLoading,
   endpoints,
-  ...props 
+  ...props
 }: React.ComponentProps<typeof Sidebar> & {
-  children?: React.ReactNode
-  selectedAgent: string
-  setSelectedAgent: (value: string) => void
-  setMessages: (value: any) => void
-  experiment: any
-  experimentIsLoading: boolean
-  endpoints: Endpoint[]
+  children?: React.ReactNode;
+  selectedAgent: string;
+  setSelectedAgent: (value: string) => void;
+  setMessages: (value: any) => void;
+  experiment: any;
+  experimentIsLoading: boolean;
+  endpoints: Endpoint[];
 }) {
+  const [brandLogo, setBrandLogo] = React.useState<string | null>(null);
+  const [brandName, setBrandName] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // Get brand logo and name from sessionStorage
+    setBrandLogo(getBrandLogoUrl());
+    setBrandName(getBrandName());
+
+    // Listen for storage events to update when brand changes
+    const handleStorageChange = () => {
+      setBrandLogo(getBrandLogoUrl());
+      setBrandName(getBrandName());
+    };
+
+    // Listen for both storage events and custom brand update events
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("brandConfigUpdated", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("brandConfigUpdated", handleStorageChange);
+    };
+  }, []);
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <div className="flex items-center gap-2 px-2 py-1.5">
+              <div
+                className={`flex aspect-square size-8 items-center justify-center rounded-lg ${
+                  brandLogo
+                    ? "bg-transparent"
+                    : "bg-sidebar-primary text-sidebar-primary-foreground"
+                }`}
+              >
+                {brandLogo ? (
+                  <img
+                    src={brandLogo}
+                    alt={brandName || "Brand Logo"}
+                    className="size-8 object-contain rounded-lg"
+                  />
+                ) : (
                   <Bot className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Databricks Agent</span>
-                  <span className="truncate text-xs">AI Assistant</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
+                )}
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">
+                  {brandName || "Databricks Agent"}
+                </span>
+                <span className="truncate text-xs">AI Assistant</span>
+              </div>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         {children}
-        <NavDocuments 
+        <NavDocuments
           selectedAgent={selectedAgent}
           setSelectedAgent={setSelectedAgent}
           setMessages={setMessages}
@@ -107,5 +141,5 @@ export function AppSidebar({
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

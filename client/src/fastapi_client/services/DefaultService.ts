@@ -36,6 +36,28 @@ export class DefaultService {
         });
     }
     /**
+     * Get Brand Config
+     * Fetch brand configuration from brand.dev API.
+     * Extracts colors and logo URL to create a style configuration.
+     * Saves the configuration to brand_config.json file.
+     * @param requestBody
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getBrandConfigApiBrandConfigPost(
+        requestBody: BrandConfigRequest,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/brand_config',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Agent
      * Agent API.
      * @param requestBody
@@ -88,27 +110,6 @@ export class DefaultService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/invoke_endpoint',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: `Validation Error`,
-            },
-        });
-    }
-    /**
-     * Get Brand Config
-     * Fetch brand configuration from brand.dev API.
-     * Extracts colors and logo URL to create a style configuration.
-     * @param requestBody
-     * @returns any Successful Response
-     * @throws ApiError
-     */
-    public static getBrandConfigApiBrandConfigPost(
-        requestBody: BrandConfigRequest,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/brand_config',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

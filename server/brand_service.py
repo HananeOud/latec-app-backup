@@ -67,11 +67,21 @@ class BrandService:
     logos = brand.get('logos', [])
     logo_url = self._select_best_logo(logos)
 
-    # Calculate complementary colors
+    # Calculate complementary colors with WCAG compliance
     foreground = self._get_contrasting_color(primary_color)
     muted = self._lighten_color(primary_color, 0.95)
-    muted_foreground = self._lighten_color(primary_color, 0.4)
+    muted_foreground = self._ensure_readable_text(muted, primary_color)
     border = self._lighten_color(primary_color, 0.9)
+
+    # Sidebar colors based on primary color with readability ensured
+    sidebar_bg = self._lighten_color(primary_color, 0.97)
+    sidebar_primary = primary_color
+    sidebar_primary_fg = self._ensure_readable_text(sidebar_primary, foreground, min_ratio=4.5)
+    sidebar_accent = self._lighten_color(primary_color, 0.93)
+    sidebar_accent_fg = self._ensure_readable_text(sidebar_accent, primary_color, min_ratio=4.5)
+    sidebar_fg = self._ensure_readable_text(
+      sidebar_bg, foreground, min_ratio=4.5
+    )  # Readable text on sidebar
 
     return {
       'brand': {
@@ -90,6 +100,13 @@ class BrandService:
           'ring': accent_color,
           'destructive': '#ef4444',
           'destructiveForeground': '#ffffff',
+          'sidebar': sidebar_bg,
+          'sidebarForeground': sidebar_fg,
+          'sidebarPrimary': sidebar_primary,
+          'sidebarPrimaryForeground': sidebar_primary_fg,
+          'sidebarAccent': sidebar_accent,
+          'sidebarAccentForeground': sidebar_accent_fg,
+          'sidebarBorder': border,
         },
       }
     }
@@ -130,6 +147,52 @@ class BrandService:
     # Return black for light colors, white for dark colors
     return '#000000' if luminance > 0.5 else '#ffffff'
 
+  def _calculate_contrast_ratio(self, color1: str, color2: str) -> float:
+    """Calculate WCAG contrast ratio between two colors."""
+
+    def get_luminance(hex_color: str) -> float:
+      hex_color = hex_color.lstrip('#')
+      r = int(hex_color[0:2], 16) / 255
+      g = int(hex_color[2:4], 16) / 255
+      b = int(hex_color[4:6], 16) / 255
+
+      # Apply gamma correction
+      r = r / 12.92 if r <= 0.03928 else ((r + 0.055) / 1.055) ** 2.4
+      g = g / 12.92 if g <= 0.03928 else ((g + 0.055) / 1.055) ** 2.4
+      b = b / 12.92 if b <= 0.03928 else ((b + 0.055) / 1.055) ** 2.4
+
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    lum1 = get_luminance(color1)
+    lum2 = get_luminance(color2)
+    lighter = max(lum1, lum2)
+    darker = min(lum1, lum2)
+
+    return (lighter + 0.05) / (darker + 0.05)
+
+  def _ensure_readable_text(self, bg_color: str, text_color: str, min_ratio: float = 4.5) -> str:
+    """Ensure text color has sufficient contrast with background.
+    WCAG AA requires 4.5:1 for normal text, 7:1 for AAA.
+    """
+    contrast = self._calculate_contrast_ratio(bg_color, text_color)
+
+    if contrast >= min_ratio:
+      return text_color
+
+    # Try black first
+    black_contrast = self._calculate_contrast_ratio(bg_color, '#000000')
+    if black_contrast >= min_ratio:
+      return '#000000'
+
+    # Try white
+    white_contrast = self._calculate_contrast_ratio(bg_color, '#ffffff')
+    if white_contrast >= min_ratio:
+      return '#ffffff'
+
+    # If neither works well, darken or lighten the background color significantly
+    # For now, return the better of black or white
+    return '#000000' if black_contrast > white_contrast else '#ffffff'
+
   def _lighten_color(self, hex_color: str, factor: float) -> str:
     """Lighten a hex color by a given factor (0-1).
     Factor closer to 1 means lighter color.
@@ -146,6 +209,31 @@ class BrandService:
     r = int(r + (255 - r) * factor)
     g = int(g + (255 - g) * factor)
     b = int(b + (255 - b) * factor)
+
+    # Ensure values are in valid range
+    r = min(255, max(0, r))
+    g = min(255, max(0, g))
+    b = min(255, max(0, b))
+
+    # Convert back to hex
+    return f'#{r:02x}{g:02x}{b:02x}'
+
+  def _darken_color(self, hex_color: str, factor: float) -> str:
+    """Darken a hex color by a given factor (0-1).
+    Factor closer to 1 means darker color.
+    """
+    # Remove # if present
+    hex_color = hex_color.lstrip('#')
+
+    # Convert to RGB
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    # Darken each channel
+    r = int(r * (1 - factor))
+    g = int(g * (1 - factor))
+    b = int(b * (1 - factor))
 
     # Ensure values are in valid range
     r = min(255, max(0, r))

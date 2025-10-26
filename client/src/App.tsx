@@ -26,6 +26,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Plus, ArrowUp } from "lucide-react";
+import { getBrandName } from "@/lib/brandConfig";
 import {
   Select,
   SelectContent,
@@ -57,6 +58,7 @@ export function Chat() {
   const [input, setInput] = useState("");
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const [brandName, setBrandName] = useState<string | null>(null);
   const lastMessageRef = React.useRef<HTMLDivElement>(null);
 
   // Load configuration on component mount
@@ -76,6 +78,7 @@ export function Chat() {
       .then((response) => response.json())
       .then((brandConfig) => {
         applyBrandStyles(brandConfig);
+        setBrandName(getBrandName());
         console.log("✅ Brand styles applied");
       })
       .catch((err) => {
@@ -202,7 +205,7 @@ export function Chat() {
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
                   <p className="text-sm font-medium leading-none">
-                    Databricks Agent
+                    {brandName || "Databricks Agent"}
                   </p>
                   <p className="text-xs text-muted-foreground">Ready to help</p>
                 </div>

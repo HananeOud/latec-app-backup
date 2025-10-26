@@ -20,6 +20,13 @@ export interface BrandConfig {
       ring: string;
       destructive: string;
       destructiveForeground: string;
+      sidebar?: string;
+      sidebarForeground?: string;
+      sidebarPrimary?: string;
+      sidebarPrimaryForeground?: string;
+      sidebarAccent?: string;
+      sidebarAccentForeground?: string;
+      sidebarBorder?: string;
     };
   };
 }
@@ -53,6 +60,41 @@ export function applyBrandStyles(config: BrandConfig): void {
     hexToHSL(colors.destructiveForeground)
   );
 
+  // Apply sidebar colors if provided
+  if (colors.sidebar) {
+    root.style.setProperty("--sidebar-background", hexToHSL(colors.sidebar));
+  }
+  if (colors.sidebarForeground) {
+    root.style.setProperty(
+      "--sidebar-foreground",
+      hexToHSL(colors.sidebarForeground)
+    );
+  }
+  if (colors.sidebarPrimary) {
+    root.style.setProperty(
+      "--sidebar-primary",
+      hexToHSL(colors.sidebarPrimary)
+    );
+  }
+  if (colors.sidebarPrimaryForeground) {
+    root.style.setProperty(
+      "--sidebar-primary-foreground",
+      hexToHSL(colors.sidebarPrimaryForeground)
+    );
+  }
+  if (colors.sidebarAccent) {
+    root.style.setProperty("--sidebar-accent", hexToHSL(colors.sidebarAccent));
+  }
+  if (colors.sidebarAccentForeground) {
+    root.style.setProperty(
+      "--sidebar-accent-foreground",
+      hexToHSL(colors.sidebarAccentForeground)
+    );
+  }
+  if (colors.sidebarBorder) {
+    root.style.setProperty("--sidebar-border", hexToHSL(colors.sidebarBorder));
+  }
+
   // Store logo URL for use in components
   if (config.brand.logoUrl) {
     sessionStorage.setItem("brandLogoUrl", config.brand.logoUrl);
@@ -62,6 +104,9 @@ export function applyBrandStyles(config: BrandConfig): void {
   if (config.brand.name) {
     sessionStorage.setItem("brandName", config.brand.name);
   }
+
+  // Dispatch custom event to notify components of brand config update
+  window.dispatchEvent(new Event("brandConfigUpdated"));
 }
 
 /**

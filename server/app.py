@@ -20,6 +20,7 @@ from starlette.requests import Request
 
 from .agents.databricks_assistant import databricks_agent
 from .agents.model_serving import model_serving_endpoint
+from .brand_service import brand_service
 from .tracing import (
   get_mlflow_experiment_id,
   setup_mlflow_tracing,
@@ -144,6 +145,37 @@ async def health_check():
       'error': str(e),
       'timestamp': int(time.time() * 1000),
     }
+
+
+class BrandConfigRequest(BaseModel):
+  """Request options for fetching brand configuration."""
+
+  brand_name: str
+
+
+@app.post(f'{API_PREFIX}/brand_config')
+async def get_brand_config(request: BrandConfigRequest):
+  """Fetch brand configuration from brand.dev API.
+  Extracts colors and logo URL to create a style configuration.
+  Saves the configuration to brand_config.json file.
+  """
+  logger.info(f'Brand config requested for: {request.brand_name}')
+
+  try:
+    import json
+
+    config = brand_service.get_brand_config(request.brand_name)
+
+    # Save to client/public/brand_config.json
+    brand_config_path = Path(__file__).parent.parent / 'client' / 'public' / 'brand_config.json'
+    with open(brand_config_path, 'w') as f:
+      json.dump(config, f, indent=2)
+
+    logger.info(f'Brand config generated and saved for {request.brand_name}')
+    return config
+  except Exception as e:
+    logger.error(f'Failed to generate brand config: {str(e)}')
+    raise
 
 
 class AgentRequestOptions(BaseModel):
