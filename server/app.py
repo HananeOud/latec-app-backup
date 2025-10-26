@@ -120,6 +120,8 @@ setup_mlflow_tracing()
 @app.get(f'{API_PREFIX}/health')
 async def health_check():
   """Health check endpoint for monitoring app status."""
+  import time
+
   try:
     # Test MLflow connection
     experiment_id = get_mlflow_experiment_id()
@@ -127,7 +129,7 @@ async def health_check():
     # Test basic functionality
     health_status = {
       'status': 'healthy',
-      'timestamp': mlflow.utils.time_utils.get_current_time_millis(),
+      'timestamp': int(time.time() * 1000),
       'mlflow_experiment_id': experiment_id,
       'environment': 'production' if not IS_DEV else 'development',
     }
@@ -140,7 +142,7 @@ async def health_check():
     return {
       'status': 'unhealthy',
       'error': str(e),
-      'timestamp': mlflow.utils.time_utils.get_current_time_millis(),
+      'timestamp': int(time.time() * 1000),
     }
 
 
