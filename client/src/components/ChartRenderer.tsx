@@ -27,10 +27,74 @@ interface ChartRendererProps {
   className?: string;
 }
 
+// Get brand primary color from CSS variables or fallback to default
+const getBrandColor = () => {
+  const root = document.documentElement;
+  const primaryHSL = getComputedStyle(root)
+    .getPropertyValue("--primary")
+    .trim();
+
+  if (primaryHSL) {
+    // Convert HSL to hex
+    const [h, s, l] = primaryHSL.split(" ").map((v) => parseFloat(v));
+    return hslToHex(h, s, l);
+  }
+
+  return "#8884d8"; // Fallback to default blue
+};
+
+// Convert HSL to Hex
+const hslToHex = (h: number, s: number, l: number): string => {
+  s /= 100;
+  l /= 100;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else {
+    r = c;
+    g = 0;
+    b = x;
+  }
+
+  const toHex = (val: number) => {
+    const hex = Math.round((val + m) * 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
 export const ChartRenderer: React.FC<ChartRendererProps> = ({
   data,
   className = "",
 }) => {
+  const brandColor = getBrandColor();
   // Transform table data into chart format
   const chartData = data.rows.map((row) => {
     const xValue = row[data.chart_config.x_column] || "";
@@ -73,7 +137,7 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
             <Line
               type="monotone"
               dataKey="value"
-              stroke="#8884d8"
+              stroke={brandColor}
               strokeWidth={2}
               name={yLabel}
             />
@@ -90,7 +154,7 @@ export const ChartRenderer: React.FC<ChartRendererProps> = ({
             />
             <Tooltip />
             <Legend />
-            <Bar dataKey="value" fill="#8884d8" name={yLabel} />
+            <Bar dataKey="value" fill={brandColor} name={yLabel} />
           </BarChart>
         )}
       </ResponsiveContainer>
