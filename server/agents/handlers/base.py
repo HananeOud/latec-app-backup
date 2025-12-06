@@ -30,11 +30,14 @@ class BaseDeploymentHandler(ABC):
     self.agent_config = agent_config
 
   @abstractmethod
-  async def invoke_stream(self, messages: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
+  async def invoke_stream(
+    self, messages: List[Dict[str, str]], client_request_id: str
+  ) -> AsyncGenerator[str, None]:
     """Stream response from the endpoint.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
+      client_request_id: Unique ID for trace linking (e.g., 'req-abc123')
 
     Yields:
       Server-Sent Events (SSE) formatted strings with JSON data
@@ -42,11 +45,12 @@ class BaseDeploymentHandler(ABC):
     pass
 
   @abstractmethod
-  def invoke(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
+  def invoke(self, messages: List[Dict[str, str]], client_request_id: str) -> Dict[str, Any]:
     """Non-streaming invocation.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
+      client_request_id: Unique ID for trace linking (e.g., 'req-abc123')
 
     Returns:
       Response dict (format may vary by handler type)

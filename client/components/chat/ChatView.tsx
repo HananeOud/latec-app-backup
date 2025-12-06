@@ -893,12 +893,55 @@ export function ChatView({
   };
 
   const submitFeedback = async (comment: string) => {
-    // TODO: Implement feedback functionality
-    console.log("Feedback disabled for now:", {
-      messageId: feedbackModal.messageId,
-      feedbackType: feedbackModal.feedbackType,
-      comment,
-    });
+    const message = messages.find((m) => m.id === feedbackModal.messageId);
+
+    if (!message?.traceId) {
+      console.error("No trace ID for message:", feedbackModal.messageId);
+      alert("Cannot submit feedback: No trace ID found");
+      setFeedbackModal({
+        isOpen: false,
+        messageId: "",
+        feedbackType: "positive",
+      });
+      return;
+    }
+
+    if (!selectedAgentId) {
+      console.error("No agent selected");
+      alert("Cannot submit feedback: No agent selected");
+      setFeedbackModal({
+        isOpen: false,
+        messageId: "",
+        feedbackType: "positive",
+      });
+      return;
+    }
+
+    try {
+      // Convert positive/negative to boolean for MLflow
+      const feedbackValue = feedbackModal.feedbackType === "positive";
+
+      await fetch("/api/log_assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trace_id: message.traceId, // client_request_id format
+          agent_id: selectedAgentId,
+          assessment_name: "user_feedback",
+          assessment_value: feedbackValue,
+          rationale: comment || undefined, // Only send if not empty
+          source_id: "anonymous", // TODO: Replace with actual user ID when auth is added
+        }),
+      });
+
+      console.log("✅ Feedback logged successfully");
+      // TODO: Show success toast
+
+    } catch (error) {
+      console.error("Failed to log feedback:", error);
+      // TODO: Show error toast
+      alert("Failed to submit feedback. Please try again.");
+    }
 
     setFeedbackModal({
       isOpen: false,

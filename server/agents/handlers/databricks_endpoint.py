@@ -90,23 +90,20 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     if not self.endpoint_name:
       raise ValueError(f'Agent {agent_config.get("id")} has no endpoint_name configured')
 
-  async def invoke_stream(self, messages: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
+  async def invoke_stream(
+    self, messages: List[Dict[str, str]], client_request_id: str
+  ) -> AsyncGenerator[str, None]:
     """Stream response from Databricks serving endpoint.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
+      client_request_id: Unique ID for trace linking (from endpoint)
 
     Yields:
       Server-Sent Events (SSE) formatted strings with JSON data
     """
-    # Generate unique client request ID for trace linking
-    # This allows us to map frontend requests to MLflow traces for feedback
-    import uuid
-
-    client_request_id = f'req-{uuid.uuid4().hex[:16]}'
-    logger.info(f'Generated client_request_id: {client_request_id}')
-
     # Emit client_request_id as first event for frontend to capture
+    logger.info(f'Emitting client_request_id to frontend: {client_request_id}')
     trace_event = {'type': 'trace.client_request_id', 'client_request_id': client_request_id}
     yield f'data: {json.dumps(trace_event)}\n\n'
 
@@ -125,9 +122,6 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     }
 
     logger.info(f'Calling Databricks endpoint (streaming): {self.endpoint_name}')
-
-    # Track whether we've tagged the MLflow trace yet
-    mlflow_trace_tagged = False
 
     # Use async httpx client for proper async streaming
     async with httpx.AsyncClient(timeout=300.0) as client:
@@ -162,23 +156,6 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
             # Parse the JSON event to validate it
             event = json.loads(json_str)
 
-            # Extract trace ID if available for logging
-            if event.get('id'):
-              logger.debug(f'Trace ID in stream: {event["id"]}')
-
-              # Tag MLflow trace with client_request_id (once per stream)
-              if not mlflow_trace_tagged:
-                try:
-                  import mlflow
-
-                  mlflow.update_current_trace(client_request_id=client_request_id)
-                  logger.info(f'Tagged MLflow trace with client_request_id: {client_request_id}')
-                  mlflow_trace_tagged = True
-                except Exception as e:
-                  logger.warning(f'Failed to tag MLflow trace: {e}')
-                  # Don't fail the stream if tagging fails
-                  mlflow_trace_tagged = True  # Don't retry
-
             # Forward the event to the client
             yield f'data: {json_str}\n\n'
 
@@ -186,11 +163,12 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
             logger.warning(f'Failed to parse JSON from stream: {e}, line: {json_str[:200]}')
             continue
 
-  def invoke(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
+  def invoke(self, messages: List[Dict[str, str]], client_request_id: str) -> Dict[str, Any]:
     """Non-streaming invocation of Databricks serving endpoint.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
+      client_request_id: Unique ID for trace linking (from endpoint)
 
     Returns:
       OpenAI-compatible response format with choices, message, content
