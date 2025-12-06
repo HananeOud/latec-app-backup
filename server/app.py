@@ -1,7 +1,6 @@
 """FastAPI app for the Databricks Apps + Agents demo."""
 
 import logging
-import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -9,11 +8,11 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
-# Routers for organizing endpoints
-from .routers import agent, chat, config, health
-
 # Import tracing module to set up MLflow tracking URI for feedback logging
 from . import tracing  # noqa: F401
+
+# Routers for organizing endpoints
+from .routers import agent, chat, config, health
 
 # Configure logging for Databricks Apps monitoring
 # Logs written to stdout/stderr will be available in Databricks Apps UI and /logz endpoint

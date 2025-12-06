@@ -30,9 +30,7 @@ class BaseDeploymentHandler(ABC):
     self.agent_config = agent_config
 
   @abstractmethod
-  async def invoke_stream(
-    self, messages: List[Dict[str, str]]
-  ) -> AsyncGenerator[str, None]:
+  async def invoke_stream(self, messages: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
     """Stream response from the endpoint.
 
     Args:

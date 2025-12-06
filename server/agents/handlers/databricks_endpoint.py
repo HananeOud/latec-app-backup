@@ -6,12 +6,11 @@ import os
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
 import httpx
-import mlflow
 import requests
 from dotenv import load_dotenv
 
-from .base import BaseDeploymentHandler
 from ..table_parser import extract_table_from_markdown
+from .base import BaseDeploymentHandler
 
 load_dotenv(dotenv_path='.env.local')
 
@@ -89,13 +88,9 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     self.endpoint_name = agent_config.get('endpoint_name')
 
     if not self.endpoint_name:
-      raise ValueError(
-        f"Agent {agent_config.get('id')} has no endpoint_name configured"
-      )
+      raise ValueError(f'Agent {agent_config.get("id")} has no endpoint_name configured')
 
-  async def invoke_stream(
-    self, messages: List[Dict[str, str]]
-  ) -> AsyncGenerator[str, None]:
+  async def invoke_stream(self, messages: List[Dict[str, str]]) -> AsyncGenerator[str, None]:
     """Stream response from Databricks serving endpoint.
 
     Args:
@@ -104,14 +99,13 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     Yields:
       Server-Sent Events (SSE) formatted strings with JSON data
     """
-
     # Get Databricks credentials
     host, token = get_databricks_credentials()
 
     # Build request payload (Databricks Agent API format with streaming enabled)
     payload = {
       'input': messages,
-      'stream': True  # CRITICAL: Tell Databricks to stream the response
+      'stream': True,  # CRITICAL: Tell Databricks to stream the response
     }
     url = f'{host}/serving-endpoints/{self.endpoint_name}/invocations'
     headers = {
@@ -174,7 +168,6 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     Returns:
       OpenAI-compatible response format with choices, message, content
     """
-
     # Get Databricks credentials
     host, token = get_databricks_credentials()
 
@@ -201,7 +194,9 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
       text_content = result.get('output', [{}])[0].get('content', [{}])[0].get('text', '')
       # Fallback to older format if needed
       if not text_content:
-        text_content = result.get('predictions', [{}])[0].get('candidates', [{}])[0].get('text', str(result))
+        text_content = (
+          result.get('predictions', [{}])[0].get('candidates', [{}])[0].get('text', str(result))
+        )
     except (IndexError, KeyError, TypeError, AttributeError):
       # Last resort: stringify the whole result
       text_content = str(result)

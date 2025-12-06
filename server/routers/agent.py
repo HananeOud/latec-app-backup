@@ -1,6 +1,5 @@
 """Agent invocation and feedback endpoints."""
 
-import json
 import logging
 from typing import Type, Union
 
@@ -79,7 +78,10 @@ async def invoke_endpoint(options: InvokeEndpointRequest):
   Supports both streaming and non-streaming modes.
   """
   logger.info(f'🎯 Invoking agent: {options.agent_id} (stream={options.stream})')
-  logger.info(f'📦 Request payload: agent_id={options.agent_id}, stream={options.stream}, messages={len(options.messages)}')
+  logger.info(
+    f'📦 Request payload: agent_id={options.agent_id}, stream={options.stream}, '
+    f'messages={len(options.messages)}'
+  )
 
   # Look up agent configuration
   agent = config_loader.get_agent_by_id(options.agent_id)
@@ -102,7 +104,9 @@ async def invoke_endpoint(options: InvokeEndpointRequest):
     supported_types = ', '.join(DEPLOYMENT_HANDLERS.keys())
     return {
       'error': 'Unsupported deployment type',
-      'message': f'Deployment type "{deployment_type}" is not supported. Supported types: {supported_types}',
+      'message': (
+        f'Deployment type "{deployment_type}" is not supported. Supported types: {supported_types}'
+      ),
     }
 
   try:
@@ -117,8 +121,8 @@ async def invoke_endpoint(options: InvokeEndpointRequest):
         headers={
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
-          'X-Accel-Buffering': 'no'  # Disable nginx buffering
-        }
+          'X-Accel-Buffering': 'no',  # Disable nginx buffering
+        },
       )
     else:
       return handler.invoke(messages=options.messages)

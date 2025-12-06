@@ -47,7 +47,9 @@ async def get_tracing_experiment():
 
   return ExperimentInfo(
     experiment_id=experiment_id,
-    link=f'{host}/ml/experiments/{experiment_id}?compareRunsMode=TRACES' if (host and experiment_id) else None,
+    link=f'{host}/ml/experiments/{experiment_id}?compareRunsMode=TRACES'
+    if (host and experiment_id)
+    else None,
   )
 
 

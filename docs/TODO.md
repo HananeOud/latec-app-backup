@@ -1,5 +1,129 @@
 # TODO: Future Enhancements
 
+## 💾 Persistent Storage & Trace Improvements
+
+**Status:** Not Implemented
+**Priority:** High
+**Complexity:** Medium
+**Estimated Effort:** 1-2 days
+
+### Current Limitations
+
+**Chat Storage:**
+- Chats stored in-memory only (`ChatStorage` class)
+- Lost on server restart
+- Max 10 chats limit (oldest auto-deleted)
+- No multi-user support
+
+**Trace Storage:**
+- Function calls cached in-memory with messages
+- No timing/duration data (shown as 0ms)
+- Lost on server restart
+- Limited to current session
+
+### Proposed Solution
+
+**1. Database Integration**
+
+Add SQLite (simple) or PostgreSQL (production-grade):
+
+```python
+# models.py
+class Chat(Base):
+    id = Column(String, primary_key=True)
+    user_id = Column(String, index=True)
+    title = Column(String)
+    agent_id = Column(String)
+    created_at = Column(DateTime)
+    messages = relationship("Message")
+
+class Message(Base):
+    id = Column(String, primary_key=True)
+    chat_id = Column(String, ForeignKey("chats.id"))
+    role = Column(String)
+    content = Column(Text)
+    trace_id = Column(String, nullable=True)
+    trace_summary = Column(JSON, nullable=True)  # Store as JSON blob
+    created_at = Column(DateTime)
+```
+
+**2. Enhanced Trace Storage Options**
+
+**Option A: Database-only (simple)**
+- Store `trace_summary` JSON in database
+- Keep current cache-only approach
+- Pros: Simple, no MLflow dependency
+- Cons: No timing data, no cross-session traces
+
+**Option B: MLflow Integration (comprehensive)**
+- Fetch traces from Databricks MLflow on-demand
+- Cache in database for offline access
+- Pros: Full trace data (durations, tokens, spans)
+- Cons: Requires Databricks MLflow access, network calls
+
+**Option C: Hybrid (recommended)**
+- Primary: Cache trace data in database
+- Fallback: Fetch from MLflow if available
+- Best of both worlds
+
+**3. Implementation Checklist**
+
+```python
+# Phase 1: Database setup
+- [ ] Choose database (SQLite for dev, PostgreSQL for prod)
+- [ ] Create SQLAlchemy models
+- [ ] Add Alembic for migrations
+- [ ] Implement database session management
+
+# Phase 2: Chat persistence
+- [ ] Replace ChatStorage with database queries
+- [ ] Add user authentication/sessions
+- [ ] Remove 10-chat limit
+- [ ] Add pagination for chat history
+
+# Phase 3: Trace persistence
+- [ ] Store trace_summary in database
+- [ ] Add optional MLflow fetching
+- [ ] Cache MLflow traces for offline access
+- [ ] Add trace cleanup (TTL or manual deletion)
+
+# Phase 4: API updates
+- [ ] GET /api/chats?user_id=X (paginated)
+- [ ] DELETE /api/chats/{chat_id}
+- [ ] GET /api/traces/{trace_id} (fetch from MLflow or cache)
+- [ ] POST /api/traces/{trace_id}/refresh (re-fetch from MLflow)
+```
+
+**4. Migration Path**
+
+```python
+# Backward compatible: Support both in-memory and DB
+class ChatRepository:
+    def __init__(self, use_database: bool = True):
+        self.backend = DatabaseBackend() if use_database else InMemoryBackend()
+
+    def get_chat(self, chat_id: str) -> Chat:
+        return self.backend.get(chat_id)
+```
+
+### Benefits
+
+- ✅ Chat history persists across server restarts
+- ✅ Support multiple users with authentication
+- ✅ No arbitrary chat limits
+- ✅ Trace data persisted and optionally enriched from MLflow
+- ✅ Can add advanced features: search, export, analytics
+
+### Files to Modify
+
+- `server/chat_storage.py` → `server/repositories/chat_repository.py`
+- `server/routers/chat.py` - Add user filtering, pagination
+- `server/routers/agent.py` - Save to DB instead of in-memory
+- Add: `server/db/` - Database models and session management
+- Add: `alembic/` - Database migrations
+
+---
+
 ## 🚀 Background Response Processing (Option 1)
 
 **Status:** Not Implemented
