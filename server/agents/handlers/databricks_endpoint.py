@@ -7,12 +7,9 @@ from typing import Any, AsyncGenerator, Dict, List, Tuple
 
 import httpx
 import requests
-from dotenv import load_dotenv
 
 from ..table_parser import extract_table_from_markdown
 from .base import BaseDeploymentHandler
-
-load_dotenv(dotenv_path='.env.local')
 
 logger = logging.getLogger(__name__)
 
@@ -20,55 +17,66 @@ logger = logging.getLogger(__name__)
 def get_databricks_credentials() -> Tuple[str, str]:
   """Get Databricks host and authentication token.
 
-  Tries WorkspaceClient first (handles OAuth in production),
-  falls back to environment variables for local development.
+  Uses ENV variable to determine authentication method:
+  - development: Uses DATABRICKS_HOST and DATABRICKS_TOKEN from environment (PAT)
+  - production: Uses WorkspaceClient for OAuth authentication
 
   Returns:
     Tuple of (host, token)
   """
-  try:
-    # Try using Databricks SDK (works in production with OAuth and local with PAT)
-    from databricks.sdk import WorkspaceClient
+  env = os.getenv('ENV', 'production')  # Default to production for safety
 
-    w = WorkspaceClient()
-    host = w.config.host
-    token = w.config.token
-
-    # In OAuth scenarios, token might not be directly available
-    if not token:
-      auth = w.config.authenticate()
-      token = auth.get('access_token', '')
-
-    if not host or not token:
-      raise ValueError('WorkspaceClient did not provide host or token')
-
-    # Ensure host has https:// prefix
-    if not host.startswith('https://'):
-      host = f'https://{host}'
-
-    logger.info(f'Using Databricks credentials from WorkspaceClient: {host}')
-    return host, token
-
-  except Exception as e:
-    # Fallback to environment variables for local development
-    logger.info(f'WorkspaceClient failed ({e}), falling back to environment variables')
+  if env == 'development':
+    # Local development: Use PAT from environment variables
+    logger.info('🔧 Development mode - using environment variables (PAT)')
 
     host = os.getenv('DATABRICKS_HOST', '')
     token = os.getenv('DATABRICKS_TOKEN', '')
 
     if not host or not token:
       raise ValueError(
-        'Unable to get Databricks credentials. '
-        'Set DATABRICKS_HOST and DATABRICKS_TOKEN in .env.local, '
-        'or ensure WorkspaceClient can authenticate.'
+        'DATABRICKS_HOST and DATABRICKS_TOKEN must be set in .env.local for development mode'
       )
 
     # Ensure host has https:// prefix
     if not host.startswith('https://'):
       host = f'https://{host}'
 
-    logger.info(f'Using Databricks credentials from environment: {host}')
+    logger.info(f'✅ Using Databricks credentials from environment: {host}')
     return host, token
+
+  else:
+    # Production: Use WorkspaceClient (OAuth)
+    logger.info('🚀 Production mode - using WorkspaceClient (OAuth)')
+
+    try:
+      from databricks.sdk import WorkspaceClient
+
+      w = WorkspaceClient()
+      host = w.config.host
+      token = w.config.token
+
+      # In OAuth scenarios, token might not be directly available
+      if not token:
+        auth = w.config.authenticate()
+        token = auth.get('access_token', '')
+
+      if not host or not token:
+        raise ValueError('WorkspaceClient did not provide host or token')
+
+      # Ensure host has https:// prefix
+      if not host.startswith('https://'):
+        host = f'https://{host}'
+
+      logger.info(f'✅ Using Databricks credentials from WorkspaceClient: {host}')
+      return host, token
+
+    except Exception as e:
+      logger.error(f'❌ WorkspaceClient authentication failed: {e}')
+      raise ValueError(
+        'Unable to authenticate with Databricks in production. '
+        'Ensure the app is running in Databricks Apps environment with proper OAuth setup.'
+      ) from e
 
 
 class DatabricksEndpointHandler(BaseDeploymentHandler):
