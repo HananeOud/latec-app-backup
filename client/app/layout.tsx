@@ -51,7 +51,17 @@ export default function RootLayout({
         className={`${dmSans.variable} ${montserrat.variable} ${inter.variable} font-sans antialiased texture-overlay`}
       >
         {children}
-        <Toaster position="bottom-right" />
+        <Toaster
+          position="bottom-right"
+          closeButton
+          toastOptions={{
+            style: {
+              background: '#f3f4f6',
+              color: '#1f2937',
+              border: '1px solid #d1d5db',
+            },
+          }}
+        />
       </body>
     </html>
   );

@@ -312,8 +312,10 @@ export function ChatView({
       }
 
       // Streaming response handling
-      console.log("🌊 STREAMING: About to start reading stream");
-      console.log("🌊 STREAMING: response.body exists?", !!response.body);
+      console.log(`[Stream] Starting response from agent: ${selectedAgentId}`);
+
+      devLog("🌊 STREAMING: About to start reading stream");
+      devLog("🌊 STREAMING: response.body exists?", !!response.body);
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -323,7 +325,7 @@ export function ChatView({
         throw new Error("No response body");
       }
 
-      console.log("🌊 STREAMING: Reader created successfully");
+      devLog("🌊 STREAMING: Reader created successfully");
       devLog("📖 Starting to read stream...");
 
       let buffer = "";
@@ -332,24 +334,24 @@ export function ChatView({
       const UPDATE_INTERVAL = 50; // Update UI every 50ms for smooth streaming
 
       try {
-        console.log("🌊 STREAMING: Entering read loop");
+        devLog("🌊 STREAMING: Entering read loop");
         let chunkCount = 0;
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            console.log("🌊 STREAMING: Stream done");
+            devLog("🌊 STREAMING: Stream done");
             break;
           }
 
           chunkCount++;
-          console.log(
+          devLog(
             `🌊 STREAMING: Chunk ${chunkCount}, bytes:`,
             value?.length,
           );
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n");
-          console.log(`🌊 STREAMING: Split into ${lines.length} lines`);
+          devLog(`🌊 STREAMING: Split into ${lines.length} lines`);
 
           // Keep the last incomplete line in the buffer
           buffer = lines.pop() || "";
@@ -946,7 +948,7 @@ export function ChatView({
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      console.log("✅ Feedback logged successfully");
+      devLog("✅ Feedback logged successfully");
       // Silent success - no toast needed, modal already closed
 
     } catch (error) {

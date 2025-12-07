@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import { TopBar } from "@/components/layout/TopBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MainContent } from "@/components/layout/MainContent";
@@ -70,9 +71,9 @@ function HomeContent() {
   const handleNewChat = () => {
     // Prevent creating new chat while streaming a response
     if (isStreaming) {
-      alert(
-        "⏳ Please wait for the current response to complete before starting a new chat.",
-      );
+      toast.info("⏳ Please wait for the current response to complete", {
+        description: "You can start a new chat once the response finishes",
+      });
       return;
     }
 
@@ -86,9 +87,9 @@ function HomeContent() {
   const handleChatSelect = (chatId: string) => {
     // Prevent switching chats while streaming a response
     if (isStreaming) {
-      alert(
-        "⏳ Please wait for the current response to complete before switching chats.",
-      );
+      toast.info("⏳ Please wait for the current response to complete", {
+        description: "You can switch chats once the response finishes",
+      });
       return;
     }
 
