@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
 import { FeedbackModal } from "@/components/modals/FeedbackModal";
@@ -897,7 +898,7 @@ export function ChatView({
 
     if (!message?.traceId) {
       console.error("No trace ID for message:", feedbackModal.messageId);
-      alert("Cannot submit feedback: No trace ID found");
+      toast.error("Cannot submit feedback: No trace ID found");
       setFeedbackModal({
         isOpen: false,
         messageId: "",
@@ -908,7 +909,7 @@ export function ChatView({
 
     if (!selectedAgentId) {
       console.error("No agent selected");
-      alert("Cannot submit feedback: No agent selected");
+      toast.error("Cannot submit feedback: No agent selected");
       setFeedbackModal({
         isOpen: false,
         messageId: "",
@@ -917,37 +918,41 @@ export function ChatView({
       return;
     }
 
-    try {
-      // Convert positive/negative to boolean for MLflow
-      const feedbackValue = feedbackModal.feedbackType === "positive";
-
-      await fetch("/api/log_assessment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          trace_id: message.traceId, // client_request_id format
-          agent_id: selectedAgentId,
-          assessment_name: "user_feedback",
-          assessment_value: feedbackValue,
-          rationale: comment || undefined, // Only send if not empty
-          source_id: "anonymous", // TODO: Replace with actual user ID when auth is added
-        }),
-      });
-
-      console.log("✅ Feedback logged successfully");
-      // TODO: Show success toast
-
-    } catch (error) {
-      console.error("Failed to log feedback:", error);
-      // TODO: Show error toast
-      alert("Failed to submit feedback. Please try again.");
-    }
-
+    // ⚡ OPTIMISTIC UI: Close modal immediately for instant feedback
     setFeedbackModal({
       isOpen: false,
       messageId: "",
       feedbackType: "positive",
     });
+
+    // Submit feedback in background
+    try {
+      const feedbackValue = feedbackModal.feedbackType === "positive";
+
+      const response = await fetch("/api/log_assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trace_id: message.traceId,
+          agent_id: selectedAgentId,
+          assessment_name: "user_feedback",
+          assessment_value: feedbackValue,
+          rationale: comment || undefined,
+          source_id: "anonymous",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      console.log("✅ Feedback logged successfully");
+      // Silent success - no toast needed, modal already closed
+
+    } catch (error) {
+      console.error("Failed to log feedback:", error);
+      toast.error("Failed to submit feedback. Please try again.");
+    }
   };
 
   return (

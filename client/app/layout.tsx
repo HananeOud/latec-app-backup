@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Montserrat, Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { getAppConfigServer } from "@/lib/config-server";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
         className={`${dmSans.variable} ${montserrat.variable} ${inter.variable} font-sans antialiased texture-overlay`}
       >
         {children}
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
