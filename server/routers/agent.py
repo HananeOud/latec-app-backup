@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional, Type, Union
 
 import mlflow
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from mlflow import MlflowClient
 from pydantic import BaseModel
@@ -268,13 +268,17 @@ async def log_feedback(options: LogAssessmentRequest):
 
 
 @router.post('/invoke_endpoint')
-async def invoke_endpoint(options: InvokeEndpointRequest):
+async def invoke_endpoint(options: InvokeEndpointRequest, request: Request):
   """Invoke an agent endpoint.
 
   Supports multiple deployment types via handler pattern.
   Each deployment type has its own handler for request/response formatting.
   Supports both streaming and non-streaming modes.
   Creates MLflow trace with client_request_id for feedback linking.
+
+  Args:
+    options: Request payload with agent_id, messages, and stream flag
+    request: FastAPI Request object (provides access to auth headers)
   """
   # Generate unique client request ID for trace linking
   client_request_id = f'req-{uuid.uuid4().hex[:16]}'
@@ -344,7 +348,9 @@ async def invoke_endpoint(options: InvokeEndpointRequest):
     # Use streaming or non-streaming based on request
     if options.stream:
       return StreamingResponse(
-        handler.invoke_stream(messages=options.messages, client_request_id=client_request_id),
+        handler.invoke_stream(
+          messages=options.messages, client_request_id=client_request_id, request=request
+        ),
         media_type='text/event-stream',
         headers={
           'Cache-Control': 'no-cache',
@@ -353,7 +359,9 @@ async def invoke_endpoint(options: InvokeEndpointRequest):
         },
       )
     else:
-      return handler.invoke(messages=options.messages, client_request_id=client_request_id)
+      return handler.invoke(
+        messages=options.messages, client_request_id=client_request_id, request=request
+      )
 
   except Exception as e:
     logger.error(f'❌ Error invoking agent {options.agent_id}: {str(e)}')

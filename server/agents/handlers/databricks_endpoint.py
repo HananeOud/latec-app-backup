@@ -2,81 +2,17 @@
 
 import json
 import logging
-import os
-from typing import Any, AsyncGenerator, Dict, List, Tuple
+from typing import Any, AsyncGenerator, Dict, List
 
 import httpx
 import requests
+from fastapi import Request
 
+from ...auth.strategies import HttpTokenAuth
 from ..table_parser import extract_table_from_markdown
 from .base import BaseDeploymentHandler
 
 logger = logging.getLogger(__name__)
-
-
-def get_databricks_credentials() -> Tuple[str, str]:
-  """Get Databricks host and authentication token.
-
-  Uses ENV variable to determine authentication method:
-  - development: Uses DATABRICKS_HOST and DATABRICKS_TOKEN from environment (PAT)
-  - production: Uses WorkspaceClient for OAuth authentication
-
-  Returns:
-    Tuple of (host, token)
-  """
-  env = os.getenv('ENV', 'production')  # Default to production for safety
-
-  if env == 'development':
-    # Local development: Use PAT from environment variables
-    logger.info('🔧 Development mode - using environment variables (PAT)')
-
-    host = os.getenv('DATABRICKS_HOST', '')
-    token = os.getenv('DATABRICKS_TOKEN', '')
-
-    if not host or not token:
-      raise ValueError(
-        'DATABRICKS_HOST and DATABRICKS_TOKEN must be set in .env.local for development mode'
-      )
-
-    # Ensure host has https:// prefix
-    if not host.startswith('https://'):
-      host = f'https://{host}'
-
-    logger.info(f'✅ Using Databricks credentials from environment: {host}')
-    return host, token
-
-  else:
-    # Production: Use WorkspaceClient (OAuth)
-    logger.info('🚀 Production mode - using WorkspaceClient (OAuth)')
-
-    try:
-      from databricks.sdk import WorkspaceClient
-
-      w = WorkspaceClient()
-      host = w.config.host
-      token = w.config.token
-
-      # In OAuth scenarios, token might not be directly available
-      if not token:
-        auth = w.config.authenticate()
-        token = auth.get('access_token', '')
-
-      if not host or not token:
-        raise ValueError('WorkspaceClient did not provide host or token')
-
-      # Ensure host has https:// prefix
-      if not host.startswith('https://'):
-        host = f'https://{host}'
-
-      logger.info(f'✅ Using Databricks credentials from WorkspaceClient: {host}')
-      return host, token
-
-    except Exception as e:
-      logger.error(f'❌ WorkspaceClient authentication failed: {e}')
-      raise ValueError(
-        'Unable to authenticate with Databricks in production. '
-        'Ensure the app is running in Databricks Apps environment with proper OAuth setup.'
-      ) from e
 
 
 class DatabricksEndpointHandler(BaseDeploymentHandler):
@@ -84,6 +20,8 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
 
   Handles both streaming and non-streaming invocations of Databricks
   serving endpoints using the Agent API format.
+
+  Uses HttpTokenAuth strategy for authentication (user token forwarding).
   """
 
   def __init__(self, agent_config: Dict[str, Any]):
@@ -92,20 +30,22 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     Args:
       agent_config: Agent config containing 'endpoint_name'
     """
-    super().__init__(agent_config)
+    # Initialize with HttpTokenAuth strategy for calling HTTP endpoints
+    super().__init__(agent_config, auth_strategy=HttpTokenAuth())
     self.endpoint_name = agent_config.get('endpoint_name')
 
     if not self.endpoint_name:
       raise ValueError(f'Agent {agent_config.get("id")} has no endpoint_name configured')
 
   async def invoke_stream(
-    self, messages: List[Dict[str, str]], client_request_id: str
+    self, messages: List[Dict[str, str]], client_request_id: str, request: Request
   ) -> AsyncGenerator[str, None]:
     """Stream response from Databricks serving endpoint.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
       client_request_id: Unique ID for trace linking (from endpoint)
+      request: FastAPI Request object (for auth headers)
 
     Yields:
       Server-Sent Events (SSE) formatted strings with JSON data
@@ -115,8 +55,8 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
     trace_event = {'type': 'trace.client_request_id', 'client_request_id': client_request_id}
     yield f'data: {json.dumps(trace_event)}\n\n'
 
-    # Get Databricks credentials
-    host, token = get_databricks_credentials()
+    # Get Databricks credentials using auth strategy
+    host, token = self.auth_strategy.get_credentials(request)
 
     # Build request payload (Databricks Agent API format with streaming enabled)
     payload = {
@@ -171,18 +111,21 @@ class DatabricksEndpointHandler(BaseDeploymentHandler):
             logger.warning(f'Failed to parse JSON from stream: {e}, line: {json_str[:200]}')
             continue
 
-  def invoke(self, messages: List[Dict[str, str]], client_request_id: str) -> Dict[str, Any]:
+  def invoke(
+    self, messages: List[Dict[str, str]], client_request_id: str, request: Request
+  ) -> Dict[str, Any]:
     """Non-streaming invocation of Databricks serving endpoint.
 
     Args:
       messages: List of messages with 'role' and 'content' keys
       client_request_id: Unique ID for trace linking (from endpoint)
+      request: FastAPI Request object (for auth headers)
 
     Returns:
       OpenAI-compatible response format with choices, message, content
     """
-    # Get Databricks credentials
-    host, token = get_databricks_credentials()
+    # Get Databricks credentials using auth strategy
+    host, token = self.auth_strategy.get_credentials(request)
 
     # Build request payload (Databricks Agent API format)
     payload = {'input': messages}
