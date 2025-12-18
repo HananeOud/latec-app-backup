@@ -7,6 +7,7 @@
       "endpoint_name": "my-custom-agent-endpoint",
       "display_name": "Custom Sales Agent",
       "display_description": "A custom agent that helps with sales forecasting and pipeline analysis.",
+      "mlflow_experiment_id": "1234567890",
       "tools": [
         {
           "name": "sales_forecast",

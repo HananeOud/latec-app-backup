@@ -53,6 +53,7 @@ DATABRICKS_HOST=https://adb-123456789.azuredatabricks.net
 DATABRICKS_TOKEN=dapi...  # PAT token
 DATABRICKS_APP_NAME=my-app  # Optional, for deployment
 WORKSPACE_SOURCE_PATH=/Workspace/Users/...  # Optional, for deployment
+LAKEBASE_PG_URL=postgresql://...  # Optional, enables PostgreSQL chat storage
 ```
 
 `config/agents.json` (agent definitions):
@@ -93,19 +94,28 @@ WORKSPACE_SOURCE_PATH=/Workspace/Users/...  # Optional, for deployment
 ```
 databricks-genai-app-template/
 ├── server/                     # FastAPI backend
-│   ├── agents/
-│   │   ├── handlers/          # Deployment handlers
-│   │   │   ├── base.py       # BaseHandler interface
-│   │   │   └── databricks_endpoint.py  # Current implementation
-│   │   └── databricks_assistant/  # Example agent code
-│   ├── auth/                  # Auth strategies
+│   ├── routers/               # API endpoints
+│   │   ├── agent.py          # Agent invocation & feedback
+│   │   ├── chat.py           # Chat management
+│   │   └── config.py         # Configuration endpoints
+│   ├── services/              # Business logic layer
+│   │   ├── agents/           # Agent handlers
+│   │   │   ├── handlers/     # Deployment-specific handlers
+│   │   │   └── agent_bricks_service.py
+│   │   ├── chat/             # Chat storage backends
+│   │   │   ├── base.py       # Abstract interface
+│   │   │   ├── memory.py     # In-memory implementation
+│   │   │   └── postgres.py   # PostgreSQL implementation
+│   │   └── user.py           # User service
+│   ├── db/                    # Database layer
+│   │   ├── database.py       # Connection management
+│   │   └── models.py         # SQLAlchemy models
+│   ├── auth/                  # Authentication strategies
 │   │   ├── base.py           # BaseAuthStrategy
-│   │   ├── http_token.py     # HttpTokenAuth (current)
-│   │   └── workspace_client.py  # WorkspaceClientAuth (future)
-│   ├── routers/
-│   │   └── agent.py          # Main API routes
+│   │   ├── http_token.py     # HttpTokenAuth
+│   │   └── workspace_client.py
 │   ├── app.py                # FastAPI app entry
-│   └── chat_storage.py       # In-memory ChatStorage
+│   └── chat_storage.py       # Storage factory (backwards compat)
 ├── client/                    # Next.js frontend
 │   ├── app/                  # Pages
 │   ├── components/
@@ -114,13 +124,14 @@ databricks-genai-app-template/
 │   ├── lib/types.ts          # TypeScript interfaces
 │   └── contexts/             # React contexts
 ├── config/                    # JSON configuration
+├── alembic/                   # Database migrations
 ├── scripts/                   # Build/deploy scripts
 └── docs/                      # Documentation
 ```
 
 ## Architecture Patterns
 
-### Handler Pattern (server/agents/handlers/)
+### Handler Pattern (server/services/agents/handlers/)
 
 Enables support for multiple agent deployment types:
 
@@ -135,11 +146,11 @@ Enables support for multiple agent deployment types:
 ```
 
 **Key locations:**
-- `server/agents/handlers/base.py` - BaseHandler interface
-- `server/agents/handlers/databricks_endpoint.py:40-112` - Current implementation (passthrough forwarding)
+- `server/services/agents/handlers/base.py` - BaseHandler interface
+- `server/services/agents/handlers/databricks_endpoint.py:40-112` - Current implementation (passthrough forwarding)
 - `server/routers/agent.py:191-202` - Handler selection logic
 
-### Authentication Strategy (server/auth/)
+### Authentication Strategy (server/auth/ + server/services/user.py)
 
 Strategy pattern for different credential types:
 
@@ -201,7 +212,7 @@ Process:
 
 ### Backend Handler (Passthrough)
 
-**File:** `server/agents/handlers/databricks_endpoint.py`
+**File:** `server/services/agents/handlers/databricks_endpoint.py`
 
 ```python
 # Lines 76-112: Simple forwarding of Databricks SSE events
@@ -328,7 +339,7 @@ env:
 - `client/lib/types.ts:39-71` - TraceSummary interface
 
 ### Handlers & Auth
-- `server/agents/handlers/databricks_endpoint.py:40-112` - SSE streaming
+- `server/services/agents/handlers/databricks_endpoint.py:40-112` - SSE streaming
 - `server/auth/http_token.py:12-38` - Token-based auth
 
 ### Storage

@@ -11,10 +11,10 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from ..agents.handlers import DatabricksEndpointHandler
-from ..auth.user_service import get_current_user
-from ..chat_storage import Message, storage
+from ..chat_storage import MessageModel, storage
 from ..config_loader import config_loader
+from ..services.agents.handlers import DatabricksEndpointHandler
+from ..services.user import get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -52,14 +52,14 @@ async def log_feedback(options: LogAssessmentRequest):
     if not agent:
       raise HTTPException(status_code=404, detail=f'Agent {options.agent_id} not found')
 
-    experiment_id = agent.get('mlflow_experiment_id')
+    """experiment_id = agent.get('mlflow_experiment_id')
     if not experiment_id:
       raise HTTPException(
         status_code=400,
         detail=f'Agent {options.agent_id} has no mlflow_experiment_id configured',
-      )
+      )"""
 
-    mlflow.log_feedback(
+    f = mlflow.log_feedback(
       trace_id=options.trace_id,
       name=options.assessment_name,
       value=options.assessment_value,
@@ -70,7 +70,7 @@ async def log_feedback(options: LogAssessmentRequest):
       rationale=options.rationale,
     )
 
-    logger.info(f'✅ Feedback logged successfully to trace {options.trace_id}')
+    logger.info(f'✅ Feedback logged successfully to trace {options.trace_id} with result {f}')
     return {'status': 'success', 'trace_id': options.trace_id}
 
   except HTTPException:
@@ -120,12 +120,12 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
     user_content = options.messages[-1].get('content', '') if options.messages else ''
     title = user_content[:50] + ('...' if len(user_content) > 50 else '')
     title = title if user_content else 'New Chat'
-    chat = user_storage.create(title=title, agent_id=options.agent_id)
+    chat = await user_storage.create(title=title, agent_id=options.agent_id)
     chat_id = chat.id
     logger.info(f'✅ Created new chat: {chat_id} for user: {user_email}')
   else:
     # Verify chat exists
-    chat = user_storage.get(chat_id)
+    chat = await user_storage.get(chat_id)
     if not chat:
       logger.error(f'Chat not found: {chat_id}')
       return {'error': f'Chat not found: {chat_id}'}
@@ -165,7 +165,20 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
             event = json.loads(data_str)
             event_type = event.get('type', '')
 
-            # Only process response.output_item.done events
+            # Log event types for debugging trace_id extraction
+            if 'databricks_output' in str(event) or event_type in ['response.done', 'response.output_item.done']:
+              logger.debug(f'📦 Event type: {event_type}, has databricks_output: {"databricks_output" in event}')
+
+            # Check for databricks_output at event level (for response.done events)
+            event_db_output = event.get('databricks_output', {})
+            if event_db_output and not trace_id:
+              databricks_output = event_db_output
+              trace_info = event_db_output.get('trace', {}).get('info', {})
+              if trace_info.get('trace_id'):
+                trace_id = trace_info['trace_id']
+                logger.info(f'📋 Extracted trace_id from event level: {trace_id}')
+
+            # Process response.output_item.done events
             if event_type == 'response.output_item.done':
               item = event.get('item', {})
               item_type = item.get('type', '')
@@ -194,14 +207,26 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
                     fc['output'] = _parse_json_field(item.get('output', {}))
                     break
 
-              # Extract trace_id from databricks_output (present in final message)
+              # Extract trace_id from databricks_output inside item (present in final message)
               db_output = item.get('databricks_output', {})
-              if db_output:
+              if db_output and not trace_id:
                 databricks_output = db_output
                 trace_info = db_output.get('trace', {}).get('info', {})
                 if trace_info.get('trace_id'):
                   trace_id = trace_info['trace_id']
-                  logger.info(f'📋 Extracted trace_id: {trace_id}')
+                  logger.info(f'📋 Extracted trace_id from item: {trace_id}')
+
+            # Also handle response.done events which may contain final trace data
+            elif event_type == 'response.done':
+              response_data = event.get('response', {})
+              # Check for databricks_output in response
+              resp_db_output = response_data.get('databricks_output', {})
+              if resp_db_output and not trace_id:
+                databricks_output = resp_db_output
+                trace_info = resp_db_output.get('trace', {}).get('info', {})
+                if trace_info.get('trace_id'):
+                  trace_id = trace_info['trace_id']
+                  logger.info(f'📋 Extracted trace_id from response.done: {trace_id}')
 
           except json.JSONDecodeError:
             # Skip non-JSON lines
@@ -211,18 +236,21 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
         logger.error(f'Error during streaming: {e}')
         yield f'data: {json.dumps({"type": "error", "error": str(e)})}\n\n'
 
+      # Log final extraction results for debugging
+      logger.info(f'🔍 Stream completed - trace_id: {trace_id}, has_databricks_output: {databricks_output is not None}')
+
       # After stream completes, save messages to storage
       try:
         # Save user message (the last one in the input)
         if options.messages:
           last_user_msg = options.messages[-1]
-          user_message = Message(
+          user_message = MessageModel(
             id=f'msg_{uuid.uuid4().hex[:12]}',
             role=last_user_msg.get('role', 'user'),
             content=last_user_msg.get('content', ''),
             timestamp=datetime.now(),
           )
-          user_storage.add_message(chat_id, user_message)
+          await user_storage.add_message(chat_id, user_message)
 
         # Build trace summary matching frontend TraceSummary type
         trace_summary = None
@@ -253,7 +281,7 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
 
         # Save assistant message with trace data
         if final_text or function_calls:
-          assistant_message = Message(
+          assistant_message = MessageModel(
             id=f'msg_{uuid.uuid4().hex[:12]}',
             role='assistant',
             content=final_text,
@@ -261,7 +289,7 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
             trace_id=trace_id,
             trace_summary=trace_summary,
           )
-          user_storage.add_message(chat_id, assistant_message)
+          await user_storage.add_message(chat_id, assistant_message)
 
         logger.info(
           f'💾 Saved messages to chat {chat_id}: '

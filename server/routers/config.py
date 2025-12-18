@@ -5,9 +5,9 @@ import logging
 
 from fastapi import APIRouter, Request
 
-from ..agents.agent_bricks_service import get_agent_bricks_service
-from ..auth.user_service import get_current_user, get_workspace_url
 from ..config_loader import config_loader
+from ..services.agents.agent_bricks_service import get_agent_bricks_service
+from ..services.user import get_current_user, get_workspace_url
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -69,6 +69,7 @@ async def get_agents():
             'display_name': manual_config.get('display_name', endpoint_name),
             'display_description': manual_config.get('display_description', ''),
             'status': 'UNKNOWN',  # We don't know the status for non-MAS endpoints
+            'mlflow_experiment_id': manual_config.get('mlflow_experiment_id'),
             'tools': [
               {
                 'name': tool.get('name', ''),
@@ -127,19 +128,32 @@ async def get_app_config():
 
 @router.get('/me')
 async def get_me(request: Request):
-  """Get current user info and workspace URL.
+  """Get current user info, workspace URL, and Lakebase status.
 
   Returns:
   - user: Current user's email
   - workspace_url: Databricks workspace URL for building resource links
+  - lakebase_configured: Whether Lakebase PostgreSQL is configured
+  - lakebase_project_id: Lakebase project ID (if configured)
+  - lakebase_error: Connection error message (empty if working)
   """
+  from ..db import get_lakebase_project_id, is_postgres_configured, test_database_connection
+
   try:
     user = await get_current_user(request)
     workspace_url = get_workspace_url()
 
+    # Get Lakebase status
+    lakebase_configured = is_postgres_configured()
+    lakebase_project_id = get_lakebase_project_id()
+    lakebase_error = await test_database_connection() if lakebase_configured else None
+
     return {
       'user': user,
       'workspace_url': workspace_url,
+      'lakebase_configured': lakebase_configured,
+      'lakebase_project_id': lakebase_project_id,
+      'lakebase_error': lakebase_error,
     }
 
   except Exception as e:

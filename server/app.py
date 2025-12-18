@@ -2,6 +2,7 @@
 
 import logging
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -14,7 +15,9 @@ from starlette.middleware.cors import CORSMiddleware
 from . import tracing  # noqa: F401
 
 # Routers for organizing endpoints
+from .db import run_migrations
 from .routers import agent, chat, config, health
+from .services.chat import init_storage
 
 # Configure logging for Databricks Apps monitoring
 # Logs written to stdout/stderr will be available in Databricks Apps UI and /logz endpoint
@@ -35,7 +38,27 @@ if load_dotenv(dotenv_path='.env.local'):
 else:
   logger.info('ℹ️  Using system environment variables')
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+  """Async lifespan context manager for startup/shutdown events."""
+  # Startup: Initialize async services
+  logger.info('🚀 Starting application...')
+
+  # Run database migrations (only if PostgreSQL is configured)
+  # Safe to run multiple times - Alembic tracks applied migrations
+  run_migrations()
+
+  await init_storage()
+  logger.info('✅ Chat storage initialized')
+
+  yield
+
+  # Shutdown: Cleanup if needed
+  logger.info('👋 Shutting down application...')
+
+
+app = FastAPI(lifespan=lifespan)
 
 # Configure CORS based on environment
 # Development: Allow localhost:3000 (Next.js dev server)

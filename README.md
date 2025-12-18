@@ -180,12 +180,12 @@ See [User Guide - Databricks Apps Deployment](docs/user-guide.md#databricks-apps
 
 - **[MLflow Tracing](docs/features/tracing.md)** - Client-side trace display, function call tracking
 - **[User Feedback](docs/features/feedback.md)** - Thumbs up/down collection and MLflow logging
-- **[Chat Storage](docs/features/chat-storage.md)** - In-memory session management (10 chat limit)
+- **[Chat Storage](docs/features/chat-storage.md)** - In-memory or PostgreSQL session management
 - **[Session Management](docs/features/session-management.md)** - Stream handling, chat switching behavior
 
 ### Configuration
 
-- **Environment Variables** - See `env.template` for all available options
+- **Environment Variables** - See `.env.template` for all available options
 - **Agent Configuration** - `config/agents.json` - Define agents and their endpoints
 - **App Branding** - `config/app.json` - App name, logo, theme
 - **About Page** - `config/about.json` - About page content (Markdown supported)
@@ -199,13 +199,17 @@ See [User Guide - Databricks Apps Deployment](docs/user-guide.md#databricks-apps
 ```
 databricks-genai-app-template/
 ├── server/                     # FastAPI backend
-│   ├── agents/
-│   │   ├── handlers/          # Deployment-specific handlers
-│   │   └── databricks_assistant/  # Example LangChain agent
-│   ├── auth/                  # Authentication strategies
 │   ├── routers/               # API endpoints
+│   ├── services/              # Business logic
+│   │   ├── agents/           # Agent handlers
+│   │   ├── chat/             # Chat storage (memory/PostgreSQL)
+│   │   └── user.py           # User service
+│   ├── db/                    # Database layer
+│   │   ├── database.py       # Connection management
+│   │   └── models.py         # SQLAlchemy models
+│   ├── auth/                  # Authentication strategies
 │   ├── app.py                 # FastAPI app
-│   └── chat_storage.py        # In-memory chat storage
+│   └── chat_storage.py        # Storage factory (backwards compat)
 ├── client/                    # Next.js frontend
 │   ├── app/                   # Next.js pages
 │   ├── components/            # React components
@@ -217,8 +221,55 @@ databricks-genai-app-template/
 │   └── about.json            # About page content
 ├── scripts/                   # Build and deployment scripts
 ├── docs/                      # Documentation
+├── alembic/                   # Database migrations
 └── app.yaml                   # Databricks Apps config
 ```
+
+## Chat Storage
+
+The application supports two storage backends for chat history:
+
+### In-Memory Storage (Default)
+
+By default, chat history is stored in memory. This is suitable for development and testing but data is lost on server restart.
+
+- Maximum 10 chats per user (oldest auto-deleted)
+- No configuration required
+- Data lost on restart
+
+### PostgreSQL Storage (Persistent)
+
+For production deployments, enable PostgreSQL storage by setting the `LAKEBASE_PG_URL` environment variable:
+
+```bash
+# In .env.local (for local development)
+LAKEBASE_PG_URL=postgresql://user:password@host:5432/database?sslmode=require
+
+# Or in app.yaml (for Databricks Apps deployment)
+env:
+  - name: LAKEBASE_PG_URL
+    value: "postgresql://..."
+```
+
+**Running database migrations:**
+
+```bash
+# Apply all pending migrations
+uv run alembic upgrade head
+
+# Check current migration status
+uv run alembic current
+
+# Generate a new migration (after model changes)
+uv run alembic revision --autogenerate -m "description"
+```
+
+The application automatically:
+- Detects which storage backend to use based on `LAKEBASE_PG_URL`
+- Creates tables on first startup (or use Alembic for production)
+- Falls back to in-memory storage if PostgreSQL connection fails
+
+**Storage module location:** `server/services/chat/`
 
 ## Customization
 
@@ -234,8 +285,8 @@ Add handlers for new agent types (Agent Bricks, local agents, etc.). See [Develo
 
 ## Known Limitations
 
-- **Chat storage is in-memory** - All chats lost on server restart
-- **Maximum 10 chats** - Oldest chat auto-deleted when limit reached
+- **Chat storage defaults to in-memory** - Enable PostgreSQL for persistence (see [Chat Storage](#chat-storage))
+- **Maximum 10 chats per user** - Oldest chat auto-deleted when limit reached
 - **Single-response-at-a-time** - Cannot switch chats during streaming
 - **No message edit/delete** - Append-only message model
 - **Client-side trace display** - No timing data or full MLflow integration

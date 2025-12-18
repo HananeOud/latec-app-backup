@@ -361,7 +361,7 @@ class AgentBricksService:
         tool['genie_display_name'] = genie.get('display_name')
         tool['warehouse_id'] = genie.get('warehouse_id')
     except Exception as e:
-      logger.warning(f"Failed to get Genie details: {e}")
+      logger.warning(f'Failed to get Genie details: {e}')
 
     return tool
 
@@ -393,7 +393,7 @@ class AgentBricksService:
           tool['volumes'] = volumes
           tool['ka_display_name'] = ka.get('tile', {}).get('name')
     except Exception as e:
-      logger.warning(f"Failed to get KA details: {e}")
+      logger.warning(f'Failed to get KA details: {e}')
 
     return tool
 
@@ -481,6 +481,9 @@ class AgentBricksService:
       # Clear the KA tiles cache after use
       self._ka_tiles_cache = None
 
+      # Extract mlflow_experiment_id from tile (MAS endpoints have this in the tile object)
+      mlflow_experiment_id = tile.get('mlflow_experiment_id')
+
       return {
         'id': endpoint_name,
         'name': tile.get('name', endpoint_name),
@@ -490,6 +493,7 @@ class AgentBricksService:
         'display_description': tile.get('description', ''),
         'instructions': tile.get('instructions', ''),
         'status': status.get('endpoint_status', 'UNKNOWN'),
+        'mlflow_experiment_id': mlflow_experiment_id,
         'tools': enriched_tools,
         'deployment_type': 'databricks-endpoint',
       }

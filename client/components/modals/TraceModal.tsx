@@ -11,6 +11,7 @@ import {
   Brain,
   Users,
   ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TraceSpan, MASFlow } from "@/lib/types";
@@ -37,6 +38,7 @@ interface TraceModalProps {
   userMessage?: string;
   assistantResponse?: string;
   masFlow?: MASFlow; // MAS-specific supervisor/specialist flow
+  mlflowTraceUrl?: string; // URL to view the trace in MLflow
 }
 
 export function TraceModal({
@@ -47,6 +49,7 @@ export function TraceModal({
   userMessage,
   assistantResponse,
   masFlow,
+  mlflowTraceUrl,
 }: TraceModalProps) {
   const [traceData, setTraceData] = useState<TraceSpan[] | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
@@ -380,14 +383,27 @@ export function TraceModal({
                   </p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="h-10 w-10 rounded-xl hover:bg-[var(--color-muted)] transition-all hover:rotate-90 duration-200"
-              >
-                <X className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center gap-2">
+                {mlflowTraceUrl && (
+                  <a
+                    href={mlflowTraceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-[var(--color-accent-primary)] text-white text-sm font-medium rounded-xl hover:bg-[var(--color-accent-primary)]/90 transition-colors cursor-pointer"
+                  >
+                    <span>View in MLflow</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="h-10 w-10 rounded-xl hover:bg-[var(--color-muted)] transition-all hover:rotate-90 duration-200"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
           </div>
 

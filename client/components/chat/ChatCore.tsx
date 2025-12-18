@@ -8,6 +8,8 @@ import { FeedbackModal } from "@/components/modals/FeedbackModal";
 import { TraceModal } from "@/components/modals/TraceModal";
 import { FunctionCallNotification } from "@/components/notifications/FunctionCallNotification";
 import { Message } from "@/lib/types";
+import { useUserInfo } from "@/hooks/useUserInfo";
+import { useAgents } from "@/hooks/useAgents";
 
 // Dev-only logger
 const devLog = (...args: any[]) => {
@@ -41,6 +43,18 @@ export function ChatCore({
 }: ChatCoreProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { userInfo } = useUserInfo();
+  const { agents } = useAgents();
+
+  // Get MLflow experiment ID for the selected agent
+  const selectedAgent = agents.find((a) => a.id === selectedAgentId);
+  const mlflowExperimentId = selectedAgent?.mlflow_experiment_id;
+
+  // Build MLflow trace URL
+  const getMlflowTraceUrl = (traceId: string | undefined) => {
+    if (!traceId || !mlflowExperimentId || !userInfo?.workspace_url) return undefined;
+    return `${userInfo.workspace_url}/ml/experiments/${mlflowExperimentId}/traces?viewState=logs&selectedEvaluationId=${traceId}`;
+  };
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(
     chatId,
   );
@@ -479,8 +493,7 @@ export function ChatCore({
       return;
     }
 
-    setFeedbackModal({ isOpen: false, messageId: "", feedbackType: "positive" });
-
+    // Don't close modal here - let the modal show loading and success states
     try {
       const feedbackValue = feedbackModal.feedbackType === "positive";
 
@@ -502,9 +515,13 @@ export function ChatCore({
       }
 
       devLog("Feedback logged successfully");
+      // Modal will show success state - user clicks Close to dismiss
     } catch (error) {
       console.error("Failed to log feedback:", error);
       toast.error("Failed to submit feedback. Please try again.");
+      // Close modal on error
+      setFeedbackModal({ isOpen: false, messageId: "", feedbackType: "positive" });
+      throw error; // Re-throw so modal knows submission failed
     }
   };
 
@@ -543,6 +560,9 @@ export function ChatCore({
         onClose={() => setFeedbackModal((prev) => ({ ...prev, isOpen: false }))}
         onSubmit={submitFeedback}
         feedbackType={feedbackModal.feedbackType}
+        mlflowTraceUrl={getMlflowTraceUrl(
+          messages.find((m) => m.id === feedbackModal.messageId)?.traceId
+        )}
       />
 
       <TraceModal
@@ -553,6 +573,7 @@ export function ChatCore({
         userMessage={traceModal.userMessage}
         assistantResponse={traceModal.assistantResponse}
         masFlow={traceModal.masFlow}
+        mlflowTraceUrl={getMlflowTraceUrl(traceModal.traceId)}
       />
 
       {!compact && (

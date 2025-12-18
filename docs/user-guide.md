@@ -128,7 +128,7 @@ WORKSPACE_SOURCE_PATH=/Workspace/Users/your.email@company.com/app-template
 - Only used for local development
 - Production uses OAuth (no token needed)
 
-See `env.template` for complete reference.
+See `.env.template` for complete reference.
 
 ### Agent Configuration (config/agents.json)
 

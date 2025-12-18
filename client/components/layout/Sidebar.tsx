@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, { useState, useEffect } from "react";
 import {
   Plus,
   MessageSquare,
@@ -11,14 +10,14 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Settings,
-  ChevronDown,
-  FlaskConical,
+  Database,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import Image from "next/image";
 import { toast } from "sonner";
 import { useAgents } from "@/hooks/useAgents";
+import { useUserContext } from "@/contexts/UserContext";
 
 export interface Chat {
   id: string;
@@ -60,17 +59,8 @@ export function Sidebar({
   const [hoveredChat, setHoveredChat] = useState<string | null>(null);
   const [editingChat, setEditingChat] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
   const { agents } = useAgents();
-  const toolsButtonRef = useRef<HTMLButtonElement>(null);
-  const toolsDropdownRef = useRef<HTMLDivElement>(null);
-  const [toolsDropdownPosition, setToolsDropdownPosition] = useState<{
-    bottom: number;
-    left: number;
-  } | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  const selectedAgentId = propSelectedAgentId || "";
+  const { workspaceUrl, lakebaseConfigured, lakebaseProjectId, lakebaseError } = useUserContext();
 
   // Set default agent when agents are loaded
   useEffect(() => {
@@ -78,49 +68,6 @@ export function Sidebar({
       onAgentChange(agents[0].id);
     }
   }, [agents, propSelectedAgentId, onAgentChange]);
-
-  // Set mounted state for Portal
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Calculate dropdown position when tools dropdown opens
-  useEffect(() => {
-    if (isToolsOpen && toolsButtonRef.current) {
-      const rect = toolsButtonRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      // Calculate bottom position (distance from bottom of viewport to top of button)
-      const bottom = viewportHeight - rect.top;
-
-      setToolsDropdownPosition({
-        bottom: bottom,
-        left: rect.right + 8, // 8px gap from icon's right edge
-      });
-    } else {
-      setToolsDropdownPosition(null);
-    }
-  }, [isToolsOpen]);
-
-  // Close tools dropdown when clicking outside
-  useEffect(() => {
-    if (!isToolsOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (
-        toolsButtonRef.current &&
-        !toolsButtonRef.current.contains(target) &&
-        toolsDropdownRef.current &&
-        !toolsDropdownRef.current.contains(target)
-      ) {
-        setIsToolsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isToolsOpen]);
 
   const handleDeleteChat = async (chatId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -303,111 +250,59 @@ export function Sidebar({
         </div>
       )}
 
-      {/* Tools Section at Bottom */}
-      <div
-        className={`mt-auto border-t border-[var(--color-border)]/20 overflow-visible ${isCollapsed ? "p-2" : "p-3"}`}
-      >
-        {!isCollapsed ? (
-          <div className="space-y-2">
-            {/* Tools Dropdown */}
-            <div className="relative tools-dropdown-container">
-              <button
-                onClick={() => setIsToolsOpen(!isToolsOpen)}
-                className="flex items-center justify-between w-full p-2.5 rounded-xl hover:bg-[var(--color-primary-navy)]/[0.06] transition-all duration-200 group border border-transparent hover:border-[var(--color-primary-navy)]/10"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Settings className="h-4 w-4 text-[var(--color-primary-navy)]/60 group-hover:text-[var(--color-primary-navy)] transition-colors" />
-                  <span className="text-sm font-semibold text-[var(--color-primary-navy)]">
-                    Tools
-                  </span>
-                </div>
-                <ChevronDown
-                  className={`h-4 w-4 text-[var(--color-primary-navy)]/60 transition-all group-hover:text-[var(--color-primary-navy)] ${isToolsOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {/* Tools Dropdown */}
-              {isToolsOpen && selectedAgentId && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-[var(--color-background)] rounded-lg shadow-lg border border-[var(--color-border)] max-h-80 overflow-y-auto z-20">
-                  <div className="py-2">
-                    {agents
-                      .find((a) => a.id === selectedAgentId)
-                      ?.tools.map((tool, index) => (
-                        <a
-                          key={index}
-                          href={tool.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-[var(--color-muted)] transition-colors no-underline"
-                        >
-                          <div className="flex-shrink-0 mt-0.5">
-                            <Image
-                              src="/logos/databricks-symbol-color.svg"
-                              alt="Databricks"
-                              width={20}
-                              height={20}
-                              className="w-5 h-5"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-medium text-sm block">
-                              {tool.display_name}
-                            </span>
-                            <span className="text-xs text-[var(--color-muted-foreground)] mt-1 block">
-                              {tool.type || "Tool"}
-                            </span>
-                          </div>
-                        </a>
-                      ))}
+      {/* Lakebase Status Box */}
+      {!isCollapsed && (
+        <div className="p-3 border-t border-[var(--color-border)]/20">
+          {lakebaseConfigured ? (
+            lakebaseError ? (
+              // Error state
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-red-700">Lakebase Connection Error</p>
+                    <p className="text-[10px] text-red-600 mt-1 break-words">{lakebaseError}</p>
                   </div>
                 </div>
-              )}
+              </div>
+            ) : (
+              // Success state
+              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                <div className="flex items-start gap-2">
+                  <Database className="h-4 w-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-emerald-700">
+                      Conversations saved in Databricks Lakebase PostgreSQL
+                    </p>
+                    {lakebaseProjectId && workspaceUrl && (
+                      <a
+                        href={`${workspaceUrl}/lakebase/projects/${lakebaseProjectId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] text-emerald-600 hover:text-emerald-700 mt-1.5 font-medium"
+                      >
+                        View Lakebase project
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          ) : (
+            // Not configured state
+            <div className="p-3 rounded-lg bg-[var(--color-background)] border border-[var(--color-border)]/50">
+              <div className="flex items-start gap-2">
+                <Database className="h-4 w-4 text-[var(--color-text-muted)] flex-shrink-0 mt-0.5" />
+                <p className="text-[11px] text-[var(--color-text-muted)]">
+                  Chat conversations are saved in memory. Configure Lakebase in .env to enable PostgreSQL persistence.
+                </p>
+              </div>
             </div>
+          )}
+        </div>
+      )}
 
-            {/* MLFlow Monitoring Button */}
-            <button
-              onClick={() => {
-                const agent = agents.find((a) => a.id === selectedAgentId);
-                if (agent?.mlflow_traces_url) {
-                  window.open(agent.mlflow_traces_url, "_blank");
-                }
-              }}
-              className="flex items-center gap-2.5 w-full p-2.5 rounded-xl hover:bg-[var(--color-primary-navy)]/[0.06] transition-all duration-200 group border border-transparent hover:border-[var(--color-primary-navy)]/10"
-            >
-              <FlaskConical className="h-4 w-4 text-[var(--color-primary-navy)]/60 group-hover:text-[var(--color-primary-navy)] transition-colors" />
-              <span className="text-sm font-semibold text-[var(--color-primary-navy)]">
-                MLFlow Monitoring
-              </span>
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {/* Tools Icon (Collapsed) */}
-            <button
-              ref={toolsButtonRef}
-              onClick={() => setIsToolsOpen(!isToolsOpen)}
-              className="w-full p-2 flex justify-center rounded-lg hover:bg-[var(--color-muted)] transition-all duration-200"
-              title="Tools"
-            >
-              <Settings className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-            </button>
-
-            {/* MLFlow Monitoring Icon (Collapsed) */}
-            <button
-              onClick={() => {
-                const agent = agents.find((a) => a.id === selectedAgentId);
-                if (agent?.mlflow_traces_url) {
-                  window.open(agent.mlflow_traces_url, "_blank");
-                }
-              }}
-              className="w-full p-2 flex justify-center rounded-lg hover:bg-[var(--color-muted)] transition-colors duration-200"
-              title="MLFlow Monitoring"
-            >
-              <FlaskConical className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-            </button>
-          </div>
-        )}
-      </div>
 
       {/* Collapse/Expand Button */}
       {!isMobile && (
@@ -475,59 +370,6 @@ export function Sidebar({
         {sidebarContent}
       </aside>
 
-      {/* Portal-rendered Tools Dropdown for Collapsed State */}
-      {mounted &&
-        isToolsOpen &&
-        selectedAgentId &&
-        toolsDropdownPosition &&
-        createPortal(
-          <div
-            ref={toolsDropdownRef}
-            className="fixed w-72 bg-[var(--color-white)] rounded-lg shadow-2xl border border-[var(--color-primary-navy)]/20 max-h-80 overflow-y-auto z-[9999]"
-            style={{
-              bottom: `${toolsDropdownPosition.bottom}px`,
-              left: `${toolsDropdownPosition.left}px`,
-            }}
-          >
-            <div className="px-4 py-2 border-b border-[var(--color-primary-navy)]/20">
-              <h3 className="font-medium text-sm text-[var(--color-primary-navy)]">
-                Tools & Resources
-              </h3>
-            </div>
-            <div className="py-2">
-              {agents
-                .find((a) => a.id === selectedAgentId)
-                ?.tools.map((tool, index) => (
-                  <a
-                    key={index}
-                    href={tool.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-3 px-4 py-3 hover:bg-[var(--color-primary-navy)]/5 transition-colors no-underline"
-                  >
-                    <div className="flex-shrink-0 mt-0.5">
-                      <Image
-                        src="/logos/databricks-symbol-color.svg"
-                        alt="Databricks"
-                        width={20}
-                        height={20}
-                        className="w-5 h-5"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="font-medium text-sm block text-[var(--color-primary-navy)]">
-                        {tool.display_name}
-                      </span>
-                      <span className="text-xs text-[var(--color-primary-navy)]/60 mt-1 block">
-                        {tool.type || "Tool"}
-                      </span>
-                    </div>
-                  </a>
-                ))}
-            </div>
-          </div>,
-          document.body,
-        )}
     </>
   );
 }

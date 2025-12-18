@@ -11,6 +11,9 @@ import React, {
 interface UserContextType {
   user: string | null;
   workspaceUrl: string | null;
+  lakebaseConfigured: boolean;
+  lakebaseProjectId: string | null;
+  lakebaseError: string | null;
   loading: boolean;
   error: Error | null;
 }
@@ -32,6 +35,9 @@ interface UserProviderProps {
 export function UserProvider({ children }: UserProviderProps) {
   const [user, setUser] = useState<string | null>(null);
   const [workspaceUrl, setWorkspaceUrl] = useState<string | null>(null);
+  const [lakebaseConfigured, setLakebaseConfigured] = useState(false);
+  const [lakebaseProjectId, setLakebaseProjectId] = useState<string | null>(null);
+  const [lakebaseError, setLakebaseError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -49,6 +55,9 @@ export function UserProvider({ children }: UserProviderProps) {
         }
         setUser(data.user);
         setWorkspaceUrl(data.workspace_url);
+        setLakebaseConfigured(data.lakebase_configured || false);
+        setLakebaseProjectId(data.lakebase_project_id || null);
+        setLakebaseError(data.lakebase_error || null);
         setLoading(false);
       })
       .catch((err) => {
@@ -63,6 +72,9 @@ export function UserProvider({ children }: UserProviderProps) {
       value={{
         user,
         workspaceUrl,
+        lakebaseConfigured,
+        lakebaseProjectId,
+        lakebaseError,
         loading,
         error,
       }}

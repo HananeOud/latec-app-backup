@@ -11,8 +11,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import Response
 from pydantic import BaseModel
 
-from ..auth.user_service import get_current_user
 from ..chat_storage import storage
+from ..services.user import get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -34,11 +34,11 @@ async def get_all_chats(request: Request):
   user_storage = storage.get_storage_for_user(user_email)
 
   logger.info(f'Fetching all chats for user: {user_email}')
-  chats = user_storage.get_all()
+  chats = await user_storage.get_all()
   logger.info(f'Retrieved {len(chats)} chats for user: {user_email}')
 
   # Convert to dict for JSON serialization
-  return [chat.dict() for chat in chats]
+  return [chat.to_dict() for chat in chats]
 
 
 @router.get('/chats/{chat_id}')
@@ -49,13 +49,13 @@ async def get_chat_by_id(request: Request, chat_id: str):
 
   logger.info(f'Fetching chat {chat_id} for user: {user_email}')
 
-  chat = user_storage.get(chat_id)
+  chat = await user_storage.get(chat_id)
   if not chat:
     logger.warning(f'Chat not found: {chat_id} for user: {user_email}')
     return Response(content=f'Chat {chat_id} not found', status_code=404)
 
   logger.info(f'Retrieved chat {chat_id} with {len(chat.messages)} messages for user: {user_email}')
-  return chat.dict()
+  return chat.to_dict()
 
 
 @router.patch('/chats/{chat_id}')
@@ -66,17 +66,21 @@ async def update_chat(request: Request, chat_id: str, body: UpdateChatRequest):
 
   logger.info(f'Updating chat {chat_id} for user: {user_email}')
 
-  chat = user_storage.get(chat_id)
+  # Update title if provided
+  if body.title is not None:
+    success = await user_storage.update_title(chat_id, body.title)
+    if not success:
+      logger.warning(f'Chat not found: {chat_id} for user: {user_email}')
+      return Response(content=f'Chat {chat_id} not found', status_code=404)
+    logger.info(f'Updated chat {chat_id} title to: {body.title}')
+
+  # Fetch updated chat
+  chat = await user_storage.get(chat_id)
   if not chat:
     logger.warning(f'Chat not found: {chat_id} for user: {user_email}')
     return Response(content=f'Chat {chat_id} not found', status_code=404)
 
-  # Update title if provided
-  if body.title is not None:
-    chat.title = body.title
-    logger.info(f'Updated chat {chat_id} title to: {body.title}')
-
-  return chat.dict()
+  return chat.to_dict()
 
 
 @router.delete('/chats/{chat_id}')
@@ -87,7 +91,7 @@ async def delete_chat_by_id(request: Request, chat_id: str):
 
   logger.info(f'Deleting chat {chat_id} for user: {user_email}')
 
-  success = user_storage.delete(chat_id)
+  success = await user_storage.delete(chat_id)
   if not success:
     logger.warning(f'Chat not found for deletion: {chat_id} for user: {user_email}')
     return Response(content=f'Chat {chat_id} not found', status_code=404)
@@ -104,7 +108,7 @@ async def clear_all_chats(request: Request):
 
   logger.info(f'Clearing all chats for user: {user_email}')
 
-  count = user_storage.clear_all()
+  count = await user_storage.clear_all()
 
   logger.info(f'Cleared {count} chats for user: {user_email}')
   return {'success': True, 'deleted_count': count}
