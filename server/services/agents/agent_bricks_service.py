@@ -529,8 +529,32 @@ class AgentBricksService:
       return endpoint_name
 
   def get_endpoint_name_from_mas_id(self, mas_id: str) -> str:
-    """Sync wrapper for async_get_endpoint_name_from_mas_id."""
-    return asyncio.run(self.async_get_endpoint_name_from_mas_id(mas_id))
+    """Get the endpoint name for a MAS tile ID (sync version).
+
+    Uses sync HTTP client to avoid event loop issues at startup.
+    """
+    headers = self._get_headers()
+    url = f'{self.host}/api/2.0/multi-agent-supervisors/{mas_id}'
+
+    with httpx.Client(headers=headers) as client:
+      response = client.get(url)
+      if response.status_code == 404:
+        raise ValueError(f"MAS with tile_id '{mas_id}' not found")
+      response.raise_for_status()
+      data = response.json()
+
+    mas = data.get('multi_agent_supervisor')
+    if not mas:
+      raise ValueError(f"MAS with tile_id '{mas_id}' not found")
+
+    tile = mas.get('tile', {})
+    endpoint_name = tile.get('serving_endpoint_name')
+
+    if not endpoint_name:
+      raise ValueError(f"MAS '{mas_id}' has no serving_endpoint_name configured")
+
+    logger.info(f"Resolved mas_id '{mas_id}' to endpoint '{endpoint_name}'")
+    return endpoint_name
 
   # ---------- Main async method (with cache) ----------
 
