@@ -284,11 +284,7 @@ export function TraceModal({
           <div
             className={`
             px-5 py-3.5 flex items-center gap-3
-            ${
-              hasChildren
-                ? "bg-gradient-to-r from-[var(--color-muted)] to-[var(--color-background)]"
-                : "bg-[var(--color-muted)]"
-            }
+            bg-[var(--color-muted)]
           `}
           >
             {/* Expand Icon */}
@@ -367,8 +363,7 @@ export function TraceModal({
         <div className="bg-[var(--color-background)] rounded-2xl shadow-xl border border-[var(--color-border)] h-full flex flex-col">
           {/* Header */}
           <div className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent-primary)]/10 via-[var(--color-accent-primary)]/5 to-transparent"></div>
-            <div className="relative flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)]">
+            <div className="relative flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-[var(--color-accent-primary)]/10 flex items-center justify-center">
                   <Code className="h-5 w-5 text-[var(--color-accent-primary)]" />
@@ -407,12 +402,12 @@ export function TraceModal({
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-[var(--color-background)] to-[var(--color-muted)]">
+          <div className="flex-1 overflow-y-auto p-6 bg-[var(--color-background)]">
             {masFlow ? (
               /* MAS Flow Visualization */
               <div className="max-w-5xl mx-auto space-y-6">
                 {/* Supervisor Header */}
-                <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20 p-5">
+                <div className="bg-purple-500/8 rounded-xl border border-purple-500/20 p-5">
                   <div className="flex items-center gap-3 mb-2">
                     <Users className="h-6 w-6 text-purple-500" />
                     <h3 className="text-xl font-bold text-[var(--color-foreground)]">
@@ -439,7 +434,7 @@ export function TraceModal({
                     </div>
 
                     {/* Specialist Card */}
-                    <div className="ml-12 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-xl border border-blue-500/20 p-5 space-y-4">
+                    <div className="ml-12 bg-blue-500/8 rounded-xl border border-blue-500/20 p-5 space-y-4">
                       {/* Specialist Header */}
                       <div className="flex items-center gap-3">
                         <Brain className="h-6 w-6 text-blue-500" />
@@ -506,7 +501,7 @@ export function TraceModal({
                 ))}
 
                 {/* Final Synthesis */}
-                <div className="bg-gradient-to-r from-green-500/10 to-purple-500/10 rounded-xl border border-green-500/20 p-5">
+                <div className="bg-green-500/8 rounded-xl border border-green-500/20 p-5">
                   <div className="flex items-center gap-3 mb-2">
                     <Users className="h-6 w-6 text-green-500" />
                     <h3 className="text-lg font-bold text-[var(--color-foreground)]">

@@ -44,10 +44,10 @@ export function DashboardView() {
             {/* Ask Agent Button */}
             <button
               onClick={() => navigate("/chat")}
-              className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-[var(--color-accent-primary)]/10 to-purple-500/10 hover:from-[var(--color-accent-primary)]/20 hover:to-purple-500/20 border border-[var(--color-accent-primary)]/20 hover:border-[var(--color-accent-primary)]/40 transition-all duration-300 group hover:shadow-lg hover:shadow-[var(--color-accent-primary)]/20 hover:scale-105"
+              className="flex-shrink-0 p-3 rounded-xl bg-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/90 transition-all duration-200 group shadow-sm hover:shadow-md"
               aria-label="Ask the AI agent"
             >
-              <Sparkles className="h-5 w-5 text-[var(--color-accent-primary)] group-hover:text-[var(--color-accent-primary)] transition-all group-hover:rotate-12" />
+              <Sparkles className="h-5 w-5 text-white transition-transform group-hover:rotate-12" />
             </button>
           </div>
         </div>
@@ -116,10 +116,10 @@ export function DashboardView() {
           </span>
           <button
             onClick={() => navigate("/chat")}
-            className="p-3 rounded-xl bg-gradient-to-br from-[var(--color-accent-primary)]/10 to-purple-500/10 hover:from-[var(--color-accent-primary)]/20 hover:to-purple-500/20 border border-[var(--color-accent-primary)]/20 hover:border-[var(--color-accent-primary)]/40 transition-all duration-300 group hover:shadow-lg hover:shadow-[var(--color-accent-primary)]/20 hover:scale-105"
+            className="p-3 rounded-xl bg-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/90 transition-all duration-200 group shadow-sm hover:shadow-md"
             aria-label="Ask the AI agent"
           >
-            <Sparkles className="h-5 w-5 text-[var(--color-accent-primary)] group-hover:text-[var(--color-accent-primary)] transition-all group-hover:rotate-12" />
+            <Sparkles className="h-5 w-5 text-white transition-transform group-hover:rotate-12" />
           </button>
         </div>
       </div>

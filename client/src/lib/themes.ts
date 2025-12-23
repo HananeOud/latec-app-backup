@@ -66,51 +66,51 @@ export const PREDEFINED_THEMES: PredefinedTheme[] = [
   {
     id: "default",
     name: "Default Light",
-    description: "Modern light theme inspired by Apple liquid glass",
+    description: "Clean, modern light theme with perfect contrast",
     isDefault: true,
     colors: {
-      // TEXT COLORS - Soft, refined grays for elegance
-      textHeading: "#1C1C1E", // Apple-style near-black
-      textPrimary: "#3A3A3C", // Soft dark gray for readability
-      textMuted: "#8E8E93", // Apple system gray
+      // TEXT COLORS - High contrast for perfect readability
+      textHeading: "#0F172A", // Deep slate for headings
+      textPrimary: "#1E293B", // Dark slate for body text
+      textMuted: "#64748B", // Medium slate for secondary text
 
-      // BRAND/ACCENT - Modern vibrant blue
-      accentPrimary: "#007AFF", // Apple system blue
+      // BRAND/ACCENT - Modern, professional blue
+      accentPrimary: "#0EA5E9", // Sky blue - vibrant yet professional
 
-      // ANIMATED BACKGROUND - Subtle, elegant
-      animatedBgColor: "#007AFF",
+      // ANIMATED BACKGROUND - Subtle animation color
+      animatedBgColor: "#0EA5E9",
 
-      // BACKGROUNDS - Soft, frosted glass feel
-      bgPrimary: "#FFFFFF", // Pure white for clarity
-      bgSecondary: "#F2F2F7", // Apple system gray background
+      // BACKGROUNDS - Clean white base
+      bgPrimary: "#FFFFFF", // Pure white
+      bgSecondary: "#F8FAFC", // Very light slate for subtle contrast
 
-      // UI ELEMENTS - Very subtle borders
-      border: "#D1D1D6", // Apple system gray for borders
+      // UI ELEMENTS - Crisp, visible borders
+      border: "#E2E8F0", // Light slate for clean separation
 
-      // STATUS COLORS - Vibrant but balanced
-      success: "#34C759", // Apple green
-      successHover: "#E8F9ED",
-      error: "#FF3B30", // Apple red
-      errorHover: "#FFEBE9",
-      info: "#007AFF", // Apple blue
-      infoHover: "#E5F1FF",
-      warning: "#FF9500", // Apple orange
-      warningHover: "#FFF4E5",
+      // STATUS COLORS - Clear semantic colors
+      success: "#10B981", // Emerald green
+      successHover: "#D1FAE5",
+      error: "#EF4444", // Red
+      errorHover: "#FEE2E2",
+      info: "#0EA5E9", // Sky blue
+      infoHover: "#E0F2FE",
+      warning: "#F59E0B", // Amber
+      warningHover: "#FEF3C7",
     },
     typography: {
       primaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
+        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       secondaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif',
+        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
     animatedBackground: {
-      particleCount: 45,
-      connectionDistance: 70,
-      particleOpacity: 0.3,
-      lineOpacity: 0.2,
-      particleSize: 3,
-      lineWidth: 1.5,
-      animationSpeed: 0.8,
+      particleCount: 35,
+      connectionDistance: 60,
+      particleOpacity: 0.15,
+      lineOpacity: 0.1,
+      particleSize: 2,
+      lineWidth: 1,
+      animationSpeed: 0.5,
     },
   },
   {

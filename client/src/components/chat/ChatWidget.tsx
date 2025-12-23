@@ -165,7 +165,7 @@ export function ChatWidget({ className = "" }: ChatWidgetProps) {
           className="w-[400px] px-4 py-3 bg-[var(--color-bg-secondary)] backdrop-blur-xl backdrop-saturate-150 rounded-t-2xl shadow-xl border border-b-0 border-[var(--color-border)] flex items-center gap-3 hover:border-[var(--color-accent-primary)]/50 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
           style={{ maxWidth: "calc(100vw - 48px)" }}
         >
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[var(--color-accent-primary)] to-[var(--color-accent-primary)]/80 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-lg">
+          <div className="h-10 w-10 rounded-xl bg-[var(--color-accent-primary)] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm">
             <MessageSquare className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 text-left">

@@ -307,7 +307,7 @@ export function AboutView() {
 
             {/* CTA Section */}
             <div className="mt-32 text-center">
-              <div className="max-w-3xl mx-auto p-12 md:p-16 bg-gradient-to-br from-[var(--color-accent-primary)] to-[var(--color-accent-primary)]/80 rounded-3xl shadow-2xl">
+              <div className="max-w-3xl mx-auto p-12 md:p-16 bg-[var(--color-accent-primary)] rounded-3xl shadow-xl">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                   Ready to Build Your AI Future?
                 </h2>

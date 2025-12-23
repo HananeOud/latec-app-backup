@@ -170,7 +170,7 @@ export function TopBar({
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] backdrop-blur-md border border-[var(--color-border)] shadow-sm hover:shadow-md transition-shadow"
                 title={userInfo?.user}
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--color-accent-primary)] to-[var(--color-accent-primary)]/80 flex items-center justify-center text-white text-xs font-medium shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-[var(--color-accent-primary)] flex items-center justify-center text-white text-xs font-medium">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm text-[var(--color-text-primary)] max-w-[120px] truncate">

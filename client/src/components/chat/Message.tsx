@@ -243,7 +243,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     </div>
                   ),
                   thead: ({ children }) => (
-                    <thead className="bg-gradient-to-r from-[var(--color-accent-primary)]/15 to-[var(--color-accent-primary)]/5 sticky top-0 z-10">
+                    <thead className="bg-[var(--color-accent-primary)]/8 sticky top-0 z-10">
                       {children}
                     </thead>
                   ),
