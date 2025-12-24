@@ -71,8 +71,7 @@ export function AboutView() {
           <video
             className="w-full h-full object-cover transition-all duration-300"
             style={{
-              filter: `blur(${Math.min(scrollY / 20, 20)}px)`,
-              opacity: Math.max(1 - scrollY / 600, 0.3),
+              filter: `blur(${Math.min(scrollY / 10, 30)}px) brightness(0.9)`,
               transform: `scale(${1 + scrollY / 2000})`,
             }}
             autoPlay
@@ -84,14 +83,6 @@ export function AboutView() {
             Your browser does not support the video tag.
           </video>
 
-          {/* Overlay that intensifies on scroll */}
-          <div
-            className="absolute inset-0 bg-black transition-opacity duration-300"
-            style={{
-              opacity: Math.min(scrollY / 200, 0.8),
-            }}
-          />
-
           {/* Hero text - Floats in from right, fades and moves on scroll */}
           <div
             className="absolute top-24 md:top-32 right-8 md:right-16 max-w-xl transition-all duration-500 animate-float-in-right"
@@ -101,7 +92,7 @@ export function AboutView() {
               visibility: scrollY > 250 ? "hidden" : "visible",
             }}
           >
-            <div className="px-6 py-4 bg-white/85 backdrop-blur-xl rounded-xl shadow-2xl">
+            <div className="px-6 py-4 bg-[var(--color-background)] rounded-xl shadow-2xl" style={{ opacity: 0.85 }}>
               <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-text-heading)] mb-3 leading-tight">
                 Databricks: The Data Intelligence Platform
               </h1>
@@ -122,6 +113,7 @@ export function AboutView() {
             className="max-w-7xl mx-auto px-6 md:px-8 py-16 md:py-24 bg-[var(--color-background)] rounded-t-3xl shadow-2xl"
             style={{
               transform: `translateY(${-scrollY / 10}px)`,
+              opacity: 0.85,
             }}
           >
             {/* Content Sections */}
