@@ -27,10 +27,8 @@ A template for building production-ready AI agent applications with Databricks. 
 ## Quick Start
 
 ```bash
-# Setup (creates .env.local, installs deps)
-./scripts/setup.sh
-
 # Start dev servers (backend:8000, frontend:3000)
+# First run will prompt to install deps and create .env.local
 ./scripts/start_dev.sh
 
 # Format code (ruff + prettier)
@@ -226,13 +224,12 @@ async for line in response.aiter_lines():
 
 ### Local Development
 
-1. **Setup:** Run `./scripts/setup.sh` once
-2. **Start:** Run `./scripts/start_dev.sh`
+1. **Start:** Run `./scripts/start_dev.sh` (first run prompts to install deps)
    - Backend: http://localhost:8000 (uvicorn with auto-reload)
    - Frontend: http://localhost:3000 (Vite dev server)
-3. **Edit code:** Changes auto-reload (Python) or hot-reload (React)
-4. **Format:** Run `./scripts/fix.sh` before committing
-5. **Test API:** Use curl to test endpoints:
+2. **Edit code:** Changes auto-reload (Python) or hot-reload (React)
+3. **Format:** Run `./scripts/fix.sh` before committing
+4. **Test API:** Use curl to test endpoints:
    ```bash
    curl -X POST http://localhost:8000/api/invoke_endpoint \
      -H "Content-Type: application/json" \
@@ -339,6 +336,31 @@ env:
 
 ### Storage
 - `server/chat_storage.py:8-156` - ChatStorage class with 10 chat limit
+
+## Styling Guide
+
+**Never use hardcoded colors** - all colors come from CSS variables.
+
+### Key Files
+- `client/src/lib/themes.ts` - Theme color definitions (`ThemeColors` interface)
+- `client/src/contexts/ThemeContext.tsx` - Applies CSS variables at runtime
+- `client/src/styles/theme.css` - Static tokens (spacing, shadows, fonts)
+- `client/tailwind.config.ts` - Tailwind-to-CSS-variable mapping
+
+### Usage Pattern
+```tsx
+// Tailwind semantic names (preferred)
+<div className="bg-background text-foreground border-border" />
+<button className="bg-primary text-primary-foreground" />
+
+// CSS variables with opacity
+<div className="bg-[var(--color-error)]/10 text-[var(--color-error)]" />
+```
+
+### Adding Colors
+1. Add to `ThemeColors` in `lib/themes.ts`
+2. Apply in `ThemeContext.tsx` `applyColorsToCSS()`
+3. Add Tailwind mapping in `tailwind.config.ts` if needed
 
 ## Documentation Reference
 

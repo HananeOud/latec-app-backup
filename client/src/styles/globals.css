@@ -26,7 +26,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--db-font-primary, 'Inter', sans-serif);
+    font-family: var(--font-body);
     font-size: 15px; /* Modern, comfortable reading size */
     font-weight: 400;
     line-height: 1.6;
@@ -48,7 +48,7 @@
 
   /* Sophisticated type scale with Inter */
   h1 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 2.5rem; /* 40px */
     font-weight: 700;
     line-height: 1.2;
@@ -56,7 +56,7 @@
   }
 
   h2 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 2rem; /* 32px */
     font-weight: 700;
     line-height: 1.25;
@@ -64,7 +64,7 @@
   }
 
   h3 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 1.5rem; /* 24px */
     font-weight: 600;
     line-height: 1.33;
@@ -72,7 +72,7 @@
   }
 
   h4 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 1.25rem; /* 20px */
     font-weight: 600;
     line-height: 1.4;
@@ -80,14 +80,14 @@
   }
 
   h5 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 1.125rem; /* 18px */
     font-weight: 600;
     line-height: 1.44;
   }
 
   h6 {
-    font-family: var(--db-font-accent, 'Inter', sans-serif);
+    font-family: var(--font-heading);
     font-size: 1rem; /* 16px */
     font-weight: 600;
     line-height: 1.5;
@@ -99,14 +99,15 @@
     font-size: 0.9375rem; /* 15px - slightly smaller for modern feel */
   }
 
-  a {
+  /* Only style content links, not navigation or buttons */
+  a:not([data-slot="button"]):not(nav a):not(header a) {
     color: var(--color-accent-primary);
     text-decoration: none;
     font-weight: 500;
     transition: color 150ms ease;
   }
 
-  a:hover {
+  a:not([data-slot="button"]):not(nav a):not(header a):hover {
     color: var(--color-accent-primary);
     opacity: 0.8;
   }

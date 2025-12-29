@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Change to project root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.."
+
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
 
@@ -193,12 +197,44 @@ kill_port $BACKEND_PORT
 kill_port $FRONTEND_PORT
 echo ""
 
-# Activate virtual environment
+# ============================================================
+# Check Python Virtual Environment
+# ============================================================
+
 if [ ! -d ".venv" ]; then
-    echo "❌ Virtual environment not found"
-    echo "Run: ./scripts/setup.sh"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "📦 Python Virtual Environment Not Found"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Python dependencies need to be installed."
+  echo ""
+
+  read -p "Would you like to install them now? (y/N) " -n 1 -r
+  echo ""
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "📥 Creating virtual environment and installing Python dependencies..."
+    uv sync
+    if [ $? -eq 0 ]; then
+      echo "✅ Python dependencies installed successfully"
+    else
+      echo "❌ Failed to install Python dependencies"
+      exit 1
+    fi
+    echo ""
+  else
+    echo ""
+    echo "Please install Python dependencies manually:"
+    echo "  uv sync"
     exit 1
+  fi
 fi
+
+echo "✅ Python virtual environment ready"
+echo ""
+
+# Activate virtual environment
 source .venv/bin/activate
 
 # Start FastAPI backend in background

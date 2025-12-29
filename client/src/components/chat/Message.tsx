@@ -22,7 +22,6 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Button } from "@/components/ui/button";
-import { useThemeContext } from "@/contexts/ThemeContext";
 
 // Type workaround for react-syntax-highlighter with React 18
 const SyntaxHighlighterComponent = SyntaxHighlighter as unknown as React.ComponentType<SyntaxHighlighterProps>;
@@ -112,7 +111,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
               isUser
                 ? "bg-[var(--color-accent-primary)] text-white shadow-lg hover:shadow-xl"
                 : isError
-                  ? "bg-red-50 dark:bg-red-950/30 border border-red-300 dark:border-red-800 shadow-sm"
+                  ? "bg-[var(--color-error)]/5 border border-[var(--color-error)]/30 shadow-sm"
                   : "bg-[var(--color-background)]/80 border border-[var(--color-border)]/30 shadow-sm hover:shadow-md"
             }
           `}
@@ -123,8 +122,8 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
             </p>
           ) : isError ? (
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-              <p className="whitespace-pre-wrap break-words text-sm text-red-700 dark:text-red-400">
+              <AlertCircle className="h-5 w-5 text-[var(--color-error)] flex-shrink-0 mt-0.5" />
+              <p className="whitespace-pre-wrap break-words text-sm text-[var(--color-error)]">
                 {message.content}
               </p>
             </div>
@@ -397,7 +396,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
               variant="ghost"
               size="icon"
               onClick={() => onFeedback(message.id, "positive")}
-              className="h-7 w-7 rounded-full hover:bg-[var(--color-success-hover)] hover:text-[var(--color-success)] hover:scale-110 transition-all duration-200"
+              className="h-7 w-7 rounded-full hover:bg-[var(--color-success)]/10 hover:text-[var(--color-success)] hover:scale-110 transition-all duration-200"
               title="Helpful response"
             >
               <ThumbsUp className="h-3.5 w-3.5" />
@@ -406,7 +405,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
               variant="ghost"
               size="icon"
               onClick={() => onFeedback(message.id, "negative")}
-              className="h-7 w-7 rounded-full hover:bg-[var(--color-error-hover)] hover:text-[var(--color-error)] hover:scale-110 transition-all duration-200"
+              className="h-7 w-7 rounded-full hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] hover:scale-110 transition-all duration-200"
               title="Not helpful"
             >
               <ThumbsDown className="h-3.5 w-3.5" />
@@ -416,7 +415,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                 variant="ghost"
                 size="icon"
                 onClick={() => onViewTrace(message.id)}
-                className="h-7 w-7 rounded-full hover:bg-[var(--color-info-hover)] hover:text-[var(--color-info)] hover:scale-110 transition-all duration-200"
+                className="h-7 w-7 rounded-full hover:bg-[var(--color-info)]/10 hover:text-[var(--color-info)] hover:scale-110 transition-all duration-200"
                 title="View detailed trace"
               >
                 <Search className="h-3.5 w-3.5" />

@@ -1,57 +1,88 @@
 import type { Config } from 'tailwindcss';
 
+/**
+ * Tailwind CSS Configuration
+ *
+ * Colors reference CSS variables set by ThemeContext.
+ * See CLAUDE.md for the complete list of available CSS variables.
+ */
 const config: Config = {
   darkMode: ['class'],
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      // ============================================================
+      // COLORS - Map to CSS variables from ThemeContext
+      // ============================================================
       colors: {
+        // Core colors
         border: 'var(--color-border)',
-        ring: 'var(--color-ring, #4c809a)',
-        background: 'var(--color-bg-primary)',
-        foreground: 'var(--color-text-primary)',
+        ring: 'var(--color-ring)',
+        background: 'var(--color-background)',
+        foreground: 'var(--color-foreground)',
+
+        // Primary (accent color for buttons, links)
         primary: {
-          DEFAULT: 'var(--color-accent-primary)',
-          foreground: 'var(--color-primary-foreground, #ffffff)',
+          DEFAULT: 'var(--color-primary)',
+          foreground: 'var(--color-primary-foreground)',
         },
+
+        // Secondary (for secondary buttons)
         secondary: {
-          DEFAULT: 'var(--color-bg-secondary)',
-          foreground: 'var(--color-text-primary)',
+          DEFAULT: 'var(--color-secondary)',
+          foreground: 'var(--color-secondary-foreground)',
         },
+
+        // Destructive (error states)
         destructive: {
-          DEFAULT: 'var(--color-error)',
+          DEFAULT: 'var(--color-destructive)',
           foreground: '#ffffff',
         },
+
+        // Muted (subtle backgrounds)
         muted: {
-          DEFAULT: 'var(--color-bg-secondary)',
-          foreground: 'var(--color-text-muted)',
+          DEFAULT: 'var(--color-muted)',
+          foreground: 'var(--color-muted-foreground)',
         },
+
+        // Accent (hover states)
         accent: {
-          DEFAULT: 'var(--color-bg-secondary)',
-          foreground: 'var(--color-text-primary)',
+          DEFAULT: 'var(--color-accent)',
+          foreground: 'var(--color-accent-foreground)',
         },
+
+        // Card/Popover
         card: {
-          DEFAULT: 'var(--color-bg-primary)',
-          foreground: 'var(--color-text-primary)',
+          DEFAULT: 'var(--color-background)',
+          foreground: 'var(--color-foreground)',
         },
         popover: {
-          DEFAULT: 'var(--color-bg-primary)',
-          foreground: 'var(--color-text-primary)',
+          DEFAULT: 'var(--color-background)',
+          foreground: 'var(--color-foreground)',
         },
       },
+
+      // ============================================================
+      // FONTS - Map to CSS variables
+      // ============================================================
       fontFamily: {
-        sans: ['var(--db-font-primary)', 'DM Sans', 'sans-serif'],
-        heading: ['var(--db-font-accent)', 'Montserrat', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: 'var(--font-body)',
+        heading: 'var(--font-heading)',
+        mono: 'var(--font-mono)',
       },
+
+      // ============================================================
+      // LAYOUT - From theme.css
+      // ============================================================
       borderRadius: {
-        lg: 'var(--border-radius-lg, 16px)',
-        md: 'var(--border-radius-md, 12px)',
-        sm: 'var(--border-radius-sm, 4px)',
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
       },
       spacing: {
-        sidebar: 'var(--sidebar-width, 280px)',
-        header: 'var(--header-height, 64px)',
+        sidebar: 'var(--sidebar-width)',
+        header: 'var(--header-height)',
       },
     },
   },

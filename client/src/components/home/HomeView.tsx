@@ -1,8 +1,10 @@
 import React from "react";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Loader2, AlertCircle, BarChart3, MessageSquare } from "lucide-react";
 import { useAppConfig } from "@/contexts/AppConfigContext";
 import { useAgentsContext } from "@/contexts/AgentsContext";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { Button } from "@/components/ui/button";
 
 export function HomeView() {
   const { config, isLoading } = useAppConfig();
@@ -25,17 +27,33 @@ export function HomeView() {
 
   return (
     <>
-      <div className="h-full flex items-center px-12">
-        <div className="max-w-4xl space-y-6">
+      <div className="h-full flex items-start pt-40 px-12">
+        <div className="w-[70%] space-y-6">
           {/* Large title - reduced from 7xl to 5xl for better fit */}
           <h1 className="text-5xl font-bold text-[var(--color-text-heading)] leading-tight">
             {home.title}
           </h1>
 
-          {/* Description - reduced from xl to lg for better balance */}
-          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed max-w-2xl">
+          {/* Description - takes most of the width for long descriptions */}
+          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed w-full whitespace-pre-line">
             {home.description}
           </p>
+
+          {/* Action buttons */}
+          <div className="flex items-center justify-end gap-4 pt-4">
+            <Button asChild size="lg">
+              <Link to="/dashboard">
+                <BarChart3 className="h-5 w-5" />
+                Analyze the business
+              </Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <Link to="/chat">
+                <MessageSquare className="h-5 w-5" />
+                Ask the AI what happened
+              </Link>
+            </Button>
+          </div>
 
           {/* Agent status: loading */}
           {agentsLoading && (
@@ -47,40 +65,40 @@ export function HomeView() {
 
           {/* Agent status: global error */}
           {!agentsLoading && globalError && (
-            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 shadow-lg space-y-2">
+            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-2">
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-red-600" />
-                <p className="text-lg font-medium text-red-900">Configuration Error</p>
+                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
+                <p className="text-lg font-medium text-[var(--color-error)]">Configuration Error</p>
               </div>
-              <p className="text-sm text-red-800">{globalError.message}</p>
+              <p className="text-sm text-[var(--color-error)]/80">{globalError.message}</p>
             </div>
           )}
 
           {/* Agent status: no agents configured */}
           {!agentsLoading && noAgentsConfigured && (
-            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 shadow-lg space-y-2">
+            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-2">
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-red-600" />
-                <p className="text-lg font-medium text-red-900">No Agents Configured</p>
+                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
+                <p className="text-lg font-medium text-[var(--color-error)]">No Agents Configured</p>
               </div>
-              <p className="text-sm text-red-800">
+              <p className="text-sm text-[var(--color-error)]/80">
                 No agents are configured. Update{" "}
-                <code className="px-2 py-0.5 bg-red-100 rounded text-xs font-mono text-red-900">
+                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
                   config/app.json
                 </code>{" "}
                 to add at least one agent with{" "}
-                <code className="px-2 py-0.5 bg-red-100 rounded text-xs font-mono text-red-900">
+                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
                   endpoint_name
                 </code>{" "}
                 or{" "}
-                <code className="px-2 py-0.5 bg-red-100 rounded text-xs font-mono text-red-900">
+                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
                   mas_id
                 </code>.
               </p>
-              <p className="text-xs text-red-700">
+              <p className="text-xs text-[var(--color-error)]/70">
                 You can use foundation models directly:{" "}
-                <code className="px-1.5 py-0.5 bg-red-100 rounded font-mono">
-                  "agents": [{"{"}"endpoint_name": "databricks-gpt-5-2"{"}"}]
+                <code className="px-1.5 py-0.5 bg-[var(--color-error)]/10 rounded font-mono">
+                  {'"agents": [{"endpoint_name": "databricks-gpt-5-2"}]'}
                 </code>
               </p>
             </div>
@@ -88,26 +106,26 @@ export function HomeView() {
 
           {/* Agent status: agent-specific errors */}
           {!agentsLoading && agentErrors.length > 0 && (
-            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 shadow-lg space-y-3">
+            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-3">
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-red-600" />
-                <p className="text-lg font-medium text-red-900">Agent Configuration Errors</p>
+                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
+                <p className="text-lg font-medium text-[var(--color-error)]">Agent Configuration Errors</p>
               </div>
               <ul className="space-y-3">
                 {agentErrors.map((agent, idx) => (
-                  <li key={idx} className="p-3 bg-red-100 rounded-lg">
-                    <p className="text-sm font-medium text-red-900">
+                  <li key={idx} className="p-3 bg-[var(--color-error)]/10 rounded-lg">
+                    <p className="text-sm font-medium text-[var(--color-error)]">
                       {agent.display_name || agent.endpoint_name || "Unknown agent"}
                     </p>
-                    <p className="text-xs text-red-700 mt-1 font-mono">
+                    <p className="text-xs text-[var(--color-error)]/70 mt-1 font-mono">
                       {agent.error}
                     </p>
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-[var(--color-error)]/80">
                 Check your{" "}
-                <code className="px-1.5 py-0.5 bg-red-100 rounded font-mono">config/app.json</code>{" "}
+                <code className="px-1.5 py-0.5 bg-[var(--color-error)]/10 rounded font-mono">config/app.json</code>{" "}
                 and verify the endpoint names or MAS IDs are correct.
               </p>
             </div>
@@ -159,41 +177,41 @@ export function HomeView() {
 
           {/* Tracker configuration - only show when using default app_name */}
           {isDefaultAppName && (
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 shadow-lg space-y-3">
-              <p className="text-lg font-medium text-amber-900">Tracker Configuration</p>
-              <p className="text-sm text-amber-800">
+            <div className="p-4 rounded-2xl bg-[var(--color-warning)]/5 border border-[var(--color-warning)]/20 shadow-lg space-y-3">
+              <p className="text-lg font-medium text-[var(--color-warning)]">Tracker Configuration</p>
+              <p className="text-sm text-[var(--color-text-primary)]">
                 To track your app usage, update{" "}
-                <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono text-amber-900">
+                <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono text-[var(--color-warning)]">
                   app_name
                 </code>{" "}
                 in{" "}
-                <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono text-amber-900">
+                <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono text-[var(--color-warning)]">
                   config/app.json
                 </code>{" "}
                 to match your repository name for easy reconciliation.
               </p>
-              <ul className="text-sm text-amber-700 space-y-2 list-disc list-inside">
+              <ul className="text-sm text-[var(--color-text-muted)] space-y-2 list-disc list-inside">
                 <li>
                   Set{" "}
-                  <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono">enable_tracker</code>
+                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">enable_tracker</code>
                   {" "}to{" "}
-                  <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono">true</code>
+                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">true</code>
                   {" "}or{" "}
-                  <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono">false</code>
+                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">false</code>
                 </li>
                 <li>
                   Optionally set{" "}
-                  <code className="px-2 py-0.5 bg-amber-100 rounded text-xs font-mono">demo_catalog_id</code>
+                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">demo_catalog_id</code>
                   {" "}if your demo is in the Demo Catalog
                 </li>
               </ul>
-              <p className="text-xs text-amber-600">
+              <p className="text-xs text-[var(--color-text-muted)]">
                 Usage is tracked and anonymized at team level. See{" "}
                 <a
                   href="https://pypi.org/project/dbdemos-tracker/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-amber-800"
+                  className="underline hover:opacity-80"
                 >
                   dbdemos-tracker
                 </a>{" "}

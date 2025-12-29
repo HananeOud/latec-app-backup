@@ -40,7 +40,7 @@ export function ChartRenderer({ visualization }: ChartRendererProps) {
 
   // Use theme colors directly from context
   const textColor = colors.textPrimary;
-  const bgColor = colors.bgElevated || colors.bgSecondary;
+  const bgColor = colors.bgSecondary;
   const borderColor = colors.border;
 
   // Default options with theme support
@@ -54,7 +54,7 @@ export function ChartRenderer({ visualization }: ChartRendererProps) {
         labels: {
           color: textColor,
           font: {
-            family: typography.fontFamily,
+            family: typography.primaryFont,
             size: 12,
           },
         },
