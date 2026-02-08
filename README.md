@@ -1,25 +1,35 @@
 # Databricks GenAI App Template
 
-A production-ready template for building AI agent applications on Databricks. Features a modern React chat interface, FastAPI backend, optional PostgreSQL persistence via Databricks Lakebase, and seamless deployment to Databricks Apps.
+A production-ready template for building AI agent applications on Databricks. Features a modern React chat interface with streaming responses, FastAPI backend, support for Serving Endpoints, Multi-Agent Supervisors, and Genie Spaces, optional PostgreSQL persistence, and one-command deployment to Databricks Apps.
 
 ![Chat Interface](docs/images/chat-ui.png)
 
 ---
 
-> ## Getting Started — Setup & Installation Guide
->
-> **New to this project?** Follow the complete step-by-step guide to configure and deploy this application for your own Databricks environment:
->
-> **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
->
-> The guide covers:
-> - **Environment setup** — workspace URL, authentication, and required tools
-> - **Agent configuration** — connect your serving endpoints, MAS deployments, or Genie spaces
-> - **Branding & theming** — customize logo, colors, fonts, and content for your company
-> - **Dashboard embedding** — embed your Lakeview dashboards
-> - **Local development** — run and test locally before deploying
-> - **Deployment to Databricks Apps** — one-command deployment with `./scripts/deploy.sh`
-> - **Troubleshooting** — common issues and fixes
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Local Development](#local-development)
+- [Deployment](#deployment)
+- [Customization](#customization)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Key Features
+
+- **Multi-Agent Chat** — connect Serving Endpoints, Multi-Agent Supervisors (MAS), and Genie Spaces
+- **Streaming Responses** — real-time SSE streaming with function call notifications
+- **Genie Space Integration** — natural language data queries via the Databricks Genie API
+- **MLflow Tracing** — view agent traces, tool calls, and token usage in the UI
+- **User Feedback** — thumbs up/down logged to MLflow for evaluation
+- **Dashboard Embedding** — embed Lakeview dashboards directly in the app
+- **Theme Customization** — in-app editor for colors, fonts, and animated backgrounds
+- **Chart Rendering** — automatic visualization of tabular data from agent responses
+- **Persistent Chat History** — optional PostgreSQL storage via Databricks Lakebase
 
 ---
 
@@ -27,187 +37,254 @@ A production-ready template for building AI agent applications on Databricks. Fe
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | Vite, React 18, TypeScript, React Router, Tailwind CSS, shadcn/ui |
+| **Frontend** | Vite, React 18, TypeScript, Tailwind CSS, Radix UI |
 | **Backend** | FastAPI, Python 3.11+, async SQLAlchemy |
 | **Database** | In-memory (default) or PostgreSQL via Databricks Lakebase |
-| **AI/ML** | Databricks Model Serving, MLflow tracing & feedback |
+| **AI/ML** | Databricks Model Serving, Genie API, MLflow |
 | **Deployment** | Databricks Apps with OAuth authentication |
 
-## Project Structure
+---
 
-```
-databricks-genai-app-template/
-├── server/                      # FastAPI backend
-│   ├── app.py                  # Application entry point
-│   ├── routers/                # API endpoints
-│   │   ├── agent.py           # Agent invocation & feedback
-│   │   ├── chat.py            # Chat CRUD operations
-│   │   └── config.py          # Configuration endpoints
-│   ├── services/
-│   │   ├── agents/handlers/   # Deployment handlers (extensible)
-│   │   └── chat/              # Storage backends (memory/postgres)
-│   └── db/                     # SQLAlchemy models & migrations
-├── client/                      # Vite/React frontend
-│   ├── src/
-│   │   ├── App.tsx            # Routes and providers
-│   │   ├── main.tsx           # Entry point
-│   │   ├── pages/             # Page components
-│   │   ├── components/        # React components
-│   │   │   ├── chat/          # Chat UI (ChatCore, MessageList, etc.)
-│   │   │   ├── modals/        # TraceModal, FeedbackModal
-│   │   │   └── layout/        # MainLayout, Sidebar, TopBar
-│   │   ├── contexts/          # React state (user, agents, theme)
-│   │   └── lib/               # Types and utilities
-│   ├── index.html             # Vite entry point
-│   └── vite.config.ts         # Vite configuration
-├── config/
-│   └── app.json                # Agents, branding, dashboard config
-├── scripts/                     # setup, start_dev, deploy, fix, check
-├── alembic/                     # Database migrations
-└── app.yaml                     # Databricks Apps deployment config
-```
+## Installation
 
-## Quick Start
+### Step 1: Install Required Tools
 
-### Prerequisites
-- Python 3.11+ with [uv](https://docs.astral.sh/uv/) package manager
-- [Bun](https://bun.sh/) (or Node.js 18+ with npm)
-- Databricks workspace with a Model Serving endpoint
+| Tool | Purpose | Install |
+|------|---------|---------|
+| **uv** | Python package manager | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| **bun** | JavaScript runtime & bundler | `curl -fsSL https://bun.sh/install \| bash` |
+| **Databricks CLI** | Deployment to workspace | `curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh \| sh` |
 
-### Setup
+### Step 2: Clone and Install Dependencies
 
 ```bash
-# 1. Clone and enter the project
-git clone <repo-url>
+git clone https://github.com/HananeOud/databricks-genai-app-template.git
 cd databricks-genai-app-template
 
-# 2. Configure your agent in config/app.json
-#    Set endpoint_name to your Databricks serving endpoint
+# Install Python dependencies
+uv sync
 
-# 3. Start development servers
-./scripts/start_dev.sh
+# Install frontend dependencies
+cd client && bun install && cd ..
 ```
 
-Open **http://localhost:3000** - the chat interface connects to your agent.
-
-## Configuration
-
-### Usage Analytics
-
-To improve user experience and asset quality, this template sends anonymized usage reports. This data is used for product improvement only, not for marketing purposes.
-
-Configure tracking in `config/app.json`:
-
-```json
-{
-  "app_name": "your-app-name",
-  "enable_tracker": true,
-  "demo_catalog_id": "your-catalog-id"
-}
-```
-
-| Setting | Description |
-|---------|-------------|
-| `app_name` | Identifies your app in usage reports |
-| `enable_tracker` | Set to `false` to disable tracking entirely |
-| `demo_catalog_id` | Optional catalog identifier for grouping analytics |
-
-By using this template, you consent to this data collection. If you prefer not to, set `enable_tracker` to `false`. See [NOTICE.md](NOTICE.md) for details.
-
-### Environment Variables (`.env.local`)
+### Step 3: Create Your Environment File
 
 ```bash
-# Required for local development
-DATABRICKS_HOST=https://your-workspace.cloud.databricks.com
-DATABRICKS_TOKEN=dapi...your-token...
-
-# Optional: PostgreSQL persistence (Databricks Lakebase)
-LAKEBASE_PG_URL=postgresql://user:pass@host/db?sslmode=require
-LAKEBASE_PROJECT_ID=your-project-id  # For UI link to Lakebase
+cp .env.template .env.local
 ```
 
-### Agent Configuration (`config/app.json`)
+Edit `.env.local` with your Databricks workspace details:
+
+```env
+# REQUIRED — Your Databricks workspace URL
+DATABRICKS_HOST=https://your-workspace.cloud.databricks.com
+
+# REQUIRED — Personal Access Token (for local dev only; not needed in production)
+# Generate from: Workspace > Settings > Developer > Access Tokens
+DATABRICKS_TOKEN=dapi_your_token_here
+
+# REQUIRED FOR DEPLOYMENT — App name (lowercase, numbers, dashes only)
+DATABRICKS_APP_NAME=my-company-app
+
+# REQUIRED FOR DEPLOYMENT — Where code is synced in your workspace
+WORKSPACE_SOURCE_PATH=/Workspace/Users/your.email@company.com/my-company-app
+
+# OPTIONAL — Persistent chat history via Databricks Lakebase
+LAKEBASE_PG_URL=postgresql://user:pass@host/databricks_postgres?sslmode=require
+LAKEBASE_PROJECT_ID=your-project-id
+```
+
+| Variable | Where to find it |
+|----------|-----------------|
+| `DATABRICKS_HOST` | Your workspace URL in the browser (e.g. `https://adb-123456789.azuredatabricks.net`) |
+| `DATABRICKS_TOKEN` | Workspace > Profile (top-right) > **Settings** > **Developer** > **Access tokens** > Generate new token |
+| `DATABRICKS_APP_NAME` | Choose any name: lowercase, numbers, dashes (e.g. `sales-ai-portal`) |
+| `WORKSPACE_SOURCE_PATH` | `/Workspace/Users/<your-databricks-email>/<app-name>` |
+| `LAKEBASE_PG_URL` | Workspace > **Lakebase** > your project > **Connection** tab |
+| `LAKEBASE_PROJECT_ID` | From the Lakebase project URL: `.../lakebase/projects/<this-id>` |
+
+### Step 4: Configure Your Agents
+
+Edit `config/app.json` and replace the `agents` array with your own. The app supports three agent types:
 
 ```json
 {
   "agents": [
     {
-      "mas_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "endpoint_name": "your-serving-endpoint-name",
+      "display_name": "Knowledge Agent",
+      "display_description": "Ask questions about your documents",
+      "question_examples": ["What is our return policy?"],
+      "mlflow_experiment_id": "123456789"
+    },
+    {
+      "endpoint_name": "your-mas-endpoint-name",
+      "display_name": "Multi-Agent Assistant",
       "question_examples": ["What can you help me with?"]
     },
     {
-      "endpoint_name": "your-agent-endpoint",
-      "display_name": "My Agent",
-      "question_examples": ["Example question for this agent"],
-      "mlflow_experiment_id": "123456789"
+      "genie_space_id": "your-genie-space-id",
+      "display_name": "Data Analyst",
+      "display_description": "Query your data using natural language"
     }
-  ],
+  ]
+}
+```
+
+| Agent Type | Config Key | Where to find the ID |
+|------------|-----------|----------------------|
+| **Serving Endpoint** | `endpoint_name` | Workspace > **Serving** > click endpoint > copy the **Name** |
+| **Multi-Agent Supervisor** | `endpoint_name` | Workspace > **Serving** > find the MAS endpoint name |
+| **Genie Space** | `genie_space_id` | Workspace > **Genie** > open your space > copy ID from URL: `.../genie/rooms/<this-id>` |
+
+Optional agent fields:
+
+| Field | Description |
+|-------|-------------|
+| `display_name` | Friendly name shown in the chat UI |
+| `display_description` | Description in the agent selector dropdown |
+| `question_examples` | Clickable example questions shown below the chat input |
+| `mlflow_experiment_id` | Links traces to an MLflow experiment for feedback |
+
+### Step 5: Update Branding
+
+In the same `config/app.json`, update the branding and home page:
+
+```json
+{
   "branding": {
-    "name": "My Company",
-    "logo": "/logos/logo.svg"
+    "name": "Your Company",
+    "logo": "/logos/your-logo.png"
+  },
+  "home": {
+    "title": "Your Portal Title",
+    "description": "A short description for the home page"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your dashboard description",
+    "dashboardId": "your-lakeview-dashboard-id",
+    "showPadding": true
   }
 }
 ```
 
-### Branding & Theming
+- **Logo**: Place your logo file in `client/public/logos/` and reference it in the config
+- **Dashboard ID**: Find it in the Lakeview dashboard URL: `.../sql/dashboardsv3/<this-id>`. Set to `""` to disable the dashboard tab.
 
-- **Logo**: Place your logo in `client/public/logos/` and update `branding.logo` in config
-- **Colors/Fonts**: Click "Edit" button in top-right of the app to customize in real-time
-- **Code changes**: Modify `client/tailwind.config.ts` for deep customization
+### Step 6: Customize Theme Colors (Optional)
 
-## Chat Storage
+To match your brand colors, edit `client/src/lib/themes.ts`. The key values to change:
 
-### In-Memory (Default)
-- No configuration needed
-- Max 10 chats per user (oldest auto-deleted)
-- Data lost on restart
-- Good for development and demos
-
-### PostgreSQL via Lakebase (Production)
-
-Set `LAKEBASE_PG_URL` in your environment to enable persistent storage:
-
-```bash
-LAKEBASE_PG_URL=postgresql://user:pass@host.database.cloud.databricks.com/db?sslmode=require
+```typescript
+colors: {
+  accentPrimary: "#0055A4",   // Your brand color (buttons, links, accents)
+  textHeading: "#1A1A1A",     // Heading text color
+  bgPrimary: "#FFFFFF",       // Main background
+  animatedBgColor: "#0C1C3E", // Animated background particles
+}
 ```
 
-Migrations run automatically on startup. The UI shows storage status in the chat sidebar.
+To use custom fonts, update the Google Fonts import in `client/src/styles/globals.css`:
 
-## Customizing the Template
+```css
+@import url("https://fonts.googleapis.com/css2?family=YourFont:wght@400;500;600;700&display=swap");
+```
 
-### Adding a New Agent
+Then set them in `themes.ts`:
 
-1. Deploy your agent to a Databricks Model Serving endpoint
-2. Add it to `config/app.json`:
-   ```json
-   {
-     "agents": [
-       {
-         "endpoint_name": "my-new-agent",
-         "display_name": "New Agent",
-         "tools": [...]
-       }
-     ]
-   }
-   ```
-3. Restart the app - the new agent appears in the dropdown
+```typescript
+typography: {
+  primaryFont: '"YourHeadingFont", sans-serif',
+  secondaryFont: '"YourBodyFont", sans-serif',
+}
+```
 
-### Modifying the Chat UI
+---
 
-Key components to customize:
-- `client/src/components/chat/ChatCore.tsx` - Main chat logic and streaming
-- `client/src/components/chat/Message.tsx` - Individual message rendering
-- `client/src/components/chat/ChatInput.tsx` - Input box and agent selector
+## Local Development
+
+Run the app locally to test before deploying:
+
+```bash
+./scripts/start_dev.sh
+```
+
+This starts:
+- **Backend** (FastAPI): http://localhost:8000
+- **Frontend** (Vite): http://localhost:3000
+
+Press `Ctrl+C` to stop both servers.
+
+### Verification Checklist
+
+- [ ] Home page loads with your branding and logo
+- [ ] Agents appear in the chat input dropdown
+- [ ] Sending a message returns a response
+- [ ] Dashboard tab shows your embedded dashboard (if configured)
+
+---
+
+## Deployment
+
+### First-time: Create the App
+
+**Option A — Via the Databricks UI:**
+1. Go to your workspace > **Compute** > **Apps**
+2. Click **Create App**
+3. Enter the name matching `DATABRICKS_APP_NAME` in your `.env.local`
+
+**Option B — Via CLI:**
+```bash
+source .env.local
+databricks apps create $DATABRICKS_APP_NAME --description "Your app description"
+```
+
+> **Note:** App names must be lowercase letters, numbers, and dashes only.
+
+### Deploy
+
+```bash
+./scripts/deploy.sh
+```
+
+This automatically:
+1. Generates `requirements.txt` from `pyproject.toml`
+2. Builds the frontend to `client/out/`
+3. Syncs all code to your Databricks workspace
+4. Deploys the app via Databricks Apps
+
+### After Deployment
+
+- **Access**: Workspace > **Compute** > **Apps** > click your app
+- **URL**: `https://<app-name>-<workspace-id>.aws.databricksapps.com`
+- **Logs**: App page > **Logs** tab
+- **Health**: `https://<your-app-url>/api/health`
+- **Update**: Just re-run `./scripts/deploy.sh` after any changes
+
+> **Production auth**: Databricks Apps handles OAuth automatically — no tokens needed.
+
+---
+
+## Customization
+
+### About Page Content
+
+Edit `client/src/components/about/AboutView.tsx` to update section titles, descriptions, and feature lists. Replace images in `client/public/images/`.
+
+### Top Navigation Bar Color
+
+In `client/src/components/layout/TopBar.tsx`, search for `bg-[#0C1C3E]` and replace with your brand's dark color.
 
 ### Adding New Pages
 
 1. Create `client/src/pages/YourPage.tsx`
-2. Add route in `client/src/App.tsx`
-3. Add navigation in `client/src/components/layout/TopBar.tsx`
+2. Add a route in `client/src/App.tsx`
+3. Add a tab in `client/src/components/layout/TopBar.tsx`
 
-### Extending the Backend
+### Adding Backend Endpoints
 
-**Add new API endpoints:**
 ```python
 # server/routers/your_router.py
 from fastapi import APIRouter
@@ -222,67 +299,73 @@ from .routers import your_router
 app.include_router(your_router.router, prefix='/api')
 ```
 
-**Add new deployment handlers:**
-See `server/services/agents/handlers/` - implement the `BaseDeploymentHandler` interface.
+### Chat Storage
 
-## Deployment to Databricks Apps
+| Mode | Config | Details |
+|------|--------|---------|
+| **In-Memory** (default) | No config needed | Max 10 chats/user, lost on restart |
+| **PostgreSQL** (production) | Set `LAKEBASE_PG_URL` | Persistent, migrations run automatically |
 
-```bash
-./scripts/deploy.sh
-```
-
-This script:
-1. Builds the Vite frontend to static files (`client/out/`)
-2. Syncs code to your Databricks workspace
-3. Deploys using `app.yaml` configuration
-
-### Production Environment
-
-In `app.yaml`, set your production environment:
-```yaml
-env:
-  - name: ENV
-    value: production
-  - name: DATABRICKS_HOST
-    value: "https://your-workspace.cloud.databricks.com"
-  # Add LAKEBASE_PG_URL for persistent storage
-```
-
-Databricks Apps automatically handles OAuth authentication - no tokens needed in production.
-
-## Development Commands
-
-```bash
-./scripts/start_dev.sh   # Start backend (8000) + frontend (3000)
-./scripts/fix.sh         # Format code (ruff + prettier)
-./scripts/check.sh       # Lint and type check
-./scripts/deploy.sh      # Deploy to Databricks Apps
-```
-
-## Key Features
-
-- **Streaming Responses** - Real-time SSE streaming with function call notifications
-- **MLflow Tracing** - View agent traces and tool calls in the UI
-- **User Feedback** - Thumbs up/down logged to MLflow for evaluation
-- **Multi-Agent Support** - Agent Bricks MAS flow visualization
-- **Chart Rendering** - Agents can return chart data for visualization
-- **Theme Customization** - In-app editor for colors, fonts, backgrounds
+---
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| **"Agent not found"** | Verify `endpoint_name` in config matches your Databricks endpoint |
-| **Auth errors (local)** | Check `DATABRICKS_HOST` and `DATABRICKS_TOKEN` in `.env.local` |
-| **Auth errors (prod)** | Verify `DATABRICKS_HOST` in `app.yaml` |
-| **Database errors** | Check `LAKEBASE_PG_URL` format, ensure `?sslmode=require` is included |
-| **Build failures** | Run `./scripts/fix.sh`, then `uv sync` and `cd client && bun install` |
-
-
-## License
-
-© 2025 Databricks, Inc. All rights reserved. Subject to the [Databricks License](https://databricks.com/db-license-source).
+| `App name must contain only lowercase letters, numbers, and dashes` | Rename `DATABRICKS_APP_NAME` in `.env.local` to use only `a-z`, `0-9`, `-` |
+| `WORKSPACE_SOURCE_PATH is not set` | Set it in `.env.local` to `/Workspace/Users/<your-email>/<app-name>` |
+| `does not have Manage permissions` | Check the casing of your email in `WORKSPACE_SOURCE_PATH` — must match your Databricks username exactly |
+| `Maximum number of apps reached` | Delete unused apps in **Compute** > **Apps** |
+| `Agent not found` | Verify `endpoint_name` or `genie_space_id` in `config/app.json` |
+| `Serving endpoint is not ready` | Check endpoint status in **Serving** — must show **Ready** |
+| `Genie error: 'id'` | Ensure `genie_space_id` in `config/app.json` is correct |
+| Dashboard shows blank | Verify `dashboardId` and that the app service principal has access |
+| Auth errors (local) | Check `DATABRICKS_HOST` and `DATABRICKS_TOKEN` in `.env.local` |
+| Auth errors (production) | The app service principal needs access to your endpoints and Genie spaces |
+| Chat history lost on restart | Set `LAKEBASE_PG_URL` in `.env.local` for persistent storage |
+| Build failures | Run `uv sync` and `cd client && bun install`, then retry |
 
 ---
 
-**Questions?** Open a [GitHub issue](https://github.com/databricks-solutions/databricks-genai-app-template/issues).
+## Project Structure
+
+```
+databricks-genai-app-template/
+├── config/
+│   └── app.json                 # Agents, branding, dashboard config
+├── server/                       # FastAPI backend
+│   ├── app.py                   # Entry point
+│   ├── routers/                 # API endpoints (agent, chat, config, health)
+│   ├── services/agents/handlers/# Agent handlers (endpoint, genie)
+│   ├── services/chat/           # Storage backends (memory, postgres)
+│   └── db/                      # SQLAlchemy models & migrations
+├── client/                       # React frontend
+│   ├── src/components/          # UI components (chat, layout, about, etc.)
+│   ├── src/lib/themes.ts        # Color themes and typography
+│   ├── src/styles/              # CSS (globals, theme variables)
+│   └── public/                  # Static assets (logos, images)
+├── scripts/
+│   ├── start_dev.sh             # Start local dev servers
+│   └── deploy.sh                # Deploy to Databricks Apps
+├── .env.template                 # Environment variables template
+├── app.yaml                      # Databricks Apps runtime config
+├── SETUP_GUIDE.md                # Detailed setup guide
+└── pyproject.toml                # Python dependencies
+```
+
+## Development Commands
+
+```bash
+./scripts/start_dev.sh   # Start backend + frontend locally
+./scripts/deploy.sh      # Build and deploy to Databricks Apps
+./scripts/fix.sh         # Format code (ruff + prettier)
+./scripts/check.sh       # Lint and type check
+```
+
+---
+
+## License
+
+ 2025 Databricks, Inc. All rights reserved. Subject to the [Databricks License](https://databricks.com/db-license-source).
+
+For the detailed step-by-step guide, see **[SETUP_GUIDE.md](SETUP_GUIDE.md)**.
