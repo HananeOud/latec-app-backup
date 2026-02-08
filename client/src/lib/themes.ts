@@ -65,17 +65,17 @@ export interface PredefinedTheme {
 export const PREDEFINED_THEMES: PredefinedTheme[] = [
   {
     id: "default",
-    name: "Corporate Light",
-    description: "Professional aerospace-inspired light theme",
+    name: "Latecoere Light",
+    description: "Professional aerospace theme inspired by Latecoere branding",
     isDefault: true,
     colors: {
       // TEXT COLORS - Deep navy tones for corporate feel
-      textHeading: "#0C1C3E", // Deep navy for headings
+      textHeading: "#0C1C3E", // Latecoere deep navy for headings
       textPrimary: "#1A2B4A", // Navy-tinted body text
       textMuted: "#6B7B94", // Muted steel blue for secondary content
 
-      // BRAND/ACCENT - Corporate blue
-      accentPrimary: "#0055A4", // Corporate blue
+      // BRAND/ACCENT - Latecoere corporate blue
+      accentPrimary: "#0055A4", // Latecoere blue (French aerospace blue)
 
       // ANIMATED BACKGROUND
       animatedBgColor: "#0C1C3E", // Deep navy particles
@@ -92,7 +92,7 @@ export const PREDEFINED_THEMES: PredefinedTheme[] = [
       successHover: "#DCFCE7", // Green-100
       error: "#DC2626", // Red-600
       errorHover: "#FEE2E2", // Red-100
-      info: "#0055A4", // Corporate blue
+      info: "#0055A4", // Latecoere blue
       infoHover: "#DBEAFE", // Blue-100
       warning: "#D97706", // Amber-600
       warningHover: "#FEF3C7", // Amber-100
@@ -115,8 +115,8 @@ export const PREDEFINED_THEMES: PredefinedTheme[] = [
   },
   {
     id: "default-dark",
-    name: "Corporate Dark",
-    description: "Deep navy aerospace-inspired dark theme",
+    name: "Latecoere Dark",
+    description: "Deep navy aerospace theme for Latecoere",
     isDefault: false,
     colors: {
       // TEXT COLORS - High contrast on deep navy
@@ -124,7 +124,7 @@ export const PREDEFINED_THEMES: PredefinedTheme[] = [
       textPrimary: "#CBD5E1", // Slate-300 for readable body text
       textMuted: "#8494A7", // Steel blue for secondary content
 
-      // BRAND/ACCENT - Bright blue for dark backgrounds
+      // BRAND/ACCENT - Bright Latecoere blue for dark backgrounds
       accentPrimary: "#3B8DD6", // Lighter corporate blue
 
       // ANIMATED BACKGROUND - Subtle blue glow
@@ -164,8 +164,8 @@ export const PREDEFINED_THEMES: PredefinedTheme[] = [
     },
   },
   {
-    id: "corporate-navy",
-    name: "Corporate Navy",
+    id: "latecoere-navy",
+    name: "Latecoere Navy",
     description: "Full navy immersive aerospace experience",
     isDefault: false,
     colors: {

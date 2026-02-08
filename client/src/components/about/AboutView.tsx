@@ -94,14 +94,14 @@ export function AboutView() {
           >
             <div className="px-6 py-4 bg-[var(--color-background)] rounded-xl shadow-2xl" style={{ opacity: 0.85 }}>
               <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-text-heading)] mb-3 leading-tight">
-                Your Company: Powering What&apos;s Next
+                Latecoere: Lift Off for a New Era
               </h1>
               <p className="text-base md:text-lg text-[var(--color-text-primary)] leading-relaxed">
-                Innovation meets operational excellence.
+                A century of aerospace excellence.
                 <br /><br />
-                Your company description goes here. Describe your core business, what sets you apart, and the value you deliver to your customers.
+                A leader in the field of Aerostructures and Interconnection Systems, Latecoere works closely with major aircraft manufacturers and airlines, from design through to production.
                 <br /><br />
-                Update this section in <code>client/src/components/about/AboutView.tsx</code> with your own story, achievements, and brand messaging.
+                Operating in the aeronautics industry for over one hundred years, the Latecoere Group consistently invests in R&amp;T and new technology to develop cutting-edge solutions increasingly tailored to the industry&apos;s evolving requirements.
               </p>
             </div>
           </div>
@@ -137,26 +137,26 @@ export function AboutView() {
                     Engineering the future of flight
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Describe your first core product or service area here. Highlight what makes your solutions unique and the value they provide to your customers.
+                    Latecoere designs and manufactures critical aerostructure components for the world&apos;s leading aircraft manufacturers. From doors to fuselage sections, our solutions combine lightweight performance with the highest safety standards.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 1</span>
+                      <span>Aircraft doors for commercial and military platforms</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 2</span>
+                      <span>Fuselage sections and structural assemblies</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 3</span>
+                      <span>eVTOL doors for next-generation air mobility</span>
                     </li>
                   </ul>
                 </div>
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img1.png" alt="Product or service area 1" className="w-full h-full object-cover" />
+                    <img src="/images/latecoere_aerostructures.jpg" alt="Latecoere Aerostructures - eVTOL doors and aircraft structures" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -179,26 +179,26 @@ export function AboutView() {
                     Connecting every system on board
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Describe your second core product or service area here. Explain how it complements your first offering and the problems it solves for customers.
+                    Latecoere provides the critical wiring, avionics, and electronic systems that connect aircraft from nose to tail. Our interconnection solutions ensure reliable communication, power distribution, and data flow across all on-board systems.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 1</span>
+                      <span>EWIS &amp; Space harnesses for wiring architecture</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 2</span>
+                      <span>Avionics racks and equipment integration</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Feature or capability 3</span>
+                      <span>On-board video surveillance and camera systems</span>
                     </li>
                   </ul>
                 </div>
                 <div className="md:col-start-1 md:row-start-1">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img2.png" alt="Product or service area 2" className="w-full h-full object-cover" />
+                    <img src="/images/latecoere_satellite.png" alt="Latecoere Interconnection Systems - Satellite harnesses and avionics" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -221,30 +221,30 @@ export function AboutView() {
                     Pioneering the industry of the future
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Describe your innovation and R&amp;D efforts here. Highlight the cutting-edge technology and forward-thinking approach that differentiates your company.
+                    Latecoere continuously invests in research and cutting-edge technology to anticipate the needs of tomorrow&apos;s aerospace industry. From supersonic flight to electric vertical takeoff, we are at the forefront of aviation&apos;s next chapter.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Innovation initiative 1</span>
+                      <span>AR-powered quality inspections for manufacturing</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Innovation initiative 2</span>
+                      <span>eVTOL door systems for urban air mobility</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Innovation initiative 3</span>
+                      <span>EWIS architecture for supersonic aircraft (Boom Overture)</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Innovation initiative 4</span>
+                      <span>Satellite platform collaboration with Airbus Defence &amp; Space</span>
                     </li>
                   </ul>
                 </div>
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img3.png" alt="Innovation and technology" className="w-full h-full object-cover" />
+                    <img src="/images/latecoere_innovation.jpg" alt="Latecoere Innovation - Boom Overture supersonic aircraft" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -267,30 +267,30 @@ export function AboutView() {
                     A worldwide industrial footprint
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Describe your global reach and operational footprint. Highlight your presence across regions, key partnerships, and the scale of your operations.
+                    With subsidiaries and production sites across the globe, Latecoere operates close to its customers on every continent. Our international network ensures agility, quality, and on-time delivery for the world&apos;s most demanding aerospace programs.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Headquarters location</span>
+                      <span>Headquarters in Toulouse, France &mdash; the heart of European aerospace</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Regional offices and production sites</span>
+                      <span>Production sites in Europe, North America, and North Africa</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Key partnerships and clients</span>
+                      <span>Tier 1 partner to Airbus, Boeing, Bombardier, Embraer, and Dassault</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Team size and global reach</span>
+                      <span>Over 5,000 employees across 13 countries</span>
                     </li>
                   </ul>
                 </div>
                 <div className="md:col-start-1 md:row-start-1">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img4.png" alt="Global presence" className="w-full h-full object-cover" />
+                    <img src="/images/latecoere_global.jpg" alt="Latecoere Global Presence - Subsidiaries around the world" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -304,7 +304,7 @@ export function AboutView() {
                   Explore Our AI-Powered Tools
                 </h2>
                 <p className="text-lg text-white/90 mb-8">
-                  Discover the intelligent agents and AI-powered tools built for your operations.
+                  Discover the intelligent agents and agentic tools built for Latecoere operations.
                 </p>
                 <a
                   href="/tools"
