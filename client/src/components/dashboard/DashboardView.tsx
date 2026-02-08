@@ -44,7 +44,7 @@ export function DashboardView() {
             {/* Ask Agent Button */}
             <button
               onClick={() => navigate("/chat")}
-              className="flex-shrink-0 p-3 rounded-xl bg-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/90 transition-all duration-200 group shadow-sm hover:shadow-md"
+              className="flex-shrink-0 p-3 rounded-xl bg-[#0C1C3E] hover:bg-[#152a52] transition-all duration-200 group shadow-sm hover:shadow-md"
               aria-label="Ask the AI agent"
             >
               <Sparkles className="h-5 w-5 text-white transition-transform group-hover:rotate-12" />
@@ -116,7 +116,7 @@ export function DashboardView() {
           </span>
           <button
             onClick={() => navigate("/chat")}
-            className="p-3 rounded-xl bg-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/90 transition-all duration-200 group shadow-sm hover:shadow-md"
+            className="p-3 rounded-xl bg-[#0C1C3E] hover:bg-[#152a52] transition-all duration-200 group shadow-sm hover:shadow-md"
             aria-label="Ask the AI agent"
           >
             <Sparkles className="h-5 w-5 text-white transition-transform group-hover:rotate-12" />

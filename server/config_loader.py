@@ -151,20 +151,21 @@ class ConfigLoader:
     return {'agents': self.app_config.get('agents', [])}
 
   def get_agent_by_id(self, agent_id: str) -> Optional[Dict[str, Any]]:
-    """Get a specific agent configuration by ID, endpoint_name, or mas_id.
+    """Get a specific agent configuration by ID, endpoint_name, mas_id, or genie_space_id.
 
     Supports these formats:
     - endpoint_name: {"endpoint_name": "mas-xxx-endpoint", ...}
     - mas_id: {"mas_id": "uuid-...", ...} (resolved to endpoint_name at startup)
+    - genie_space_id: {"genie_space_id": "xxx", ...} (Databricks Genie space)
     - Legacy: {"id": "agent-id", ...}
 
     Also handles lookup by resolved endpoint_name when config only has mas_id.
 
     Args:
-        agent_id: The agent ID, endpoint_name, or mas_id to look up
+        agent_id: The agent ID, endpoint_name, mas_id, or genie_space_id to look up
 
     Returns:
-        Agent configuration dict with endpoint_name, or None if not found
+        Agent configuration dict, or None if not found
     """
     agents = self.app_config.get('agents', [])
     for agent in agents:
@@ -175,10 +176,11 @@ class ConfigLoader:
         continue
 
       # Handle object format
-      # Match by endpoint_name, mas_id, or id (legacy)
+      # Match by endpoint_name, mas_id, genie_space_id, or id (legacy)
       if (
         agent.get('endpoint_name') == agent_id
         or agent.get('mas_id') == agent_id
+        or agent.get('genie_space_id') == agent_id
         or agent.get('id') == agent_id
       ):
         # Ensure endpoint_name is always set
@@ -197,6 +199,12 @@ class ConfigLoader:
           result = dict(agent)
           result['endpoint_name'] = expected_endpoint
           return result
+
+      # Also check if agent_id matches the genie-{genie_space_id} pattern
+      # This handles Genie space agents where the frontend sends the constructed id
+      genie_space_id = agent.get('genie_space_id')
+      if genie_space_id and agent_id == f"genie-{genie_space_id}":
+        return dict(agent)
 
     return None
 

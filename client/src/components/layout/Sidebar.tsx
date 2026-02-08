@@ -94,9 +94,9 @@ export function Sidebar({
       >
         <button
           onClick={onNewChat}
-          className={`flex items-center w-full hover:bg-[var(--color-accent-primary)]/[0.08] rounded-xl transition-all duration-300 group ${isCollapsed ? "p-2 justify-center" : "p-3 gap-3"}`}
+          className={`flex items-center w-full hover:bg-[var(--color-accent-primary)]/[0.06] rounded-lg transition-all duration-300 group ${isCollapsed ? "p-2 justify-center" : "p-3 gap-3"}`}
         >
-          <div className="flex items-center justify-center rounded-xl bg-[var(--color-accent-primary)] text-white transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-105 h-10 w-10 flex-shrink-0">
+          <div className="flex items-center justify-center rounded-lg bg-[#0C1C3E] text-white transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-105 h-10 w-10 flex-shrink-0">
             <Plus className="h-5 w-5" strokeWidth={2.5} />
           </div>
           {!isCollapsed && (
@@ -135,7 +135,7 @@ export function Sidebar({
                     group relative px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-200
                     ${
                       currentChatId === chat.id
-                        ? "bg-[var(--color-accent-primary)] text-white shadow-sm"
+                        ? "bg-[#0C1C3E] text-white shadow-sm"
                         : "bg-[var(--color-background)] hover:bg-[var(--color-background)]/80 text-[var(--color-foreground)] border border-[var(--color-border)]/50 hover:border-[var(--color-border)] hover:shadow-sm"
                     }
                   `}

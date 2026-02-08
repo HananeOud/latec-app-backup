@@ -94,14 +94,14 @@ export function AboutView() {
           >
             <div className="px-6 py-4 bg-[var(--color-background)] rounded-xl shadow-2xl" style={{ opacity: 0.85 }}>
               <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-text-heading)] mb-3 leading-tight">
-                Databricks: The Data Intelligence Platform
+                Latecoere: Lift Off for a New Era
               </h1>
               <p className="text-base md:text-lg text-[var(--color-text-primary)] leading-relaxed">
-                Unified Data & AI capabilities.
+                A century of aerospace excellence.
                 <br /><br />
-                Databricks offers a unified platform for data, analytics and AI.
+                A leader in the field of Aerostructures and Interconnection Systems, Latecoere works closely with major aircraft manufacturers and airlines, from design through to production.
                 <br /><br />
-                With the Data Intelligence Platform, Databricks democratizes insights to everyone in an organization. Built on an open lakehouse architecture, the Data Intelligence Platform provides a unified foundation for all data and governance, combined with AI models tuned to an organization&apos;s unique characteristics.
+                Operating in the aeronautics industry for over one hundred years, the Latecoere Group consistently invests in R&amp;T and new technology to develop cutting-edge solutions increasingly tailored to the industry&apos;s evolving requirements.
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function AboutView() {
             {/* Content Sections */}
             <div className="space-y-32">
 
-              {/* Section 1: Building the data foundations */}
+              {/* Section 1: Aerostructures */}
               <div
                 id="foundations"
                 data-section
@@ -130,38 +130,38 @@ export function AboutView() {
                 <div className="space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Unified Data & AI Platform
+                      Aerostructures
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Building the data foundations
+                    Engineering the future of flight
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Unlocking AI power starts by setting up the right foundations and making your data AI-ready. This means ingesting all the relevant data into the unified data platform, from various sources (files, operational databases, APIs, etc.), and processing it into curated data products, using Databricks capabilities:
+                    Latecoere designs and manufactures critical aerostructure components for the world&apos;s leading aircraft manufacturers. From doors to fuselage sections, our solutions combine lightweight performance with the highest safety standards.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Unity Catalog for centralized governance</span>
+                      <span>Aircraft doors for commercial and military platforms</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Ingestion, processing & orchestration pipelines with Lakeflow</span>
+                      <span>Fuselage sections and structural assemblies</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Advanced data warehousing with DBSQL</span>
+                      <span>eVTOL doors for next-generation air mobility</span>
                     </li>
                   </ul>
                 </div>
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img1.png" alt="Building the data foundations" className="w-full h-full object-contain" />
+                    <img src="/images/latecoere_aerostructures.jpg" alt="Latecoere Aerostructures - eVTOL doors and aircraft structures" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Unlocking value at every level */}
+              {/* Section 2: Interconnection Systems */}
               <div
                 id="analytics"
                 data-section
@@ -172,125 +172,125 @@ export function AboutView() {
                 <div className="md:col-start-2 space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Descriptive and predictive intelligence
+                      Interconnection Systems
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Unlocking value at every level
+                    Connecting every system on board
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Use the prepared data to build advanced descriptive analytics (what happened), as well predictive ML models and advanced AI agents, using tools built on top of your data (Bring the AI to your data, not the other way around).
+                    Latecoere provides the critical wiring, avionics, and electronic systems that connect aircraft from nose to tail. Our interconnection solutions ensure reliable communication, power distribution, and data flow across all on-board systems.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Dashboards & advanced queries (what happened)</span>
+                      <span>EWIS &amp; Space harnesses for wiring architecture</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Machine Learning Models (what will happen)</span>
+                      <span>Avionics racks and equipment integration</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>AI Agents (root cause, how to respond, etc.)</span>
+                      <span>On-board video surveillance and camera systems</span>
                     </li>
                   </ul>
                 </div>
                 <div className="md:col-start-1 md:row-start-1">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img2.png" alt="Unlocking value at every level" className="w-full h-full object-contain" />
+                    <img src="/images/latecoere_satellite.png" alt="Latecoere Interconnection Systems - Satellite harnesses and avionics" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
 
-              {/* Section 3: The Databricks Advantage */}
+              {/* Section 3: Innovation & Technology */}
               <div
-                id="databricks-architecture"
+                id="innovation"
                 data-section
                 className={`grid md:grid-cols-2 gap-12 md:gap-16 items-center transition-all duration-1000 ${
-                  isVisible("databricks-architecture") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+                  isVisible("innovation") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
                 }`}
               >
                 <div className="space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Production grade AI
+                      Innovation &amp; Technology
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    The Databricks Advantage
+                    Pioneering the industry of the future
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Databricks provides the foundational infrastructure for building production-grade AI applications. From data ingestion to model serving, everything runs on a single, governed platform that scales with your needs.
+                    Latecoere continuously invests in research and cutting-edge technology to anticipate the needs of tomorrow&apos;s aerospace industry. From supersonic flight to electric vertical takeoff, we are at the forefront of aviation&apos;s next chapter.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Agent Bricks: the fastest way to build agents</span>
+                      <span>AR-powered quality inspections for manufacturing</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>MLflow for experiment tracking and quality monitoring</span>
+                      <span>eVTOL door systems for urban air mobility</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Model serving with guardrails (AI Gateway)</span>
+                      <span>EWIS architecture for supersonic aircraft (Boom Overture)</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Unity Catalog for governance and security</span>
+                      <span>Satellite platform collaboration with Airbus Defence &amp; Space</span>
                     </li>
                   </ul>
                 </div>
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img3.png" alt="The Databricks Advantage" className="w-full h-full object-contain" />
+                    <img src="/images/latecoere_innovation.jpg" alt="Latecoere Innovation - Boom Overture supersonic aircraft" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
 
-              {/* Section 4: Power AI with tools */}
+              {/* Section 4: Global Presence */}
               <div
-                id="use-cases"
+                id="global-presence"
                 data-section
                 className={`grid md:grid-cols-2 gap-12 md:gap-16 items-center transition-all duration-1000 md:grid-flow-dense ${
-                  isVisible("use-cases") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+                  isVisible("global-presence") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
                 }`}
               >
                 <div className="md:col-start-2 space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Agent patterns
+                      Global Presence
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Power AI with tools
+                    A worldwide industrial footprint
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    From retrieving relevant knowledge from PDFs to querying databases and APIs, tools are the key to getting more operational value from your AI agents.
+                    With subsidiaries and production sites across the globe, Latecoere operates close to its customers on every continent. Our international network ensures agility, quality, and on-time delivery for the world&apos;s most demanding aerospace programs.
                   </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Get context from text corpus (RAG)</span>
+                      <span>Headquarters in Toulouse, France &mdash; the heart of European aerospace</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Query tables (text-to-sql)</span>
+                      <span>Production sites in Europe, North America, and North Africa</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Combine different tools (multi-tool agent)</span>
+                      <span>Tier 1 partner to Airbus, Boeing, Bombardier, Embraer, and Dassault</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Combine and orchestrate different agents</span>
+                      <span>Over 5,000 employees across 13 countries</span>
                     </li>
                   </ul>
                 </div>
                 <div className="md:col-start-1 md:row-start-1">
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/img4.png" alt="Power AI with tools" className="w-full h-full object-contain" />
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
+                    <img src="/images/latecoere_global.jpg" alt="Latecoere Global Presence - Subsidiaries around the world" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -299,16 +299,16 @@ export function AboutView() {
 
             {/* CTA Section */}
             <div className="mt-32 text-center">
-              <div className="max-w-3xl mx-auto p-12 md:p-16 bg-[var(--color-accent-primary)] rounded-3xl shadow-xl">
+              <div className="max-w-3xl mx-auto p-12 md:p-16 bg-[#0C1C3E] rounded-3xl shadow-xl">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Ready to Build Your AI Future?
+                  Explore Our AI-Powered Tools
                 </h2>
                 <p className="text-lg text-white/90 mb-8">
-                  Explore tools and start creating intelligent agents on Databricks.
+                  Discover the intelligent agents and agentic tools built for Latecoere operations.
                 </p>
                 <a
                   href="/tools"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[var(--color-accent-primary)] font-semibold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 group"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0C1C3E] font-semibold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 group"
                 >
                   Explore Tools
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />

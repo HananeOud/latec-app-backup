@@ -4,6 +4,25 @@ A production-ready template for building AI agent applications on Databricks. Fe
 
 ![Chat Interface](docs/images/chat-ui.png)
 
+---
+
+> ## Getting Started — Setup & Installation Guide
+>
+> **New to this project?** Follow the complete step-by-step guide to configure and deploy this application for your own Databricks environment:
+>
+> **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
+>
+> The guide covers:
+> - **Environment setup** — workspace URL, authentication, and required tools
+> - **Agent configuration** — connect your serving endpoints, MAS deployments, or Genie spaces
+> - **Branding & theming** — customize logo, colors, fonts, and content for your company
+> - **Dashboard embedding** — embed your Lakeview dashboards
+> - **Local development** — run and test locally before deploying
+> - **Deployment to Databricks Apps** — one-command deployment with `./scripts/deploy.sh`
+> - **Troubleshooting** — common issues and fixes
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |

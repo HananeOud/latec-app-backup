@@ -65,152 +65,152 @@ export interface PredefinedTheme {
 export const PREDEFINED_THEMES: PredefinedTheme[] = [
   {
     id: "default",
-    name: "Default Light",
-    description: "Sophisticated light theme inspired by Linear and Vercel",
+    name: "Latecoere Light",
+    description: "Professional aerospace theme inspired by Latecoere branding",
     isDefault: true,
     colors: {
-      // TEXT COLORS - Neutral zinc scale for warmth and sophistication
-      textHeading: "#09090B", // Near-black zinc for maximum impact
-      textPrimary: "#18181B", // Zinc-900 for body text
-      textMuted: "#71717A", // Zinc-500 for secondary content
+      // TEXT COLORS - Deep navy tones for corporate feel
+      textHeading: "#0C1C3E", // Latecoere deep navy for headings
+      textPrimary: "#1A2B4A", // Navy-tinted body text
+      textMuted: "#6B7B94", // Muted steel blue for secondary content
 
-      // BRAND/ACCENT - Vibrant coral
-      accentPrimary: "#2075b6", 
+      // BRAND/ACCENT - Latecoere corporate blue
+      accentPrimary: "#0055A4", // Latecoere blue (French aerospace blue)
 
       // ANIMATED BACKGROUND
-      animatedBgColor: "#4eb4f4", 
+      animatedBgColor: "#0C1C3E", // Deep navy particles
 
-      // BACKGROUNDS - Pure white with warm neutral secondary
-      bgPrimary: "#FFFFFF", // Pure white for maximum clarity
-      bgSecondary: "#FAFAFA", // Neutral-50 for subtle elevation
+      // BACKGROUNDS - Clean white with cool gray secondary
+      bgPrimary: "#FFFFFF", // Pure white for clarity
+      bgSecondary: "#F4F6F9", // Cool gray-blue tint
 
-      // UI ELEMENTS - Delicate neutral borders
-      border: "#E4E4E7", // Zinc-200 for refined separation
+      // UI ELEMENTS - Subtle steel borders
+      border: "#D5DBE5", // Cool steel border
 
-      // STATUS COLORS - Vibrant and clear
-      success: "#22C55E", // Green-500
+      // STATUS COLORS
+      success: "#16A34A", // Green-600
       successHover: "#DCFCE7", // Green-100
-      error: "#EF4444", // Red-500
+      error: "#DC2626", // Red-600
       errorHover: "#FEE2E2", // Red-100
-      info: "#2c76af", // Blue (matches accent)
+      info: "#0055A4", // Latecoere blue
       infoHover: "#DBEAFE", // Blue-100
-      warning: "#F59E0B", // Amber-500
+      warning: "#D97706", // Amber-600
       warningHover: "#FEF3C7", // Amber-100
     },
     typography: {
       primaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       secondaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
     animatedBackground: {
-      particleCount: 25,
-      connectionDistance: 80,
-      particleOpacity: 0.1,
-      lineOpacity: 0.5,
-      particleSize: 1.5,
-      lineWidth: 1.2,
-      animationSpeed: 1.1,
+      particleCount: 30,
+      connectionDistance: 90,
+      particleOpacity: 0.08,
+      lineOpacity: 0.3,
+      particleSize: 1.2,
+      lineWidth: 0.8,
+      animationSpeed: 0.6,
     },
   },
   {
     id: "default-dark",
-    name: "Default Dark",
-    description: "Elegant dark theme inspired by Linear and GitHub",
+    name: "Latecoere Dark",
+    description: "Deep navy aerospace theme for Latecoere",
     isDefault: false,
     colors: {
-      // TEXT COLORS - High contrast on true dark
-      textHeading: "#FAFAFA", // Neutral-50 for crisp headings
-      textPrimary: "#E4E4E7", // Zinc-200 for readable body text
-      textMuted: "#A1A1AA", // Zinc-400 for subtle secondary content
+      // TEXT COLORS - High contrast on deep navy
+      textHeading: "#F0F4F8", // Crisp white-blue for headings
+      textPrimary: "#CBD5E1", // Slate-300 for readable body text
+      textMuted: "#8494A7", // Steel blue for secondary content
 
-      // BRAND/ACCENT - Lighter blue for dark backgrounds
-      accentPrimary: "#66abd6", // Light blue - readable on dark
+      // BRAND/ACCENT - Bright Latecoere blue for dark backgrounds
+      accentPrimary: "#3B8DD6", // Lighter corporate blue
 
       // ANIMATED BACKGROUND - Subtle blue glow
-      animatedBgColor: "#2c76af", // Ocean blue
+      animatedBgColor: "#1E3A5F", // Deep navy-blue
 
-      // BACKGROUNDS - True dark with subtle elevation
-      bgPrimary: "#131315", // Zinc-950 - true dark
-      bgSecondary: "#0d0d0d", // Zinc-900 - elevated surfaces
+      // BACKGROUNDS - Deep navy
+      bgPrimary: "#0B1424", // Very deep navy
+      bgSecondary: "#0F1B2E", // Slightly lighter navy
 
-      // UI ELEMENTS - Subtle but visible borders
-      border: "#27272A", // Zinc-800 for refined separation
+      // UI ELEMENTS - Subtle navy borders
+      border: "#1E2D42", // Dark navy border
 
-      // STATUS COLORS - Vibrant but not harsh
-      success: "#22C55E", // Green-500
-      successHover: "rgba(34, 197, 94, 0.15)", // Green with opacity
-      error: "#EF4444", // Red-500
-      errorHover: "rgba(239, 68, 68, 0.15)", // Red with opacity
-      info: "#66abd6", // Light blue (matches accent)
-      infoHover: "rgba(102, 171, 214, 0.15)", // Blue with opacity
-      warning: "#F59E0B", // Amber-500
-      warningHover: "rgba(245, 158, 11, 0.15)", // Amber with opacity
+      // STATUS COLORS
+      success: "#22C55E",
+      successHover: "rgba(34, 197, 94, 0.15)",
+      error: "#EF4444",
+      errorHover: "rgba(239, 68, 68, 0.15)",
+      info: "#3B8DD6",
+      infoHover: "rgba(59, 141, 214, 0.15)",
+      warning: "#F59E0B",
+      warningHover: "rgba(245, 158, 11, 0.15)",
     },
     typography: {
       primaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       secondaryFont:
-        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
     animatedBackground: {
-      particleCount: 25,
-      connectionDistance: 80,
-      particleOpacity: 0.1,
-      lineOpacity: 0.5,
-      particleSize: 1.5,
-      lineWidth: 1.2,
-      animationSpeed: 1.1,
+      particleCount: 30,
+      connectionDistance: 90,
+      particleOpacity: 0.08,
+      lineOpacity: 0.3,
+      particleSize: 1.2,
+      lineWidth: 0.8,
+      animationSpeed: 0.6,
     },
   },
   {
-    id: "emerald",
-    name: "Emerald",
-    description: "Dark theme with vibrant green energy",
+    id: "latecoere-navy",
+    name: "Latecoere Navy",
+    description: "Full navy immersive aerospace experience",
     isDefault: false,
     colors: {
       // TEXT COLORS
       textHeading: "#FFFFFF",
-      textPrimary: "#E5E5E5",
-      textMuted: "#B3B3B3",
+      textPrimary: "#D1DAE6",
+      textMuted: "#8FA3BB",
 
-      // BRAND/ACCENT (single color, others auto-derived)
-      accentPrimary: "#1DB954",
+      // BRAND/ACCENT
+      accentPrimary: "#4DA3E8", // Sky blue accent
 
       // ANIMATED BACKGROUND
-      animatedBgColor: "#1DB954",
+      animatedBgColor: "#4DA3E8",
 
-      // BACKGROUNDS (two-tier, others auto-derived)
-      bgPrimary: "#121212",
-      bgSecondary: "#181818",
+      // BACKGROUNDS
+      bgPrimary: "#0A1628", // Deepest navy
+      bgSecondary: "#111F36", // Dark navy panel
 
       // UI ELEMENTS
-      border: "#404040",
+      border: "#1C2E47",
 
-      // STATUS COLORS (semantic, not editable in UI)
-      success: "#1DB954",
-      successHover: "rgba(29, 185, 84, 0.2)",
-      error: "#E22134",
-      errorHover: "rgba(226, 33, 52, 0.2)",
-      info: "#509BF5",
-      infoHover: "rgba(80, 155, 245, 0.2)",
-      warning: "#FFA500",
-      warningHover: "rgba(255, 165, 0, 0.2)",
+      // STATUS COLORS
+      success: "#34D399",
+      successHover: "rgba(52, 211, 153, 0.15)",
+      error: "#F87171",
+      errorHover: "rgba(248, 113, 113, 0.15)",
+      info: "#4DA3E8",
+      infoHover: "rgba(77, 163, 232, 0.15)",
+      warning: "#FBBF24",
+      warningHover: "rgba(251, 191, 36, 0.15)",
     },
     typography: {
       primaryFont:
         '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       secondaryFont:
-        '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
     animatedBackground: {
-      particleCount: 25,
-      connectionDistance: 80,
+      particleCount: 35,
+      connectionDistance: 85,
       particleOpacity: 0.1,
-      lineOpacity: 0.5,
-      particleSize: 1.5,
-      lineWidth: 1.2,
-      animationSpeed: 1.1,
+      lineOpacity: 0.4,
+      particleSize: 1.0,
+      lineWidth: 0.6,
+      animationSpeed: 0.5,
     },
   },
 ];

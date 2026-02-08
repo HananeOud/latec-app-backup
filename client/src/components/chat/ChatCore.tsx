@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ExternalLink } from "lucide-react";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
 import { FeedbackModal } from "@/components/modals/FeedbackModal";
@@ -53,6 +53,14 @@ export function ChatCore({
   const selectedAgent = agents.find((a) => a.id === selectedAgentId);
   const mlflowExperimentId = selectedAgent?.mlflow_experiment_id;
   const questionExamples = selectedAgent?.question_examples || [];
+  const isGenieAgent = selectedAgent?.deployment_type === "genie_space";
+  const genieSpaceId = selectedAgent?.genie_space_id;
+
+  // Build Genie workspace URL
+  const genieWorkspaceUrl =
+    isGenieAgent && genieSpaceId && userInfo?.workspace_url
+      ? `${userInfo.workspace_url}/genie/rooms/${genieSpaceId}`
+      : null;
 
   // Build MLflow trace URL
   const getMlflowTraceUrl = (traceId: string | undefined) => {
@@ -677,7 +685,12 @@ export function ChatCore({
         {isLoadingHistory ? (
           <div className="flex flex-col items-center justify-center h-full">
             <Loader2 className="h-8 w-8 text-[var(--color-accent-primary)] animate-spin" />
-            <p className="mt-3 text-sm text-[var(--color-text-muted)]">Loading conversation...</p>
+            <p
+              className="mt-3 text-[0.8125rem] text-[var(--color-text-muted)] italic tracking-wide"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Loading conversation...
+            </p>
           </div>
         ) : (
           <>
@@ -693,6 +706,28 @@ export function ChatCore({
           </>
         )}
       </div>
+
+      {/* Genie workspace link banner */}
+      {isGenieAgent && genieWorkspaceUrl && (
+        <div className="flex-shrink-0 px-4 py-2 bg-[var(--color-bg-secondary)]/80 border-t border-[var(--color-border)]/20">
+          <div
+            className="flex items-center justify-center gap-2 text-[0.75rem] text-[var(--color-text-muted)] tracking-wide"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            <span>You can also interact with this Genie space directly in</span>
+            <a
+              href={genieWorkspaceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[var(--color-accent-primary)] hover:underline font-semibold transition-colors"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Databricks Workspace
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        </div>
+      )}
 
       <div
         className={`flex-shrink-0 border-t border-[var(--color-border)]/20 bg-[var(--color-background)]/80 backdrop-blur-xl`}

@@ -117,78 +117,105 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
           `}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap break-words text-sm text-white">
+            <p
+              className="whitespace-pre-wrap break-words text-[0.9375rem] leading-relaxed text-white tracking-[-0.01em]"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               {message.content}
             </p>
           ) : isError ? (
             <div className="flex items-start gap-2">
               <AlertCircle className="h-5 w-5 text-[var(--color-error)] flex-shrink-0 mt-0.5" />
-              <p className="whitespace-pre-wrap break-words text-sm text-[var(--color-error)]">
+              <p
+                className="whitespace-pre-wrap break-words text-[0.875rem] leading-relaxed text-[var(--color-error)]"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
                 {message.content}
               </p>
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none break-words text-sm text-[var(--color-text-primary)]">
+            <div
+              className="prose prose-sm max-w-none break-words text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  // Headings
+                  // Headings - use heading font (Montserrat) for clear hierarchy
                   h1: ({ children }) => (
-                    <h1 className="text-lg font-bold text-[var(--color-text-heading)] mt-4 mb-2 pb-1 border-b border-[var(--color-border)]">
+                    <h1
+                      className="text-xl font-bold text-[var(--color-text-heading)] mt-5 mb-2.5 pb-1.5 border-b border-[var(--color-border)] tracking-[-0.025em] leading-tight"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h1>
                   ),
                   h2: ({ children }) => (
-                    <h2 className="text-base font-bold text-[var(--color-text-heading)] mt-3 mb-2 pb-1 border-b border-[var(--color-border)]">
+                    <h2
+                      className="text-lg font-bold text-[var(--color-text-heading)] mt-4 mb-2 pb-1 border-b border-[var(--color-border)]/60 tracking-[-0.02em] leading-snug"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-sm font-semibold text-[var(--color-text-heading)] mt-3 mb-1.5">
+                    <h3
+                      className="text-base font-semibold text-[var(--color-text-heading)] mt-4 mb-1.5 tracking-[-0.015em] leading-snug"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h3>
                   ),
                   h4: ({ children }) => (
-                    <h4 className="text-sm font-semibold text-[var(--color-text-heading)] mt-2 mb-1">
+                    <h4
+                      className="text-[0.9375rem] font-semibold text-[var(--color-text-heading)] mt-3 mb-1 tracking-[-0.01em]"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h4>
                   ),
                   h5: ({ children }) => (
-                    <h5 className="text-sm font-medium text-[var(--color-text-heading)] mt-2 mb-1">
+                    <h5
+                      className="text-sm font-semibold text-[var(--color-text-heading)] mt-3 mb-1 uppercase tracking-wide"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h5>
                   ),
                   h6: ({ children }) => (
-                    <h6 className="text-xs font-medium text-[var(--color-text-muted)] mt-1.5 mb-1">
+                    <h6
+                      className="text-xs font-semibold text-[var(--color-text-muted)] mt-2 mb-1 uppercase tracking-wider"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </h6>
                   ),
 
-                  // Paragraphs
+                  // Paragraphs - body font with comfortable reading size
                   p: ({ children }) => (
-                    <p className="mb-2 leading-normal text-[var(--color-text-primary)]">
+                    <p className="mb-2.5 leading-[1.7] text-[0.9375rem] text-[var(--color-text-primary)] tracking-[-0.005em]">
                       {children}
                     </p>
                   ),
 
-                  // Lists
+                  // Lists - slightly smaller, tighter spacing
                   ul: ({ children }) => (
-                    <ul className="my-2 ml-5 space-y-1 list-disc marker:text-[var(--color-accent-primary)]">
+                    <ul className="my-2.5 ml-5 space-y-1.5 list-disc marker:text-[var(--color-accent-primary)]">
                       {children}
                     </ul>
                   ),
                   ol: ({ children }) => (
-                    <ol className="my-2 ml-5 space-y-1 list-decimal marker:text-[var(--color-accent-primary)] marker:font-semibold">
+                    <ol className="my-2.5 ml-5 space-y-1.5 list-decimal marker:text-[var(--color-accent-primary)] marker:font-semibold">
                       {children}
                     </ol>
                   ),
                   li: ({ children }) => (
-                    <li className="leading-normal text-[var(--color-text-primary)] pl-0.5">
+                    <li className="leading-[1.65] text-[0.9rem] text-[var(--color-text-primary)] pl-1">
                       {children}
                     </li>
                   ),
 
-                  // Links
+                  // Links - body font, medium weight
                   a: ({ href, children }) => (
                     <a
                       href={href}
@@ -200,7 +227,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     </a>
                   ),
 
-                  // Inline code
+                  // Inline code - monospace with distinct styling
                   code: ({ className, children, ...props }: any) => {
                     const match = /language-(\w+)/.exec(className || "");
                     const language = match ? match[1] : "";
@@ -214,7 +241,8 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     // Inline code
                     return (
                       <code
-                        className="bg-[var(--color-muted)]/50 text-[var(--color-accent-primary)] px-1.5 py-0.5 rounded font-mono text-sm border border-[var(--color-border)]"
+                        className="bg-[var(--color-muted)]/50 text-[var(--color-accent-primary)] px-1.5 py-0.5 rounded text-[0.8125rem] border border-[var(--color-border)] font-medium"
+                        style={{ fontFamily: "var(--font-mono)" }}
                         {...props}
                       >
                         {children}
@@ -227,19 +255,22 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     return <>{children}</>;
                   },
 
-                  // Blockquotes
+                  // Blockquotes - italic body font with accent
                   blockquote: ({ children }) => (
-                    <blockquote className="my-4 pl-4 pr-3 py-2 border-l-4 border-[var(--color-accent-primary)] bg-[var(--color-muted)]/30 rounded-r-lg">
-                      <div className="text-[var(--color-text-primary)] italic">
+                    <blockquote className="my-4 pl-4 pr-3 py-2.5 border-l-4 border-[var(--color-accent-primary)] bg-[var(--color-muted)]/30 rounded-r-lg">
+                      <div
+                        className="text-[var(--color-text-primary)] italic text-[0.9375rem] leading-[1.65]"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
                         {children}
                       </div>
                     </blockquote>
                   ),
 
-                  // Tables
+                  // Tables - heading font for headers, body for data
                   table: ({ children }) => (
                     <div className="my-4 overflow-x-auto rounded-xl border border-[var(--color-border)] shadow-md bg-[var(--color-background)]/50 backdrop-blur-sm">
-                      <table className="w-full border-collapse text-sm">
+                      <table className="w-full border-collapse">
                         {children}
                       </table>
                     </div>
@@ -260,12 +291,18 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     </tr>
                   ),
                   th: ({ children }) => (
-                    <th className="px-4 py-3 text-left text-xs font-bold text-[var(--color-text-heading)] uppercase tracking-wide border-b-2 border-[var(--color-accent-primary)]/40">
+                    <th
+                      className="px-4 py-3 text-left text-[0.6875rem] font-bold text-[var(--color-text-heading)] uppercase tracking-widest border-b-2 border-[var(--color-accent-primary)]/40"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </th>
                   ),
                   td: ({ children }) => (
-                    <td className="px-4 py-3 text-sm text-[var(--color-text-primary)]">
+                    <td
+                      className="px-4 py-3 text-[0.8125rem] text-[var(--color-text-primary)] tabular-nums"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
                       {children}
                     </td>
                   ),
@@ -275,16 +312,19 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
                     <hr className="my-6 border-t-2 border-[var(--color-border)] opacity-50" />
                   ),
 
-                  // Strong/Bold
+                  // Strong/Bold - heading font for emphasis
                   strong: ({ children }) => (
-                    <strong className="font-bold text-[var(--color-text-heading)]">
+                    <strong
+                      className="font-bold text-[var(--color-text-heading)]"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {children}
                     </strong>
                   ),
 
                   // Emphasis/Italic
                   em: ({ children }) => (
-                    <em className="italic text-[var(--color-text-primary)]">
+                    <em className="italic text-[var(--color-text-primary)] opacity-90">
                       {children}
                     </em>
                   ),
@@ -328,14 +368,15 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
 
         {/* Timestamp */}
         <div
-          className={`mt-1 text-xs text-[var(--color-text-muted)] ${isUser ? "text-right" : "text-left"}`}
+          className={`mt-1.5 text-[0.6875rem] text-[var(--color-text-muted)] tracking-wide ${isUser ? "text-right" : "text-left"}`}
+          style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}
         >
           {formatDistanceToNow(message.timestamp, { addSuffix: true })}
         </div>
 
         {/* Trace Summary (for assistant messages with trace data, not for errors) */}
         {!isUser && !isError && message.traceSummary && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-[0.6875rem]" style={{ fontFamily: "var(--font-body)" }}>
             {message.traceSummary.duration_ms > 0 && (
               <div
                 className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--color-muted)] text-[var(--color-text-muted)]"

@@ -14,7 +14,7 @@ from pydantic import BaseModel
 
 from ..chat_storage import MessageModel, storage
 from ..config_loader import config_loader
-from ..services.agents.handlers import DatabricksEndpointHandler
+from ..services.agents.handlers import DatabricksEndpointHandler, DatabricksGenieHandler
 from ..services.user import get_current_user
 
 logger = logging.getLogger(__name__)
@@ -127,8 +127,12 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
       message='Please check your agent configuration',
     )
 
+  # Check if this is a Genie space agent
+  genie_space_id = agent.get('genie_space_id')
+  is_genie_agent = bool(genie_space_id)
+
   endpoint_name = agent.get('endpoint_name')
-  if not endpoint_name:
+  if not endpoint_name and not is_genie_agent:
     logger.error(f'Agent {options.agent_id} has no endpoint_name configured')
     return create_error_stream(
       error='No endpoint configured - check your app.json configuration',
@@ -153,7 +157,11 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
       return create_error_stream(error=f'Chat not found: {chat_id}')
 
   try:
-    handler = DatabricksEndpointHandler(agent)
+    # Select the appropriate handler based on agent type
+    if is_genie_agent:
+      handler = DatabricksGenieHandler(agent)
+    else:
+      handler = DatabricksEndpointHandler(agent)
 
     # Create wrapper that collects data and saves to storage
     async def stream_and_store() -> AsyncGenerator[str, None]:
@@ -169,8 +177,10 @@ async def invoke_endpoint(request: Request, options: InvokeEndpointRequest):
       error_message: Optional[str] = None
 
       try:
+        # For Genie agents, pass chat_id so the handler can track conversations
+        stream_endpoint = chat_id if is_genie_agent else endpoint_name
         stream = handler.predict_stream(
-          messages=options.messages, endpoint_name=endpoint_name
+          messages=options.messages, endpoint_name=stream_endpoint
         )
         async for chunk in stream:
           # Forward the chunk to frontend

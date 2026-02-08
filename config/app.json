@@ -1,22 +1,37 @@
 {
-  "app_name": "databricks-app-template",
+  "app_name": "Latec_app",
   "enable_tracker": true,
   "demo_catalog_id": "",
   "agents": [
-    
+    {
+      "endpoint_name": "ka-0b0f263d-endpoint",
+      "display_name": "Latecoere KA",
+      "question_examples": ["How long does the rust protection last with RustBlock Enamel"],
+      "mlflow_experiment_id": "556739606318052"
+    },
+    {
+      "endpoint_name": "mas-5c903a9d-endpoint",
+      "display_name": "Latecoere MAS",
+      "question_examples": ["What can you help me with?"]
+    },
+    {
+      "genie_space_id": "01f10471a6bd1a59ab22df10a6edda2c",
+      "display_name": "Latecoere Genie",
+      "display_description": "Query your data using natural language powered by Databricks Genie"
+    }
   ],
   "branding": {
     "name": "",
-    "logo": "/logos/u_logo.svg"
+    "logo": "/logos/LOGO_LATECOERE.png"
   },
   "home": {
-    "title": "Databricks App Template",
-    "description": "Build production-ready AI applications with Databricks. This template provides a complete foundation for creating intelligent agents, chat interfaces, and data-driven dashboards."
+    "title": "Latecoere portal",
+    "description": "Complete access to your agentic tools"
   },
   "dashboard": {
-    "title": "This is a very cool AI/BI Dashboard",
+    "title": "Analysis Dashboard",
     "subtitle": "And this is why it is a very cool one",
-    "dashboardId": "",
+    "dashboardId": "01f1051014f416f5a55905098c377aa1",
     "showPadding": true
   }
 }

@@ -174,7 +174,8 @@ export interface Agent {
   endpoint_url?: string;
   llm?: string;
   tools: Tool[];
-  deployment_type?: string;
+  deployment_type?: string; // "genie_space" for Genie spaces
+  genie_space_id?: string; // Databricks Genie space ID
   mlflow_experiment_id?: string;
   mlflow_experiment_url?: string;
   mlflow_traces_url?: string;

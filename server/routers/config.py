@@ -40,8 +40,8 @@ def validate_agent_config(agent_config, index: int) -> Optional[dict]:
       'display_name': f'Invalid Config #{index + 1}',
       'error': (
         f"Invalid agent format: got string '{agent_config}' but expected an object. "
-        "Each agent must be an object with 'endpoint_name' or 'mas_id'. "
-        "Example: {\"endpoint_name\": \"my-endpoint\"} or {\"mas_id\": \"uuid-here\"}"
+        "Each agent must be an object with 'endpoint_name', 'mas_id', or 'genie_space_id'. "
+        "Example: {\"endpoint_name\": \"my-endpoint\"} or {\"genie_space_id\": \"space-id\"}"
       ),
       'status': 'CONFIG_ERROR',
     }
@@ -54,23 +54,24 @@ def validate_agent_config(agent_config, index: int) -> Optional[dict]:
       'display_name': f'Invalid Config #{index + 1}',
       'error': (
         f"Invalid agent format: expected an object but got {type(agent_config).__name__}. "
-        "Each agent must be an object with 'endpoint_name' or 'mas_id'."
+        "Each agent must be an object with 'endpoint_name', 'mas_id', or 'genie_space_id'."
       ),
       'status': 'CONFIG_ERROR',
     }
 
   endpoint_name = agent_config.get('endpoint_name', '')
   mas_id = agent_config.get('mas_id', '')
+  genie_space_id = agent_config.get('genie_space_id', '')
 
-  if not endpoint_name and not mas_id:
+  if not endpoint_name and not mas_id and not genie_space_id:
     return {
       'id': f'agent-{index}',
       'name': f'agent-{index}',
       'endpoint_name': '',
       'display_name': agent_config.get('display_name', f'Invalid Config #{index + 1}'),
       'error': (
-        "Missing required field: agent must have either 'endpoint_name' or 'mas_id'. "
-        "Example: {\"endpoint_name\": \"my-endpoint\"} or {\"mas_id\": \"uuid-here\"}"
+        "Missing required field: agent must have 'endpoint_name', 'mas_id', or 'genie_space_id'. "
+        "Example: {\"endpoint_name\": \"my-endpoint\"} or {\"genie_space_id\": \"space-id\"}"
       ),
       'status': 'CONFIG_ERROR',
     }
@@ -143,6 +144,23 @@ async def get_agents():
       validation_error = validate_agent_config(agent_config, index)
       if validation_error:
         return validation_error
+
+      # Handle Genie space agents (no endpoint needed)
+      genie_space_id = agent_config.get('genie_space_id', '')
+      if genie_space_id:
+        logger.info(f'Using Genie space config for {genie_space_id}')
+        return {
+          'id': f'genie-{genie_space_id}',
+          'name': f'genie-{genie_space_id}',
+          'endpoint_name': '',
+          'genie_space_id': genie_space_id,
+          'display_name': agent_config.get('display_name', 'Genie Space'),
+          'display_description': agent_config.get('display_description', 'Query your data using natural language'),
+          'status': 'READY',
+          'deployment_type': 'genie_space',
+          'question_examples': agent_config.get('question_examples', []),
+          'tools': [],
+        }
 
       endpoint_name = agent_config.get('endpoint_name', '')
       mas_id = agent_config.get('mas_id')

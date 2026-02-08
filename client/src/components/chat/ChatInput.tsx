@@ -119,9 +119,9 @@ export function ChatInput({
               onKeyDown={handleKeyDown}
               placeholder="Message to agent..."
               disabled={disabled}
-              className={`flex-1 bg-transparent resize-none outline-none text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] min-h-[24px] max-h-[var(--chat-input-max-height)] ${compact ? "py-1 text-sm" : "py-2"}`}
+              className={`flex-1 bg-transparent resize-none outline-none text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] placeholder:tracking-wide min-h-[24px] max-h-[var(--chat-input-max-height)] ${compact ? "py-1 text-sm" : "py-2 text-[0.9375rem]"}`}
               rows={1}
-              style={{ outline: "none", boxShadow: "none" }}
+              style={{ outline: "none", boxShadow: "none", fontFamily: "var(--font-body)", letterSpacing: "-0.01em", lineHeight: "1.6" }}
             />
 
             {/* Right side controls */}
@@ -150,7 +150,10 @@ export function ChatInput({
                     ) : currentAgentHasError ? (
                       <AlertCircle className="h-3 w-3 text-red-600 flex-shrink-0" />
                     ) : null}
-                    <span className={`text-xs font-medium truncate ${currentAgentHasError ? "text-red-700" : "text-[var(--color-foreground)]"}`}>
+                    <span
+                      className={`text-[0.6875rem] font-semibold truncate tracking-wide ${currentAgentHasError ? "text-red-700" : "text-[var(--color-foreground)]"}`}
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
                       {agentsLoading ? "Loading..." : (currentAgent?.display_name || "Agent")}
                     </span>
                     {!hasMessages && !agentsLoading && (
@@ -181,15 +184,24 @@ export function ChatInput({
                             }`}
                           >
                             <div className="flex-1 min-w-0">
-                              <div className={`font-semibold text-sm leading-tight truncate ${hasError ? "text-red-700" : "text-[var(--color-foreground)]"}`}>
+                              <div
+                                className={`font-semibold text-[0.8125rem] leading-tight truncate tracking-[-0.01em] ${hasError ? "text-red-700" : "text-[var(--color-foreground)]"}`}
+                                style={{ fontFamily: "var(--font-heading)" }}
+                              >
                                 {agent.display_name}
                               </div>
                               {hasError ? (
-                                <div className="text-xs text-red-600 mt-1 leading-snug line-clamp-2">
+                                <div
+                                  className="text-[0.6875rem] text-red-600 mt-1 leading-snug line-clamp-2"
+                                  style={{ fontFamily: "var(--font-body)" }}
+                                >
                                   {agent.error}
                                 </div>
                               ) : agent.display_description ? (
-                                <div className="text-xs text-[var(--color-muted-foreground)] mt-1 leading-snug line-clamp-2">
+                                <div
+                                  className="text-[0.6875rem] text-[var(--color-muted-foreground)] mt-1 leading-snug line-clamp-2"
+                                  style={{ fontFamily: "var(--font-body)" }}
+                                >
                                   {agent.display_description}
                                 </div>
                               ) : null}
@@ -239,19 +251,28 @@ export function ChatInput({
       {/* Question Examples */}
       {questionExamples.length > 0 && !compact && (
         <div className="mt-3 flex items-center gap-x-1.5 justify-center">
-          <span className="text-sm text-[var(--color-muted-foreground)] flex-shrink-0">Try:</span>
+          <span
+            className="text-[0.8125rem] text-[var(--color-muted-foreground)] flex-shrink-0 font-medium tracking-wide"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Try:
+          </span>
           {questionExamples.slice(0, 5).map((example, index) => (
             <span key={index} className="flex items-center flex-shrink-0">
               <span className="group relative">
                 <button
                   onClick={() => handleExampleClick(example)}
                   disabled={disabled}
-                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-accent-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:underline"
+                  className="text-[0.8125rem] text-[var(--color-muted-foreground)] hover:text-[var(--color-accent-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:underline"
+                  style={{ fontFamily: "var(--font-body)" }}
                 >
                   {example.length > 35 ? `${example.slice(0, 35)}...` : example}
                 </button>
                 {/* Tooltip */}
-                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-sm text-[var(--color-foreground)] bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none whitespace-normal w-72 text-center z-50">
+                <span
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-[0.8125rem] text-[var(--color-foreground)] bg-[var(--color-background)] border border-[var(--color-border)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none whitespace-normal w-72 text-center z-50"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
                   {example}
                 </span>
               </span>

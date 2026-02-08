@@ -27,20 +27,23 @@ export function HomeView() {
 
   return (
     <>
-      <div className="h-full flex items-start pt-40 px-12">
-        <div className="w-[70%] space-y-6">
-          {/* Large title - reduced from 7xl to 5xl for better fit */}
-          <h1 className="text-5xl font-bold text-[var(--color-text-heading)] leading-tight">
+      <div className="h-full flex items-start pt-32 px-12">
+        <div className="w-[70%] space-y-8">
+          {/* Decorative accent line */}
+          <div className="w-16 h-1 bg-[var(--color-accent-primary)] rounded-full" />
+
+          {/* Large title */}
+          <h1 className="text-5xl font-bold text-[var(--color-text-heading)] leading-tight tracking-tight">
             {home.title}
           </h1>
 
-          {/* Description - takes most of the width for long descriptions */}
-          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed w-full whitespace-pre-line">
+          {/* Description */}
+          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed w-full whitespace-pre-line max-w-2xl">
             {home.description}
           </p>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end gap-4 pt-4">
+          <div className="flex items-center gap-4 pt-4">
             <Button asChild size="lg">
               <Link to="/dashboard">
                 <BarChart3 className="h-5 w-5" />
