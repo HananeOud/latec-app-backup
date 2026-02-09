@@ -190,6 +190,21 @@ databricks sync . "$WORKSPACE_SOURCE_PATH" \
   --full \
   --profile "$DATABRICKS_CONFIG_PROFILE"
 
+# Create app if it doesn't exist
+echo ""
+echo "🔍 Checking if app '$DATABRICKS_APP_NAME' exists..."
+if databricks apps get "$DATABRICKS_APP_NAME" --profile "$DATABRICKS_CONFIG_PROFILE" &> /dev/null; then
+  echo "✅ App already exists"
+else
+  echo "📱 App not found — creating '$DATABRICKS_APP_NAME'..."
+  databricks apps create "$DATABRICKS_APP_NAME" \
+    --description "Latecoere AI Portal" \
+    --profile "$DATABRICKS_CONFIG_PROFILE"
+  echo "✅ App created"
+  echo "⏳ Waiting for app to initialize..."
+  sleep 10
+fi
+
 # Deploy app
 echo ""
 echo "🎯 Deploying app: $DATABRICKS_APP_NAME..."

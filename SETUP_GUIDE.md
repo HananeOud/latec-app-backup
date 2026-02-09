@@ -348,30 +348,7 @@ The frontend proxies API calls to the backend automatically. Press `Ctrl+C` to s
 
 ## 9. Deploy to Databricks
 
-### Step 9.1: Create the app in your workspace
-
-Before the first deployment, create the app in Databricks:
-
-**Option A: Via UI**
-1. Go to your Databricks workspace
-2. Navigate to **Compute** > **Apps**
-3. Click **Create App**
-4. Enter your app name (must match `DATABRICKS_APP_NAME` in `.env.local`)
-
-**Option B: Via CLI**
-```bash
-# Load your environment variables
-source .env.local
-
-# Create the app
-databricks apps create $DATABRICKS_APP_NAME \
-  --description "Your app description" \
-  --profile DEFAULT
-```
-
-> **Important:** The app name must contain only lowercase letters, numbers, and dashes.
-
-### Step 9.2: Deploy
+### Step 9.1: Deploy
 
 Run the deployment script:
 
@@ -380,13 +357,17 @@ Run the deployment script:
 ```
 
 This will automatically:
-1. Verify Databricks CLI authentication
-2. Generate `requirements.txt` from `pyproject.toml`
-3. Build the frontend (`client/out/`)
-4. Sync all code to your workspace path
-5. Deploy the app
+1. Install missing tools (`uv`, `bun`, `databricks CLI`) if needed
+2. Verify Databricks CLI authentication
+3. Generate `requirements.txt` from `pyproject.toml`
+4. Build the frontend (`client/out/`)
+5. Sync all code to your workspace path
+6. **Create the app if it doesn't exist**
+7. Deploy the app
 
-### Step 9.3: Access your app
+> **Note:** The app name must contain only lowercase letters, numbers, and dashes.
+
+### Step 9.2: Access your app
 
 After deployment:
 1. Go to **Compute** > **Apps** in your workspace
@@ -479,11 +460,7 @@ cp .env.template .env.local
 # 5. Test locally
 ./scripts/start_dev.sh
 
-# 6. Create app in Databricks (first time only)
-source .env.local
-databricks apps create $DATABRICKS_APP_NAME --profile DEFAULT
-
-# 7. Deploy
+# 6. Deploy (creates app automatically if needed)
 ./scripts/deploy.sh
 ```
 

@@ -1,0 +1,172 @@
+================================================================================
+                    GREENFIELD PROPERTY GROUP
+                    COATING & PAINT SPECIFICATION
+                    
+    Project: Riverside Commercial Complex — Full Exterior & Interior Renovation
+    Spec Reference: GPG-SPEC-2026-0041
+    Issue Date: January 15, 2026
+    Revision: 1.0
+    
+    Prepared by: Greenfield Engineering & Compliance Division
+================================================================================
+
+1. SCOPE
+
+This specification defines the coating and paint requirements for the full
+renovation of Riverside Commercial Complex (12 buildings, mixed-use: retail,
+office, residential). The selected supplier SHALL demonstrate compliance with
+every requirement listed below. Non-compliance on any critical requirement
+is grounds for disqualification from the bid.
+
+================================================================================
+
+2. GENERAL REQUIREMENTS
+
+REQ-GEN-001: All coatings supplied MUST be from a single manufacturer to ensure
+system compatibility across primer, base coat, and topcoat layers.
+
+REQ-GEN-002: The supplier SHALL provide complete Safety Data Sheets (SDS) and
+Technical Data Sheets (TDS) for every product proposed.
+
+REQ-GEN-003: All products MUST be available for delivery within 10 business days
+of order confirmation for quantities up to 800 gallons.
+
+REQ-GEN-004: The supplier SHALL offer on-site technical consultation and
+application training for our painting crews prior to project start.
+
+REQ-GEN-005: All products MUST be compliant with current EPA VOC regulations
+for architectural coatings. Maximum VOC content: 50 g/L for interior flat,
+100 g/L for exterior coatings.
+
+REQ-GEN-006: The supplier SHALL provide a dedicated account manager for the
+duration of the project (estimated 8 months).
+
+================================================================================
+
+3. EXTERIOR COATING REQUIREMENTS
+
+REQ-EXT-001: Exterior walls REQUIRE a weather-resistant topcoat rated for a
+minimum of 10 years of UV and rain protection without significant fading or
+chalking.
+
+REQ-EXT-002: The exterior coating system MUST include a rust-inhibiting primer
+for all metal substrates (railings, structural steel, door frames).
+
+REQ-EXT-003: The rust protection primer MUST provide a minimum of 8 years of
+corrosion resistance on ferrous metals.
+
+REQ-EXT-004: Exterior coatings MUST be applicable at temperatures between
+50°F (10°C) and 95°F (35°C) with relative humidity up to 85%.
+
+REQ-EXT-005: The exterior topcoat SHALL achieve a minimum dry film thickness
+of 3.0 mils per coat.
+
+REQ-EXT-006: All exterior coatings MUST resist mildew and algae growth for a
+minimum of 5 years.
+
+REQ-EXT-007: Exterior metal coatings MUST be compatible with hot-dip galvanized
+steel surfaces without requiring a separate bonding agent.
+
+================================================================================
+
+4. INTERIOR COATING REQUIREMENTS
+
+REQ-INT-001: Interior common areas (lobbies, hallways, stairwells) REQUIRE a
+semi-gloss finish with a sheen level between 35-70 units at 60°.
+
+REQ-INT-002: The interior semi-gloss coating MUST be water-based (latex/acrylic)
+for low odor during application in occupied spaces.
+
+REQ-INT-003: Interior coatings MUST be washable and scrubbable — minimum
+Class 1 scrub resistance per ASTM D2486.
+
+REQ-INT-004: Interior coatings for residential units SHALL achieve full cure
+within 14 days and be safe for occupancy within 48 hours of final coat.
+
+REQ-INT-005: The supplier MUST offer a tintable base system with a minimum
+of 1,500 color options for interior residential units.
+
+REQ-INT-006: Interior coatings MUST meet GREENGUARD Gold certification or
+equivalent for low chemical emissions.
+
+REQ-INT-007: Coverage rate for interior coatings SHALL be a minimum of
+350 sq ft per gallon on smooth drywall surfaces.
+
+================================================================================
+
+5. PRIMER & SURFACE PREPARATION
+
+REQ-PRM-001: The supplier SHALL provide a universal primer compatible with
+drywall, wood, previously painted surfaces, and metal substrates.
+
+REQ-PRM-002: The primer MUST be stain-blocking — capable of covering water
+stains, smoke damage, and tannin bleed from wood.
+
+REQ-PRM-003: Primer dry-to-recoat time SHALL NOT exceed 2 hours under standard
+conditions (72°F / 50% RH).
+
+REQ-PRM-004: The primer MUST be sandable after 1 hour for surface preparation
+between coats.
+
+REQ-PRM-005: The primer system MUST provide adhesion to glossy or previously
+coated surfaces without requiring mechanical sanding.
+
+================================================================================
+
+6. SUSTAINABILITY & ENVIRONMENTAL
+
+REQ-ENV-001: The supplier MUST demonstrate that at least 80% of products in the
+proposed system use bio-based or recycled content materials.
+
+REQ-ENV-002: All packaging MUST be recyclable. The supplier SHALL offer a
+container return/recycling program.
+
+REQ-ENV-003: Products MUST be manufactured using renewable energy sources
+(minimum 50% of production facility energy).
+
+REQ-ENV-004: The supplier SHALL provide Environmental Product Declarations (EPD)
+or equivalent lifecycle documentation.
+
+REQ-ENV-005: All coatings MUST be zero-APE (alkylphenol ethoxylate free) and
+formaldehyde-free.
+
+================================================================================
+
+7. COMMERCIAL & LOGISTICS
+
+REQ-COM-001: The supplier MUST offer Net 30 payment terms for approved
+commercial accounts.
+
+REQ-COM-002: Pricing MUST include volume discount tiers for orders exceeding
+500 gallons per month.
+
+REQ-COM-003: The supplier SHALL maintain a regional warehouse or distribution
+point within 200 miles of the project site (Portland, OR metro area).
+
+REQ-COM-004: The supplier MUST provide batch traceability — each delivery SHALL
+include lot numbers and manufacturing dates.
+
+REQ-COM-005: The supplier SHALL guarantee color consistency across batches
+(Delta E < 1.0 between production lots).
+
+================================================================================
+
+8. COMPLIANCE VERIFICATION
+
+The supplier SHALL respond to this specification with a Compliance Matrix
+indicating, for each requirement:
+
+    - Status: COMPLIANT / PARTIAL / NON-COMPLIANT
+    - Evidence: Product name, data sheet reference, or test report
+    - Notes: Any deviations or alternative proposals
+
+Non-response to any requirement will be treated as NON-COMPLIANT.
+
+================================================================================
+
+    DOCUMENT END
+    
+    Greenfield Property Group — Procurement Division
+    Contact: specifications@greenfieldpropgroup.com
+    
+================================================================================
