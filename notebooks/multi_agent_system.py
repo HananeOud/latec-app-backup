@@ -1,5 +1,4 @@
 # Databricks notebook source
-
 # MAGIC %md
 # MAGIC # Multi-Agent System with LangGraph Supervisor + Genie
 # MAGIC
@@ -21,8 +20,8 @@
 # COMMAND ----------
 
 # DBTITLE 1,Install required packages
-%pip install -U -qqqq databricks-langchain databricks-agents mlflow langgraph langgraph-supervisor langchain-core pyyaml
-dbutils.library.restartPython()
+# MAGIC %pip install -U -qqqq databricks-langchain databricks-agents mlflow langgraph langgraph-supervisor langchain-core pyyaml
+# MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
@@ -42,7 +41,7 @@ dbutils.library.restartPython()
 # 📌 GENIE SPACE
 # Where to find it: Databricks > Genie > open your space
 #   → the space ID is in the URL: /genie/rooms/<SPACE_ID>
-GENIE_SPACE_ID = "<YOUR_GENIE_SPACE_ID>"
+GENIE_SPACE_ID = "01f1053eceae17d385bc1bb931735fa5"
 GENIE_AGENT_NAME = "DataAnalyst"
 GENIE_DESCRIPTION = (
     "Use this agent to answer questions about structured business data, "
@@ -53,7 +52,7 @@ GENIE_DESCRIPTION = (
 # 📌 KNOWLEDGE AGENT (existing serving endpoint)
 # Where to find it: Databricks > Serving > Endpoints
 #   → copy the endpoint name
-KA_ENDPOINT_NAME = "<YOUR_KA_ENDPOINT_NAME>"
+KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
 KA_AGENT_NAME = "KnowledgeAssistant"
 KA_DESCRIPTION = (
     "Use this agent to answer questions about product documentation, "
@@ -64,15 +63,16 @@ KA_DESCRIPTION = (
 # 📌 SUPERVISOR LLM
 # Where to find it: Databricks > Serving > Endpoints
 #   → pick any Foundation Model endpoint
-SUPERVISOR_LLM_ENDPOINT = "databricks-claude-sonnet-4"
+SUPERVISOR_LLM_ENDPOINT = 'databricks-claude-haiku-4-5'
+#"databricks-meta-llama-3-3-70b-instruct"
 
 # 📌 UNITY CATALOG MODEL NAME
 # Where to find it: Databricks > Catalog
 #   → format: "catalog.schema.model_name"
-UC_MODEL_NAME = "<YOUR_CATALOG>.<YOUR_SCHEMA>.mas_supervisor"
+UC_MODEL_NAME = "main.hanane_oudnia.mas_supervisor_v2"
 
 # 📌 SERVING ENDPOINT NAME (for deployment)
-ENDPOINT_NAME = "<YOUR_MAS_ENDPOINT_NAME>"
+ENDPOINT_NAME = "Ghouse_houd_mas_supervisor_v2"
 
 # COMMAND ----------
 
@@ -105,7 +105,7 @@ print(f"✅ Experiment set: {experiment_path}")
 from databricks_langchain.genie import GenieAgent
 
 genie_agent = GenieAgent(
-    space_id=GENIE_SPACE_ID,
+    genie_space_id=GENIE_SPACE_ID,
     genie_agent_name=GENIE_AGENT_NAME,
     description=GENIE_DESCRIPTION,
 )
@@ -321,7 +321,7 @@ def _build_agent():
 
     # Genie Agent
     _genie_agent = GenieAgent(
-        space_id=GENIE_SPACE_ID,
+        genie_space_id=GENIE_SPACE_ID,
         genie_agent_name=GENIE_AGENT_NAME,
         description=GENIE_DESCRIPTION,
     )
@@ -552,7 +552,7 @@ served_entity = ServedEntityInput(
     scale_to_zero_enabled=True,
     workload_size="Medium",
     environment_vars={
-        "DATABRICKS_HOST": "https://<YOUR_WORKSPACE>.cloud.databricks.com",
+        "DATABRICKS_HOST": "https://fe-sandbox-latecdemo-m6nv10.cloud.databricks.com",
         "DATABRICKS_TOKEN": "{{secrets/multi-agent-scope/serving-token}}",
     },
 )

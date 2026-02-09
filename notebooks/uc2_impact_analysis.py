@@ -1,5 +1,4 @@
 # Databricks notebook source
-
 # MAGIC %md
 # MAGIC # UC2: New Document Impact Scanner
 # MAGIC
@@ -20,8 +19,8 @@
 
 # COMMAND ----------
 
-%pip install -U -qqqq databricks-langchain mlflow langchain-core
-dbutils.library.restartPython()
+# MAGIC %pip install -U -qqqq databricks-langchain mlflow langchain-core
+# MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
@@ -35,7 +34,7 @@ dbutils.library.restartPython()
 # ╚══════════════════════════════════════════════════════════════╝
 
 # 📌 KNOWLEDGE AGENT ENDPOINT
-KA_ENDPOINT_NAME = "<YOUR_KA_ENDPOINT_NAME>"
+KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
 
 # 📌 LLM ENDPOINT for analysis
 LLM_ENDPOINT = "databricks-claude-sonnet-4"
@@ -43,7 +42,7 @@ LLM_ENDPOINT = "databricks-claude-sonnet-4"
 # 📌 PATH TO THE CLIENT REQUIREMENTS DOCUMENT IN A UC VOLUME
 # Supports: .pdf, .docx, .txt
 # Example: /Volumes/catalog/schema/volume_name/document.pdf
-DOCUMENT_PATH = "/Volumes/<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>/requirements.pdf"
+DOCUMENT_PATH = "/Volumes/main/hanane_oudnia/greensheen/Client_requirements_v2.pdf"
 
 # COMMAND ----------
 
@@ -55,6 +54,7 @@ DOCUMENT_PATH = "/Volumes/<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>/requirement
 
 # COMMAND ----------
 
+# DBTITLE 1,Untitled
 import os
 
 file_ext = os.path.splitext(DOCUMENT_PATH)[1].lower()
@@ -70,12 +70,10 @@ if file_ext == ".txt":
 elif file_ext in (".pdf", ".docx", ".doc", ".pptx", ".ppt"):
     # Use ai_parse_document for rich document parsing
     print("Parsing with ai_parse_document...")
-    df = spark.read.format("binaryFile").load(DOCUMENT_PATH)
-    result_df = df.selectExpr(
-        "ai_parse_document(content, 'text') as parsed"
-    )
-    parsed = result_df.collect()[0]["parsed"]
-    CLIENT_REQUIREMENTS = parsed
+    CLIENT_REQUIREMENTS = spark.sql(f"""
+        SELECT ai_parse_document(content, 'text')
+        FROM read_files('{DOCUMENT_PATH}', format => 'binaryFile')
+    """).collect()[0][0]
     print(f"✅ Document parsed: {len(CLIENT_REQUIREMENTS)} characters")
 
 else:
