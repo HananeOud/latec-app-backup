@@ -6,7 +6,8 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
@@ -118,7 +119,24 @@ app.include_router(chat.router, prefix=API_PREFIX, tags=['chat'])
 build_path = Path('.') / 'client/out'
 if build_path.exists():
   logger.info(f'Serving static files from {build_path}')
-  app.mount('/', StaticFiles(directory=str(build_path), html=True), name='static')
+  app.mount('/assets', StaticFiles(directory=str(build_path / 'assets')), name='assets')
+
+  # Serve other static directories (images, logos, videos)
+  for static_dir in ['images', 'logos', 'videos']:
+    dir_path = build_path / static_dir
+    if dir_path.exists():
+      app.mount(f'/{static_dir}', StaticFiles(directory=str(dir_path)), name=static_dir)
+
+  # SPA catch-all: serve index.html for any non-API route
+  # This enables client-side routing (React Router) to work on page refresh
+  @app.get('/{full_path:path}')
+  async def serve_spa(request: Request, full_path: str):
+    # Serve actual files if they exist (e.g. favicon.ico)
+    file_path = build_path / full_path
+    if full_path and file_path.is_file():
+      return FileResponse(str(file_path))
+    # Otherwise serve index.html for client-side routing
+    return FileResponse(str(build_path / 'index.html'))
 else:
   logger.warning(
     f'Build directory {build_path} not found. '

@@ -42,7 +42,7 @@ dbutils.library.restartPython()
 # 📌 GENIE SPACE
 # Where to find it: Databricks > Genie > open your space
 #   → the space ID is in the URL: /genie/rooms/<SPACE_ID>
-GENIE_SPACE_ID = "01f10471a6bd1a59ab22df10a6edda2c"
+GENIE_SPACE_ID = "01f1053eceae17d385bc1bb931735fa5"
 GENIE_AGENT_NAME = "DataAnalyst"
 GENIE_DESCRIPTION = (
     "Use this agent to answer questions about structured business data, "
@@ -53,7 +53,7 @@ GENIE_DESCRIPTION = (
 # 📌 KNOWLEDGE AGENT (existing serving endpoint)
 # Where to find it: Databricks > Serving > Endpoints
 #   → copy the endpoint name
-KA_ENDPOINT_NAME = "ka-0b0f263d-endpoint"
+KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
 KA_AGENT_NAME = "KnowledgeAssistant"
 KA_DESCRIPTION = (
     "Use this agent to answer questions about product documentation, "
@@ -142,7 +142,6 @@ def knowledge_assistant(question: str) -> str:
             endpoint=KA_ENDPOINT_NAME,
             inputs={
                 "input": [{"role": "user", "content": question}],
-                "databricks_options": {"return_trace": True},
             },
         )
 
@@ -337,7 +336,6 @@ def _build_agent():
                 endpoint=KA_ENDPOINT_NAME,
                 inputs={
                     "input": [{"role": "user", "content": question}],
-                    "databricks_options": {"return_trace": True},
                 },
             )
             if isinstance(resp, dict):
@@ -552,9 +550,9 @@ served_entity = ServedEntityInput(
     entity_name=UC_MODEL_NAME,
     entity_version=str(registered_model.version),
     scale_to_zero_enabled=True,
-    workload_size="Small",
+    workload_size="Medium",
     environment_vars={
-        "DATABRICKS_HOST": "https://e2-demo-west.cloud.databricks.com",
+        "DATABRICKS_HOST": "https://fe-sandbox-latecdemo-m6nv10.cloud.databricks.com",
         "DATABRICKS_TOKEN": "{{secrets/multi-agent-scope/serving-token}}",
     },
 )

@@ -51,3 +51,8 @@ summary.md
 
 # Old backups
 client_old_backup/
+*.bak
+*.bak2
+*.bak3
+*.orig
+*.safe

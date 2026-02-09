@@ -109,17 +109,22 @@ def get_workspace_url() -> str:
 
   # Try env var first
   host = os.getenv('DATABRICKS_HOST')
+  if not host:
+    # Fall back to WorkspaceClient config (just reads from config, not a network call)
+    try:
+      client = WorkspaceClient()
+      host = client.config.host
+    except Exception as e:
+      logger.error(f'Failed to get workspace URL: {e}')
+      return ''
+
   if host:
-    _workspace_url_cache = host.rstrip('/')
-    logger.debug(f'Got workspace URL from env: {_workspace_url_cache}')
+    host = host.rstrip('/')
+    # Ensure the URL has a scheme (https://)
+    if not host.startswith('http://') and not host.startswith('https://'):
+      host = f'https://{host}'
+    _workspace_url_cache = host
+    logger.debug(f'Workspace URL: {_workspace_url_cache}')
     return _workspace_url_cache
 
-  # Fall back to WorkspaceClient config (just reads from config, not a network call)
-  try:
-    client = WorkspaceClient()
-    _workspace_url_cache = client.config.host.rstrip('/')
-    logger.debug(f'Got workspace URL from WorkspaceClient: {_workspace_url_cache}')
-    return _workspace_url_cache
-  except Exception as e:
-    logger.error(f'Failed to get workspace URL: {e}')
-    return ''
+  return ''
