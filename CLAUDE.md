@@ -1,14 +1,74 @@
-# AI Assistant Guide - Databricks GenAI App Template
+# AI Assistant Guide — Latecoere AI Portal
 
-This file helps AI assistants understand the project structure, patterns, and implementation details.
+This file helps AI assistants (Claude Code, Cursor, etc.) understand the project and guide users through deployment.
+
+## DEPLOYMENT — START HERE
+
+When a user asks to deploy this app, follow these steps:
+
+### Step 1: Configure `.env.local`
+
+```bash
+cp .env.template .env.local
+```
+
+Ask the user for these 4 values and fill them in:
+
+| Variable | What to ask | Example |
+|----------|------------|---------|
+| `DATABRICKS_HOST` | "What is your Databricks workspace URL?" | `https://adb-123456789.cloud.databricks.com` |
+| `DATABRICKS_TOKEN` | "What is your Personal Access Token? (Settings > Developer > Access Tokens)" | `dapi...` |
+| `DATABRICKS_APP_NAME` | "What do you want to name the app? (lowercase, dashes only)" | `latec-app` |
+| `WORKSPACE_SOURCE_PATH` | "What is your Databricks email?" then construct: `/Workspace/Users/<email>/<app-name>` | `/Workspace/Users/user@company.com/latec-app` |
+
+### Step 2: Configure `config/app.json`
+
+Ask the user which agents they have and fill in the `agents` array:
+
+- **Knowledge Agent**: Ask for `endpoint_name` (found in Serving > Endpoints)
+- **Genie Space**: Ask for `genie_space_id` (found in URL: `/genie/rooms/<ID>`)
+- **Native MAS**: Ask for `mas_id` (found in Agent Bricks)
+- **Dashboard**: Ask for `dashboardId` (found in URL: `/sql/dashboardsv3/<ID>`) or set to `""` to disable
+
+The branding (Latecoere logo, colors, fonts) is already configured — do NOT change it.
+
+### Step 3: Deploy
+
+```bash
+./scripts/deploy.sh
+```
+
+The script auto-installs tools, builds the frontend, creates the app if needed, and deploys.
+
+### Step 4: Post-Deployment (if agents show errors)
+
+**Quick fix (recommended for demos):** Add PAT to `app.yaml`:
+```yaml
+env:
+  - name: DATABRICKS_HOST
+    value: "https://the-workspace-url"
+  - name: DATABRICKS_TOKEN
+    value: "the-users-pat"
+```
+Then re-run `./scripts/deploy.sh`.
+
+**Production fix:** Grant the app's service principal permissions:
+- Serving endpoints: **CAN_QUERY**
+- Native MAS tiles: **CAN_MANAGE** (not just CAN_QUERY)
+- Genie spaces: **CAN_RUN**
+- Dashboards: **CAN_RUN**
+
+Find the SP name: Compute > Apps > the app > look for `app-xxxxx`.
+
+---
 
 ## Project Overview
 
-A template for building production-ready AI agent applications with Databricks. Features:
-- **Handler Pattern**: Pluggable deployment types (databricks-endpoint current, local-agent/openai planned)
+Latecoere AI Portal — a branded AI agent application on Databricks. Features:
+- **Vite/React + FastAPI**: Static frontend export served by FastAPI backend
+- **Handler Pattern**: Pluggable deployment types (databricks-endpoint)
 - **Strategy Pattern**: Authentication strategies (HttpTokenAuth, WorkspaceClientAuth)
 - **MLflow Integration**: Tracing and feedback collection
-- **Vite/React + FastAPI**: Static frontend export served by FastAPI backend
 - **In-memory storage**: Chat history (10 chat limit)
 
 ## Package Management
@@ -28,16 +88,12 @@ A template for building production-ready AI agent applications with Databricks. 
 
 ```bash
 # Start dev servers (backend:8000, frontend:3000)
-# First run will prompt to install deps and create .env.local
 ./scripts/start_dev.sh
 
 # Format code (ruff + prettier)
 ./scripts/fix.sh
 
-# Lint and type check
-./scripts/check.sh
-
-# Deploy to Databricks Apps
+# Deploy to Databricks Apps (creates app if needed)
 ./scripts/deploy.sh
 ```
 
@@ -45,36 +101,28 @@ A template for building production-ready AI agent applications with Databricks. 
 
 **IMPORTANT - Know where configs go:**
 
-`.env.local` (local development only, gitignored):
+`.env.local` (local development + deployment, gitignored):
 ```bash
-DATABRICKS_HOST=https://adb-123456789.azuredatabricks.net
+DATABRICKS_HOST=https://your-workspace.cloud.databricks.com
 DATABRICKS_TOKEN=dapi...  # PAT token
-DATABRICKS_APP_NAME=my-app  # Optional, for deployment
-WORKSPACE_SOURCE_PATH=/Workspace/Users/...  # Optional, for deployment
-LAKEBASE_PG_URL=postgresql://...  # Optional, enables PostgreSQL chat storage
+DATABRICKS_APP_NAME=latec-app
+WORKSPACE_SOURCE_PATH=/Workspace/Users/user@company.com/latec-app
 ```
 
-`config/app.json` (unified config - agents, branding, dashboard):
+`config/app.json` (agents, branding, dashboard):
 ```json
 {
-  "agents": [{
-    "mas_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "question_examples": ["What can you help me with?"]
-  }],
-  "branding": {
-    "name": "My Company",
-    "logo": "/logos/logo.svg"
-  },
-  "dashboard": {
-    "iframeUrl": "",
-    "showPadding": true
-  }
+  "agents": [
+    { "endpoint_name": "ka-xxxxxxxx-endpoint", "display_name": "Latecoere KA" },
+    { "mas_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "display_name": "Latecoere MAS" },
+    { "genie_space_id": "01fxxxxx", "display_name": "Latecoere Genie" }
+  ],
+  "branding": { "name": "", "logo": "/logos/LOGO_LATECOERE.png" },
+  "dashboard": { "dashboardId": "your-dashboard-id" }
 }
 ```
 
-`config/about.json` (about page content with hero, sections, CTA)
-
-`app.yaml` (Databricks Apps deployment config)
+`app.yaml` (Databricks Apps runtime config — add PAT here for demo approach)
 
 ## Project Structure
 
