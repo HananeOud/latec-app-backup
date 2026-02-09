@@ -11,8 +11,6 @@ A production-ready template for building AI agent applications on Databricks. Fe
 - **Genie Space Integration** — natural language data queries via Databricks Genie API
 - **Dashboard Embedding** — embed Lakeview dashboards directly in the app
 - **Theme Customization** — colors, fonts, and branding via config
-- **MAS Notebooks** — ready-to-run notebooks to build and deploy your own Multi-Agent System
-- **UC2 Impact Analysis** — document impact scanner notebook with `ai_parse_document` support
 
 ---
 
@@ -38,22 +36,9 @@ All customer-specific values are marked with `<PLACEHOLDER>` tags. Here is the c
 | `<YOUR_LAKEVIEW_DASHBOARD_ID>` | Dashboard UUID (or `""` to disable) | Dashboard URL: `/sql/dashboardsv3/<ID>` |
 | `your-logo.png` | Your company logo filename | Place file in `client/public/logos/` |
 
-### 3. MAS Notebooks: `notebooks/multi_agent_simple.py` and `notebooks/multi_agent_system.py`
+### 3. (Optional) MAS Notebooks
 
-| Placeholder | Replace with | Where to find it |
-|-------------|-------------|-----------------|
-| `<YOUR_GENIE_SPACE_ID>` | Genie space UUID | Same as above |
-| `<YOUR_KA_ENDPOINT_NAME>` | KA endpoint name | Same as above |
-| `<YOUR_CATALOG>.<YOUR_SCHEMA>` | Unity Catalog path | Workspace > Catalog > pick a catalog.schema you own |
-| `<YOUR_MAS_ENDPOINT_NAME>` | Name for the new MAS endpoint | Choose any name (e.g. `my-mas-endpoint`) |
-| `<YOUR_WORKSPACE>` | Your workspace hostname | Same as `.env.local` |
-
-### 4. UC2 Impact Analysis: `notebooks/uc2_impact_analysis.py`
-
-| Placeholder | Replace with | Where to find it |
-|-------------|-------------|-----------------|
-| `<YOUR_KA_ENDPOINT_NAME>` | KA endpoint name | Same as above |
-| `<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>` | UC Volume path to your document | Workspace > Catalog > Volumes |
+The `notebooks/` folder contains optional notebooks to build and deploy your own Multi-Agent System. Each notebook has its own `<PLACEHOLDER>` values to fill in — see the instructions inside each file.
 
 ---
 
@@ -93,30 +78,6 @@ databricks apps create $DATABRICKS_APP_NAME --description "My AI Portal"
 
 ---
 
-## Included Notebooks
-
-### `notebooks/multi_agent_simple.py` — Simple Multi-Agent System
-
-A lightweight MAS using **ChatDatabricks with tool-calling** as the supervisor. The LLM decides which tool (Genie or Knowledge Agent) to call based on the user's question.
-
-**When to use:** Quick setup, fewer dependencies, full control over routing logic.
-
-### `notebooks/multi_agent_system.py` — Full LangGraph Supervisor
-
-A more advanced MAS using **LangGraph Supervisor** pattern. Each agent runs as a separate node in a graph, with a supervisor LLM orchestrating the flow.
-
-**When to use:** Complex multi-step workflows, need for agent handoffs, production-grade orchestration.
-
-### `notebooks/uc2_impact_analysis.py` — Document Impact Scanner
-
-Takes a new requirements document (PDF or text), extracts requirements, searches your Knowledge Base for matches, and generates a gap analysis report.
-
-**Supports:** PDF via `ai_parse_document`, DOCX, plain text. Documents are read from UC Volumes.
-
-**When to use:** Analyzing new client requirements against your existing knowledge base.
-
----
-
 ## Agent Types
 
 The app supports three types of agents in `config/app.json`:
@@ -148,12 +109,11 @@ After deploying to Databricks Apps, the app runs as a **service principal**. You
 
 | What | File | Details |
 |------|------|---------|
-| Agents & branding | `config/app.json` | Agent endpoints, logo, titles, dashboard |
+| Agents & branding | `config/app.json` | Agent endpoints, titles, dashboard (logo already set) |
 | Brand colors | `client/src/lib/themes.ts` | `accentPrimary`, `animatedBgColor`, etc. |
 | Custom fonts | `client/src/styles/globals.css` | Add `@import url(...)` for Google Fonts |
 | Top bar color | `client/src/components/layout/TopBar.tsx` | Search for `bg-[#0C1C3E]` |
 | About page | `client/src/components/about/AboutView.tsx` | Section titles, descriptions, images |
-| Logo | `client/public/logos/` | Place your `.png` or `.svg` file here |
 | Images | `client/public/images/` | Replace with your own images |
 
 ---
@@ -174,17 +134,17 @@ After deploying to Databricks Apps, the app runs as a **service principal**. You
 ## Project Structure
 
 ```
-├── config/app.json               # <-- EDIT THIS: agents, branding, dashboard
+├── config/app.json               # <-- EDIT THIS: agent endpoints, dashboard ID
 ├── .env.local                    # <-- EDIT THIS: workspace URL, token, app name
-├── notebooks/
-│   ├── multi_agent_simple.py     # <-- EDIT THIS: MAS notebook (simple version)
-│   ├── multi_agent_system.py     # <-- EDIT THIS: MAS notebook (LangGraph version)
-│   └── uc2_impact_analysis.py    # <-- EDIT THIS: Document impact analysis
+├── notebooks/                    # Optional: MAS and UC2 notebooks
+│   ├── multi_agent_simple.py     # Simple MAS (tool-calling supervisor)
+│   ├── multi_agent_system.py     # Full LangGraph MAS
+│   └── uc2_impact_analysis.py    # Document impact analysis
 ├── server/                       # FastAPI backend (no changes needed)
-├── client/                       # React frontend
-│   ├── public/logos/             # <-- PUT YOUR LOGO HERE
-│   ├── public/images/            # <-- PUT YOUR IMAGES HERE
-│   └── src/lib/themes.ts        # <-- OPTIONAL: brand colors
+├── client/                       # React frontend (branding already configured)
+│   ├── public/logos/             # Latecoere logo included
+│   ├── public/images/            # Images for about page
+│   └── src/lib/themes.ts        # Optional: adjust brand colors
 ├── scripts/
 │   ├── start_dev.sh              # Local development
 │   └── deploy.sh                 # Deploy to Databricks Apps
