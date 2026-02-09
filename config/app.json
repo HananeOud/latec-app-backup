@@ -1,43 +1,32 @@
 {
-  "app_name": "Latec_app",
+  "app_name": "My_App",
   "enable_tracker": true,
   "demo_catalog_id": "",
   "agents": [
     {
-      "endpoint_name": "ka-0b0f263d-endpoint",
-      "display_name": "Latecoere KA",
-      "question_examples": ["How long does the rust protection last with RustBlock Enamel"],
-      "mlflow_experiment_id": "556739606318052"
+      "endpoint_name": "<YOUR_KA_ENDPOINT_NAME>",
+      "display_name": "Knowledge Agent",
+      "display_description": "Ask questions about your documents and knowledge base",
+      "question_examples": ["What is our return policy?", "Summarize the latest report"]
     },
     {
-      "endpoint_name": "mas-5c903a9d-endpoint",
-      "display_name": "Latecoere MAS",
-      "question_examples": ["What can you help me with?"]
-    },
-    {
-      "genie_space_id": "01f10471a6bd1a59ab22df10a6edda2c",
-      "display_name": "Latecoere Genie",
+      "genie_space_id": "<YOUR_GENIE_SPACE_ID>",
+      "display_name": "Data Analyst",
       "display_description": "Query your data using natural language powered by Databricks Genie"
-    },
-    {
-      "endpoint_name": "Ghouse_houd_mas_cust",
-      "display_name": "Intelligent Assistant",
-      "display_description": "Your all-in-one assistant — answers from documents and data in one place",
-      "question_examples": ["What can you help me with?", "Show me Jane Doe's purchase history"]
     }
   ],
   "branding": {
     "name": "",
-    "logo": "/logos/LOGO_LATECOERE.png"
+    "logo": "/logos/your-logo.png"
   },
   "home": {
-    "title": "Latecoere portal",
+    "title": "Your Company Portal",
     "description": "Complete access to your agentic tools"
   },
   "dashboard": {
     "title": "Analysis Dashboard",
-    "subtitle": "And this is why it is a very cool one",
-    "dashboardId": "01f1051014f416f5a55905098c377aa1",
+    "subtitle": "Interactive business intelligence",
+    "dashboardId": "<YOUR_LAKEVIEW_DASHBOARD_ID>",
     "showPadding": true
   }
 }

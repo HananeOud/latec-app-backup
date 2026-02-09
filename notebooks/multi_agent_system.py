@@ -42,7 +42,7 @@ dbutils.library.restartPython()
 # 📌 GENIE SPACE
 # Where to find it: Databricks > Genie > open your space
 #   → the space ID is in the URL: /genie/rooms/<SPACE_ID>
-GENIE_SPACE_ID = "01f1053eceae17d385bc1bb931735fa5"
+GENIE_SPACE_ID = "<YOUR_GENIE_SPACE_ID>"
 GENIE_AGENT_NAME = "DataAnalyst"
 GENIE_DESCRIPTION = (
     "Use this agent to answer questions about structured business data, "
@@ -53,7 +53,7 @@ GENIE_DESCRIPTION = (
 # 📌 KNOWLEDGE AGENT (existing serving endpoint)
 # Where to find it: Databricks > Serving > Endpoints
 #   → copy the endpoint name
-KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
+KA_ENDPOINT_NAME = "<YOUR_KA_ENDPOINT_NAME>"
 KA_AGENT_NAME = "KnowledgeAssistant"
 KA_DESCRIPTION = (
     "Use this agent to answer questions about product documentation, "
@@ -69,10 +69,10 @@ SUPERVISOR_LLM_ENDPOINT = "databricks-claude-sonnet-4"
 # 📌 UNITY CATALOG MODEL NAME
 # Where to find it: Databricks > Catalog
 #   → format: "catalog.schema.model_name"
-UC_MODEL_NAME = "users.hanane_oudnia.mas_supervisor_v2"
+UC_MODEL_NAME = "<YOUR_CATALOG>.<YOUR_SCHEMA>.mas_supervisor"
 
 # 📌 SERVING ENDPOINT NAME (for deployment)
-ENDPOINT_NAME = "Ghouse_houd_mas_supervisor_v2"
+ENDPOINT_NAME = "<YOUR_MAS_ENDPOINT_NAME>"
 
 # COMMAND ----------
 
@@ -552,7 +552,7 @@ served_entity = ServedEntityInput(
     scale_to_zero_enabled=True,
     workload_size="Medium",
     environment_vars={
-        "DATABRICKS_HOST": "https://fe-sandbox-latecdemo-m6nv10.cloud.databricks.com",
+        "DATABRICKS_HOST": "https://<YOUR_WORKSPACE>.cloud.databricks.com",
         "DATABRICKS_TOKEN": "{{secrets/multi-agent-scope/serving-token}}",
     },
 )

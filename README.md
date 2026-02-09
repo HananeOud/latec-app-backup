@@ -1,310 +1,160 @@
 # Databricks GenAI App Template
 
-A production-ready template for building AI agent applications on Databricks. Features a modern React chat interface with streaming responses, FastAPI backend, support for Serving Endpoints, Multi-Agent Supervisors, and Genie Spaces, optional PostgreSQL persistence, and one-command deployment to Databricks Apps.
-
-![Chat Interface](docs/images/chat-ui.png)
+A production-ready template for building AI agent applications on Databricks. Features a React chat interface, FastAPI backend, support for Serving Endpoints, Multi-Agent Systems, and Genie Spaces, and one-command deployment to Databricks Apps.
 
 ---
 
-## Table of Contents
+## What You Get
 
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Local Development](#local-development)
-- [Deployment](#deployment)
-- [Customization](#customization)
-- [Troubleshooting](#troubleshooting)
-
----
-
-## Key Features
-
-- **Multi-Agent Chat** — connect Serving Endpoints, Multi-Agent Supervisors (MAS), and Genie Spaces
-- **Streaming Responses** — real-time SSE streaming with function call notifications
-- **Genie Space Integration** — natural language data queries via the Databricks Genie API
-- **MLflow Tracing** — view agent traces, tool calls, and token usage in the UI
-- **User Feedback** — thumbs up/down logged to MLflow for evaluation
+- **Multi-Agent Chat UI** — connect Knowledge Agents, custom MAS endpoints, and Genie Spaces
+- **Streaming Responses** — real-time SSE streaming with tool call notifications
+- **Genie Space Integration** — natural language data queries via Databricks Genie API
 - **Dashboard Embedding** — embed Lakeview dashboards directly in the app
-- **Theme Customization** — in-app editor for colors, fonts, and animated backgrounds
-- **Chart Rendering** — automatic visualization of tabular data from agent responses
-- **Persistent Chat History** — optional PostgreSQL storage via Databricks Lakebase
+- **Theme Customization** — colors, fonts, and branding via config
+- **MAS Notebooks** — ready-to-run notebooks to build and deploy your own Multi-Agent System
+- **UC2 Impact Analysis** — document impact scanner notebook with `ai_parse_document` support
 
 ---
 
-## Tech Stack
+## What You Need to Change
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | Vite, React 18, TypeScript, Tailwind CSS, Radix UI |
-| **Backend** | FastAPI, Python 3.11+, async SQLAlchemy |
-| **Database** | In-memory (default) or PostgreSQL via Databricks Lakebase |
-| **AI/ML** | Databricks Model Serving, Genie API, MLflow |
-| **Deployment** | Databricks Apps with OAuth authentication |
+All customer-specific values are marked with `<PLACEHOLDER>` tags. Here is the complete list:
+
+### 1. Environment: `.env.local`
+
+| Placeholder | Replace with | Where to find it |
+|-------------|-------------|-----------------|
+| `<YOUR_WORKSPACE>` | Your Databricks workspace hostname | Browser URL bar (e.g. `adb-123456789.azuredatabricks.net`) |
+| `dapi_your_token_here` | Your Personal Access Token | Workspace > Settings > Developer > Access Tokens |
+| `my-company-app` | Your app name (lowercase, dashes) | Choose any name |
+| `your.email@company.com` | Your Databricks email | Your login email |
+
+### 2. App Config: `config/app.json`
+
+| Placeholder | Replace with | Where to find it |
+|-------------|-------------|-----------------|
+| `<YOUR_KA_ENDPOINT_NAME>` | Knowledge Agent endpoint name | Workspace > Serving > Endpoints > copy **Name** |
+| `<YOUR_GENIE_SPACE_ID>` | Genie space UUID | Workspace > Genie > open space > ID in URL: `/genie/rooms/<ID>` |
+| `<YOUR_LAKEVIEW_DASHBOARD_ID>` | Dashboard UUID (or `""` to disable) | Dashboard URL: `/sql/dashboardsv3/<ID>` |
+| `your-logo.png` | Your company logo filename | Place file in `client/public/logos/` |
+
+### 3. MAS Notebooks: `notebooks/multi_agent_simple.py` and `notebooks/multi_agent_system.py`
+
+| Placeholder | Replace with | Where to find it |
+|-------------|-------------|-----------------|
+| `<YOUR_GENIE_SPACE_ID>` | Genie space UUID | Same as above |
+| `<YOUR_KA_ENDPOINT_NAME>` | KA endpoint name | Same as above |
+| `<YOUR_CATALOG>.<YOUR_SCHEMA>` | Unity Catalog path | Workspace > Catalog > pick a catalog.schema you own |
+| `<YOUR_MAS_ENDPOINT_NAME>` | Name for the new MAS endpoint | Choose any name (e.g. `my-mas-endpoint`) |
+| `<YOUR_WORKSPACE>` | Your workspace hostname | Same as `.env.local` |
+
+### 4. UC2 Impact Analysis: `notebooks/uc2_impact_analysis.py`
+
+| Placeholder | Replace with | Where to find it |
+|-------------|-------------|-----------------|
+| `<YOUR_KA_ENDPOINT_NAME>` | KA endpoint name | Same as above |
+| `<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>` | UC Volume path to your document | Workspace > Catalog > Volumes |
 
 ---
 
-## Installation
-
-### Step 1: Install Required Tools
-
-| Tool | Purpose | Install |
-|------|---------|---------|
-| **uv** | Python package manager | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| **bun** | JavaScript runtime & bundler | `curl -fsSL https://bun.sh/install \| bash` |
-| **Databricks CLI** | Deployment to workspace | `curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh \| sh` |
-
-### Step 2: Clone and Install Dependencies
+## Quick Start (5 minutes)
 
 ```bash
-git clone https://github.com/HananeOud/databricks-genai-app-template.git
-cd databricks-genai-app-template
+# 1. Install tools (one-time)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+curl -fsSL https://bun.sh/install | bash
+curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-# Install Python dependencies
+# 2. Install dependencies
 uv sync
-
-# Install frontend dependencies
 cd client && bun install && cd ..
-```
 
-### Step 3: Create Your Environment File
-
-```bash
+# 3. Configure environment
 cp .env.template .env.local
-```
+# Edit .env.local → fill in your workspace URL, token, app name, path
 
-Edit `.env.local` with your Databricks workspace details:
+# 4. Configure agents
+# Edit config/app.json → replace <PLACEHOLDERS> with your IDs
 
-```env
-# REQUIRED — Your Databricks workspace URL
-DATABRICKS_HOST=https://your-workspace.cloud.databricks.com
+# 5. (Optional) Replace branding
+# Put your logo in client/public/logos/
+# Update logo path in config/app.json
 
-# REQUIRED — Personal Access Token (for local dev only; not needed in production)
-# Generate from: Workspace > Settings > Developer > Access Tokens
-DATABRICKS_TOKEN=dapi_your_token_here
-
-# REQUIRED FOR DEPLOYMENT — App name (lowercase, numbers, dashes only)
-DATABRICKS_APP_NAME=my-company-app
-
-# REQUIRED FOR DEPLOYMENT — Where code is synced in your workspace
-WORKSPACE_SOURCE_PATH=/Workspace/Users/your.email@company.com/my-company-app
-
-# OPTIONAL — Persistent chat history via Databricks Lakebase
-LAKEBASE_PG_URL=postgresql://user:pass@host/databricks_postgres?sslmode=require
-LAKEBASE_PROJECT_ID=your-project-id
-```
-
-| Variable | Where to find it |
-|----------|-----------------|
-| `DATABRICKS_HOST` | Your workspace URL in the browser (e.g. `https://adb-123456789.azuredatabricks.net`) |
-| `DATABRICKS_TOKEN` | Workspace > Profile (top-right) > **Settings** > **Developer** > **Access tokens** > Generate new token |
-| `DATABRICKS_APP_NAME` | Choose any name: lowercase, numbers, dashes (e.g. `sales-ai-portal`) |
-| `WORKSPACE_SOURCE_PATH` | `/Workspace/Users/<your-databricks-email>/<app-name>` |
-| `LAKEBASE_PG_URL` | Workspace > **Lakebase** > your project > **Connection** tab |
-| `LAKEBASE_PROJECT_ID` | From the Lakebase project URL: `.../lakebase/projects/<this-id>` |
-
-### Step 4: Configure Your Agents
-
-Edit `config/app.json` and replace the `agents` array with your own. The app supports three agent types:
-
-```json
-{
-  "agents": [
-    {
-      "endpoint_name": "your-serving-endpoint-name",
-      "display_name": "Knowledge Agent",
-      "display_description": "Ask questions about your documents",
-      "question_examples": ["What is our return policy?"],
-      "mlflow_experiment_id": "123456789"
-    },
-    {
-      "endpoint_name": "your-mas-endpoint-name",
-      "display_name": "Multi-Agent Assistant",
-      "question_examples": ["What can you help me with?"]
-    },
-    {
-      "genie_space_id": "your-genie-space-id",
-      "display_name": "Data Analyst",
-      "display_description": "Query your data using natural language"
-    }
-  ]
-}
-```
-
-| Agent Type | Config Key | Where to find the ID |
-|------------|-----------|----------------------|
-| **Serving Endpoint** | `endpoint_name` | Workspace > **Serving** > click endpoint > copy the **Name** |
-| **Multi-Agent Supervisor** | `endpoint_name` | Workspace > **Serving** > find the MAS endpoint name |
-| **Genie Space** | `genie_space_id` | Workspace > **Genie** > open your space > copy ID from URL: `.../genie/rooms/<this-id>` |
-
-Optional agent fields:
-
-| Field | Description |
-|-------|-------------|
-| `display_name` | Friendly name shown in the chat UI |
-| `display_description` | Description in the agent selector dropdown |
-| `question_examples` | Clickable example questions shown below the chat input |
-| `mlflow_experiment_id` | Links traces to an MLflow experiment for feedback |
-
-### Step 5: Update Branding
-
-In the same `config/app.json`, update the branding and home page:
-
-```json
-{
-  "branding": {
-    "name": "Your Company",
-    "logo": "/logos/your-logo.png"
-  },
-  "home": {
-    "title": "Your Portal Title",
-    "description": "A short description for the home page"
-  },
-  "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Your dashboard description",
-    "dashboardId": "your-lakeview-dashboard-id",
-    "showPadding": true
-  }
-}
-```
-
-- **Logo**: Place your logo file in `client/public/logos/` and reference it in the config
-- **Dashboard ID**: Find it in the Lakeview dashboard URL: `.../sql/dashboardsv3/<this-id>`. Set to `""` to disable the dashboard tab.
-
-### Step 6: Customize Theme Colors (Optional)
-
-To match your brand colors, edit `client/src/lib/themes.ts`. The key values to change:
-
-```typescript
-colors: {
-  accentPrimary: "#0055A4",   // Your brand color (buttons, links, accents)
-  textHeading: "#1A1A1A",     // Heading text color
-  bgPrimary: "#FFFFFF",       // Main background
-  animatedBgColor: "#0C1C3E", // Animated background particles
-}
-```
-
-To use custom fonts, update the Google Fonts import in `client/src/styles/globals.css`:
-
-```css
-@import url("https://fonts.googleapis.com/css2?family=YourFont:wght@400;500;600;700&display=swap");
-```
-
-Then set them in `themes.ts`:
-
-```typescript
-typography: {
-  primaryFont: '"YourHeadingFont", sans-serif',
-  secondaryFont: '"YourBodyFont", sans-serif',
-}
-```
-
----
-
-## Local Development
-
-Run the app locally to test before deploying:
-
-```bash
+# 6. Test locally
 ./scripts/start_dev.sh
-```
 
-This starts:
-- **Backend** (FastAPI): http://localhost:8000
-- **Frontend** (Vite): http://localhost:3000
-
-Press `Ctrl+C` to stop both servers.
-
-### Verification Checklist
-
-- [ ] Home page loads with your branding and logo
-- [ ] Agents appear in the chat input dropdown
-- [ ] Sending a message returns a response
-- [ ] Dashboard tab shows your embedded dashboard (if configured)
-
----
-
-## Deployment
-
-### First-time: Create the App
-
-**Option A — Via the Databricks UI:**
-1. Go to your workspace > **Compute** > **Apps**
-2. Click **Create App**
-3. Enter the name matching `DATABRICKS_APP_NAME` in your `.env.local`
-
-**Option B — Via CLI:**
-```bash
+# 7. Create app (first time only)
 source .env.local
-databricks apps create $DATABRICKS_APP_NAME --description "Your app description"
-```
+databricks apps create $DATABRICKS_APP_NAME --description "My AI Portal"
 
-> **Note:** App names must be lowercase letters, numbers, and dashes only.
-
-### Deploy
-
-```bash
+# 8. Deploy
 ./scripts/deploy.sh
 ```
 
-This automatically:
-1. Generates `requirements.txt` from `pyproject.toml`
-2. Builds the frontend to `client/out/`
-3. Syncs all code to your Databricks workspace
-4. Deploys the app via Databricks Apps
+---
 
-### After Deployment
+## Included Notebooks
 
-- **Access**: Workspace > **Compute** > **Apps** > click your app
-- **URL**: `https://<app-name>-<workspace-id>.aws.databricksapps.com`
-- **Logs**: App page > **Logs** tab
-- **Health**: `https://<your-app-url>/api/health`
-- **Update**: Just re-run `./scripts/deploy.sh` after any changes
+### `notebooks/multi_agent_simple.py` — Simple Multi-Agent System
 
-> **Production auth**: Databricks Apps handles OAuth automatically — no tokens needed.
+A lightweight MAS using **ChatDatabricks with tool-calling** as the supervisor. The LLM decides which tool (Genie or Knowledge Agent) to call based on the user's question.
+
+**When to use:** Quick setup, fewer dependencies, full control over routing logic.
+
+### `notebooks/multi_agent_system.py` — Full LangGraph Supervisor
+
+A more advanced MAS using **LangGraph Supervisor** pattern. Each agent runs as a separate node in a graph, with a supervisor LLM orchestrating the flow.
+
+**When to use:** Complex multi-step workflows, need for agent handoffs, production-grade orchestration.
+
+### `notebooks/uc2_impact_analysis.py` — Document Impact Scanner
+
+Takes a new requirements document (PDF or text), extracts requirements, searches your Knowledge Base for matches, and generates a gap analysis report.
+
+**Supports:** PDF via `ai_parse_document`, DOCX, plain text. Documents are read from UC Volumes.
+
+**When to use:** Analyzing new client requirements against your existing knowledge base.
+
+---
+
+## Agent Types
+
+The app supports three types of agents in `config/app.json`:
+
+| Type | Config Key | Description |
+|------|-----------|-------------|
+| **Serving Endpoint** | `endpoint_name` | Any model or agent deployed to Databricks Model Serving |
+| **Multi-Agent System** | `endpoint_name` | A custom MAS deployed via the included notebooks |
+| **Genie Space** | `genie_space_id` | Databricks Genie for natural language SQL queries |
+
+You can configure as many agents as you want. Users switch between them in the chat UI.
+
+---
+
+## Post-Deployment Checklist
+
+After deploying to Databricks Apps, the app runs as a **service principal**. You must grant it access:
+
+- [ ] **Serving Endpoints**: Go to Serving > your endpoint > Permissions > add the app's service principal with `CAN_QUERY`
+- [ ] **Genie Spaces**: Share the Genie space with the app's service principal
+- [ ] **Dashboards**: Share the Lakeview dashboard with the app's service principal
+- [ ] **MLflow Experiments**: Grant access if using feedback logging
+
+> **Tip:** Find the service principal name in Compute > Apps > your app > it shows as `app-xxxxx <app-name>`.
 
 ---
 
 ## Customization
 
-### About Page Content
-
-Edit `client/src/components/about/AboutView.tsx` to update section titles, descriptions, and feature lists. Replace images in `client/public/images/`.
-
-### Top Navigation Bar Color
-
-In `client/src/components/layout/TopBar.tsx`, search for `bg-[#0C1C3E]` and replace with your brand's dark color.
-
-### Adding New Pages
-
-1. Create `client/src/pages/YourPage.tsx`
-2. Add a route in `client/src/App.tsx`
-3. Add a tab in `client/src/components/layout/TopBar.tsx`
-
-### Adding Backend Endpoints
-
-```python
-# server/routers/your_router.py
-from fastapi import APIRouter
-router = APIRouter()
-
-@router.get('/your-endpoint')
-async def your_endpoint():
-    return {"data": "value"}
-
-# Register in server/app.py
-from .routers import your_router
-app.include_router(your_router.router, prefix='/api')
-```
-
-### Chat Storage
-
-| Mode | Config | Details |
-|------|--------|---------|
-| **In-Memory** (default) | No config needed | Max 10 chats/user, lost on restart |
-| **PostgreSQL** (production) | Set `LAKEBASE_PG_URL` | Persistent, migrations run automatically |
+| What | File | Details |
+|------|------|---------|
+| Agents & branding | `config/app.json` | Agent endpoints, logo, titles, dashboard |
+| Brand colors | `client/src/lib/themes.ts` | `accentPrimary`, `animatedBgColor`, etc. |
+| Custom fonts | `client/src/styles/globals.css` | Add `@import url(...)` for Google Fonts |
+| Top bar color | `client/src/components/layout/TopBar.tsx` | Search for `bg-[#0C1C3E]` |
+| About page | `client/src/components/about/AboutView.tsx` | Section titles, descriptions, images |
+| Logo | `client/public/logos/` | Place your `.png` or `.svg` file here |
+| Images | `client/public/images/` | Replace with your own images |
 
 ---
 
@@ -312,60 +162,36 @@ app.include_router(your_router.router, prefix='/api')
 
 | Issue | Solution |
 |-------|----------|
-| `App name must contain only lowercase letters, numbers, and dashes` | Rename `DATABRICKS_APP_NAME` in `.env.local` to use only `a-z`, `0-9`, `-` |
-| `WORKSPACE_SOURCE_PATH is not set` | Set it in `.env.local` to `/Workspace/Users/<your-email>/<app-name>` |
-| `does not have Manage permissions` | Check the casing of your email in `WORKSPACE_SOURCE_PATH` — must match your Databricks username exactly |
-| `Maximum number of apps reached` | Delete unused apps in **Compute** > **Apps** |
-| `Agent not found` | Verify `endpoint_name` or `genie_space_id` in `config/app.json` |
-| `Serving endpoint is not ready` | Check endpoint status in **Serving** — must show **Ready** |
-| `Genie error: 'id'` | Ensure `genie_space_id` in `config/app.json` is correct |
-| Dashboard shows blank | Verify `dashboardId` and that the app service principal has access |
-| Auth errors (local) | Check `DATABRICKS_HOST` and `DATABRICKS_TOKEN` in `.env.local` |
-| Auth errors (production) | The app service principal needs access to your endpoints and Genie spaces |
-| Chat history lost on restart | Set `LAKEBASE_PG_URL` in `.env.local` for persistent storage |
-| Build failures | Run `uv sync` and `cd client && bun install`, then retry |
+| `No Agents Configured` | Check `config/app.json` — each agent needs `endpoint_name` or `genie_space_id` |
+| `Agent not found` / `403` | Grant `CAN_QUERY` permission to the app's service principal on the endpoint |
+| Dashboard shows blank | Check `dashboardId` and grant dashboard access to the service principal |
+| `Maximum number of apps reached` | Delete unused apps in Compute > Apps |
+| Fonts not loading | Ensure fonts are imported in `client/src/styles/globals.css` |
+| `.env.local` not working | Make sure `.env.local` is NOT uploaded to the workspace (it's for local dev only) |
 
 ---
 
 ## Project Structure
 
 ```
-databricks-genai-app-template/
-├── config/
-│   └── app.json                 # Agents, branding, dashboard config
-├── server/                       # FastAPI backend
-│   ├── app.py                   # Entry point
-│   ├── routers/                 # API endpoints (agent, chat, config, health)
-│   ├── services/agents/handlers/# Agent handlers (endpoint, genie)
-│   ├── services/chat/           # Storage backends (memory, postgres)
-│   └── db/                      # SQLAlchemy models & migrations
+├── config/app.json               # <-- EDIT THIS: agents, branding, dashboard
+├── .env.local                    # <-- EDIT THIS: workspace URL, token, app name
+├── notebooks/
+│   ├── multi_agent_simple.py     # <-- EDIT THIS: MAS notebook (simple version)
+│   ├── multi_agent_system.py     # <-- EDIT THIS: MAS notebook (LangGraph version)
+│   └── uc2_impact_analysis.py    # <-- EDIT THIS: Document impact analysis
+├── server/                       # FastAPI backend (no changes needed)
 ├── client/                       # React frontend
-│   ├── src/components/          # UI components (chat, layout, about, etc.)
-│   ├── src/lib/themes.ts        # Color themes and typography
-│   ├── src/styles/              # CSS (globals, theme variables)
-│   └── public/                  # Static assets (logos, images)
+│   ├── public/logos/             # <-- PUT YOUR LOGO HERE
+│   ├── public/images/            # <-- PUT YOUR IMAGES HERE
+│   └── src/lib/themes.ts        # <-- OPTIONAL: brand colors
 ├── scripts/
-│   ├── start_dev.sh             # Start local dev servers
-│   └── deploy.sh                # Deploy to Databricks Apps
-├── .env.template                 # Environment variables template
-├── app.yaml                      # Databricks Apps runtime config
-├── SETUP_GUIDE.md                # Detailed setup guide
-└── pyproject.toml                # Python dependencies
-```
-
-## Development Commands
-
-```bash
-./scripts/start_dev.sh   # Start backend + frontend locally
-./scripts/deploy.sh      # Build and deploy to Databricks Apps
-./scripts/fix.sh         # Format code (ruff + prettier)
-./scripts/check.sh       # Lint and type check
+│   ├── start_dev.sh              # Local development
+│   └── deploy.sh                 # Deploy to Databricks Apps
+├── app.yaml                      # Databricks Apps runtime config (no changes needed)
+└── SETUP_GUIDE.md                # Detailed step-by-step setup guide
 ```
 
 ---
-
-## License
-
- 2025 Databricks, Inc. All rights reserved. Subject to the [Databricks License](https://databricks.com/db-license-source).
 
 For the detailed step-by-step guide, see **[SETUP_GUIDE.md](SETUP_GUIDE.md)**.
