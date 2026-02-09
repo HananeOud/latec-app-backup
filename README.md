@@ -85,23 +85,73 @@ The app supports three types of agents in `config/app.json`:
 | Type | Config Key | Description |
 |------|-----------|-------------|
 | **Serving Endpoint** | `endpoint_name` | Any model or agent deployed to Databricks Model Serving |
-| **Multi-Agent System** | `endpoint_name` | A custom MAS deployed via the included notebooks |
+| **Native MAS** (Agent Bricks) | `mas_id` | A MAS created in Agent Bricks — auto-discovers sub-agents, doc counts, table counts |
+| **Custom MAS** | `endpoint_name` | A custom MAS deployed via the included notebooks |
 | **Genie Space** | `genie_space_id` | Databricks Genie for natural language SQL queries |
 
 You can configure as many agents as you want. Users switch between them in the chat UI.
 
 ---
 
-## Post-Deployment Checklist
+## Post-Deployment: Authentication & Access Rights
 
-After deploying to Databricks Apps, the app runs as a **service principal**. You must grant it access:
+After deploying to Databricks Apps, the app needs credentials to call your agents, Genie spaces, and dashboards. There are **two approaches**:
 
-- [ ] **Serving Endpoints**: Go to Serving > your endpoint > Permissions > add the app's service principal with `CAN_QUERY`
-- [ ] **Genie Spaces**: Share the Genie space with the app's service principal
-- [ ] **Dashboards**: Share the Lakeview dashboard with the app's service principal
-- [ ] **MLflow Experiments**: Grant access if using feedback logging
+---
 
-> **Tip:** Find the service principal name in Compute > Apps > your app > it shows as `app-xxxxx <app-name>`.
+### Approach A: Service Principal (Production — recommended)
+
+By default, Databricks Apps run as an **auto-created service principal** (SP). No tokens to manage, but you must grant the SP access to every resource the app uses.
+
+> **Find your SP name:** Go to Compute > Apps > your app. The SP is listed as `app-xxxxx <app-name>`.
+
+#### Required Permissions
+
+| Resource | Where to grant | Permission level | Notes |
+|----------|---------------|-----------------|-------|
+| **Serving Endpoints** (KA, custom MAS) | Serving > endpoint > Permissions | **CAN_QUERY** | Required for each `endpoint_name` in config |
+| **Native MAS tile** (Agent Bricks) | Agent Bricks > MAS > Share | **CAN_MANAGE** | Required when using `mas_id` in config. `CAN_QUERY` is **not enough** — the app needs to read tile metadata (sub-agents, descriptions, doc/table counts) |
+| **Genie Spaces** | Genie > space > Share | **CAN_RUN** | Required for each `genie_space_id` in config |
+| **Lakeview Dashboards** | Dashboard > Share | **CAN_RUN** | Required if `dashboardId` is set in config |
+| **MLflow Experiments** | Experiment > Permissions | **CAN_MANAGE** | Required for feedback logging (thumbs up/down) |
+
+#### Common issues with this approach
+
+- `"You do not have read access to the agent"` → The SP needs **CAN_MANAGE** on the MAS tile (not just CAN_QUERY)
+- `"No Agents Configured"` with all agents failing → One agent's permission error can crash all agents; check SP access on every resource
+- `403 Permission Denied` → SP is missing CAN_QUERY on the serving endpoint
+
+---
+
+### Approach B: Personal Access Token (Demos & Hackathons — quick setup)
+
+Use your own PAT so the app runs with **your identity**. Simpler setup — no per-resource permissions needed since you already have access to everything.
+
+#### How to set it up
+
+Add these environment variables to your `app.yaml`:
+
+```yaml
+env:
+  - name: DATABRICKS_HOST
+    value: "https://your-workspace.cloud.databricks.com"
+  - name: DATABRICKS_TOKEN
+    value: "dapi_your_token_here"
+```
+
+Then redeploy. The app will use your PAT instead of the SP's OAuth token.
+
+#### Trade-offs
+
+| | Service Principal | Personal Access Token |
+|---|---|---|
+| **Setup** | Grant permissions on each resource | Just add 2 env vars to `app.yaml` |
+| **Token expiry** | Never (auto-managed OAuth) | PAT expires (default 90 days) |
+| **Identity** | App has its own identity | All actions run as you |
+| **Best for** | Production, shared apps | Demos, hackathons, quick testing |
+| **MAS native view** | Needs CAN_MANAGE on tile | Works automatically |
+
+> **Important:** If using Approach B, make sure `.env.local` is **NOT** in the deployed workspace — it can override `app.yaml` variables and cause conflicts.
 
 ---
 
@@ -122,12 +172,16 @@ After deploying to Databricks Apps, the app runs as a **service principal**. You
 
 | Issue | Solution |
 |-------|----------|
-| `No Agents Configured` | Check `config/app.json` — each agent needs `endpoint_name` or `genie_space_id` |
-| `Agent not found` / `403` | Grant `CAN_QUERY` permission to the app's service principal on the endpoint |
-| Dashboard shows blank | Check `dashboardId` and grant dashboard access to the service principal |
+| `No Agents Configured` | Check `config/app.json` — each agent needs `endpoint_name`, `mas_id`, or `genie_space_id` |
+| `MAS Unavailable` / `no read access` | Grant **CAN_MANAGE** (not CAN_QUERY) on the MAS tile in Agent Bricks > Share |
+| `Agent not found` / `403` | Grant `CAN_QUERY` permission to the app's service principal on the serving endpoint |
+| All agents fail at once | One agent's unhandled error can cascade — check permissions on every configured resource |
+| Dashboard shows blank | Check `dashboardId` and grant **CAN_RUN** on the dashboard to the SP |
+| Genie not responding | Share the Genie space with the SP (**CAN_RUN**) |
 | `Maximum number of apps reached` | Delete unused apps in Compute > Apps |
 | Fonts not loading | Ensure fonts are imported in `client/src/styles/globals.css` |
 | `.env.local` not working | Make sure `.env.local` is NOT uploaded to the workspace (it's for local dev only) |
+| PAT approach not working | Check that `DATABRICKS_TOKEN` in `app.yaml` is valid and not expired |
 
 ---
 
