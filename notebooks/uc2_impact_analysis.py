@@ -34,7 +34,7 @@
 # ╚══════════════════════════════════════════════════════════════╝
 
 # 📌 KNOWLEDGE AGENT ENDPOINT
-KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
+KA_ENDPOINT_NAME = "<YOUR_KA_ENDPOINT_NAME>"
 
 # 📌 LLM ENDPOINT for analysis
 LLM_ENDPOINT = "databricks-claude-sonnet-4"
@@ -42,7 +42,7 @@ LLM_ENDPOINT = "databricks-claude-sonnet-4"
 # 📌 PATH TO THE CLIENT REQUIREMENTS DOCUMENT IN A UC VOLUME
 # Supports: .pdf, .docx, .txt
 # Example: /Volumes/catalog/schema/volume_name/document.pdf
-DOCUMENT_PATH = "/Volumes/main/hanane_oudnia/greensheen/Client_requirements_v2.pdf"
+DOCUMENT_PATH = "/Volumes/<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>/requirements.pdf"
 
 # COMMAND ----------
 

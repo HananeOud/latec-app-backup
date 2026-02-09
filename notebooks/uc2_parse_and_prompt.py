@@ -14,7 +14,7 @@
 # COMMAND ----------
 
 # 📌 PATH TO THE CLIENT REQUIREMENTS DOCUMENT
-DOCUMENT_PATH = "/Volumes/main/hanane_oudnia/greensheen/Client_requirements_v2.pdf"
+DOCUMENT_PATH = "/Volumes/<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>/requirements.pdf"
 
 # 📌 LLM for extracting requirements
 LLM_ENDPOINT = "databricks-claude-haiku-4-5"
@@ -64,7 +64,7 @@ print(f"\n--- Preview (first 500 chars) ---\n{doc_text[:500]}")
 
 # Re-run parsing after Python restart
 import os
-DOCUMENT_PATH = "/Volumes/main/hanane_oudnia/greensheen/Client_requirements_v2.pdf"
+DOCUMENT_PATH = "/Volumes/<YOUR_CATALOG>/<YOUR_SCHEMA>/<YOUR_VOLUME>/requirements.pdf"
 LLM_ENDPOINT = "databricks-claude-haiku-4-5"
 
 file_ext = os.path.splitext(DOCUMENT_PATH)[1].lower()

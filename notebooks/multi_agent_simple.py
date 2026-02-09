@@ -35,12 +35,12 @@
 # 📌 GENIE SPACE ID
 # Where to find it: Databricks > Genie > open your space
 #   → the ID is in the URL: /genie/rooms/<SPACE_ID>
-GENIE_SPACE_ID = "01f1053eceae17d385bc1bb931735fa5"
+GENIE_SPACE_ID = "<YOUR_GENIE_SPACE_ID>"
 
 # 📌 KNOWLEDGE AGENT ENDPOINT
 # Where to find it: Databricks > Serving > Endpoints
 #   → copy the endpoint name
-KA_ENDPOINT_NAME = "ka-e33b52a8-endpoint"
+KA_ENDPOINT_NAME = "<YOUR_KA_ENDPOINT_NAME>"
 
 # 📌 SUPERVISOR LLM ENDPOINT
 # Where to find it: Databricks > Serving > Endpoints
@@ -50,11 +50,11 @@ SUPERVISOR_LLM_ENDPOINT = "databricks-claude-haiku-4-5"
 # 📌 UNITY CATALOG MODEL NAME
 # Where to find it: Databricks > Catalog
 #   → pick a catalog.schema you have write access to
-UC_MODEL_NAME = "main.hanane_oudnia.mas_model_sim"
+UC_MODEL_NAME = "<YOUR_CATALOG>.<YOUR_SCHEMA>.mas_model_simple"
 
 # 📌 SERVING ENDPOINT NAME (for deployment)
 # Choose a name for the new endpoint that will be created
-ENDPOINT_NAME = "Ghouse_houd_mas_cust"
+ENDPOINT_NAME = "<YOUR_MAS_ENDPOINT_NAME>"
 
 # COMMAND ----------
 
@@ -638,7 +638,7 @@ served_entity = ServedEntityInput(
     scale_to_zero_enabled=True,
     workload_size="Medium",
     environment_vars={
-        "DATABRICKS_HOST": "https://fe-sandbox-latecdemo-m6nv10.cloud.databricks.com",
+        "DATABRICKS_HOST": "https://<YOUR_WORKSPACE>.cloud.databricks.com",
         "DATABRICKS_TOKEN": "{{secrets/multi-agent-scope/serving-token}}",
     },
 )
@@ -697,7 +697,7 @@ print(resp)
 # MAGIC Update `config/app.json`:
 # MAGIC ```json
 # MAGIC {
-# MAGIC   "endpoint_name": "Ghouse_houd_mas_cust",
+# MAGIC   "endpoint_name": "<YOUR_MAS_ENDPOINT_NAME>",
 # MAGIC   "display_name": "Multi-Agent Assistant",
 # MAGIC   "question_examples": ["What can you help me with?"]
 # MAGIC }
