@@ -15,7 +15,7 @@ import logging
 import os
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-import fitz  # type: ignore[import-untyped]  # pymupdf
+import pymupdf  # type: ignore[import-untyped]
 import httpx
 from fastapi import APIRouter, File, Request, UploadFile
 from fastapi.responses import StreamingResponse
@@ -78,10 +78,10 @@ def _pdf_pages_to_base64_images(pdf_bytes: bytes, dpi: int = 150) -> List[str]:
   Returns:
     List of base64-encoded PNG strings (one per page, capped at MAX_PAGES_PER_PDF).
   """
-  doc = fitz.open(stream=pdf_bytes, filetype='pdf')
+  doc = pymupdf.open(stream=pdf_bytes, filetype='pdf')
   images: List[str] = []
-  zoom = dpi / 72  # fitz default is 72 dpi
-  matrix = fitz.Matrix(zoom, zoom)
+  zoom = dpi / 72  # pymupdf default is 72 dpi
+  matrix = pymupdf.Matrix(zoom, zoom)
 
   for i, page in enumerate(doc):
     if i >= MAX_PAGES_PER_PDF:
@@ -99,7 +99,7 @@ def _pdf_pages_to_base64_images(pdf_bytes: bytes, dpi: int = 150) -> List[str]:
 
 def _extract_pdf_text(pdf_bytes: bytes) -> str:
   """Extract all text from a PDF using pymupdf (fallback context)."""
-  doc = fitz.open(stream=pdf_bytes, filetype='pdf')
+  doc = pymupdf.open(stream=pdf_bytes, filetype='pdf')
   pages: List[str] = []
   for page in doc:
     pages.append(page.get_text())
