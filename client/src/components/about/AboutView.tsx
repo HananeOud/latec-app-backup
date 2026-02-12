@@ -127,27 +127,28 @@ export function AboutView() {
                 <div className="space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Aerostructures
+                      Architecture
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Engineering the future of flight
+                    Intraqual's Building Blocks
                   </h2>
-                  <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Latecoere designs and manufactures critical aerostructure components for the world&apos;s leading aircraft manufacturers. From doors to fuselage sections, our solutions combine lightweight performance with the highest safety standards.
-                  </p>
                   <ul className="space-y-3 mt-6">
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Aircraft doors for commercial and military platforms</span>
+                      <span>A web application for end users</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Fuselage sections and structural assemblies</span>
+                      <span>A knowledge assistant (AI Agent with tools)</span>
                     </li>
                     <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
                       <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>eVTOL doors for next-generation air mobility</span>
+                      <span>Structured Data Base</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
+                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
+                      <span>Documents & unstructured data</span>
                     </li>
                   </ul>
                 </div>
@@ -169,29 +170,15 @@ export function AboutView() {
                 <div className="md:col-start-2 space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Interconnection Systems
+                      Game Changing Features
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Connecting every system on board
+                    Intelligent Revision Impact Analysis
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Latecoere provides the critical wiring, avionics, and electronic systems that connect aircraft from nose to tail. Our interconnection solutions ensure reliable communication, power distribution, and data flow across all on-board systems.
+                    Submit a new document for revision, and the assistant will instantly analyze what's new, what changed, and what's removed across all 3,000+ documents in Intraqual
                   </p>
-                  <ul className="space-y-3 mt-6">
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>EWIS &amp; Space harnesses for wiring architecture</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Avionics racks and equipment integration</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>On-board video surveillance and camera systems</span>
-                    </li>
-                  </ul>
                 </div>
                 <div className="md:col-start-1 md:row-start-1">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
@@ -211,83 +198,19 @@ export function AboutView() {
                 <div className="space-y-6">
                   <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
                     <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Innovation &amp; Technology
+                      Game Changing Features
                     </span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    Pioneering the industry of the future
+                    Intraqual Knowledge Assistant
                   </h2>
                   <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    Latecoere continuously invests in research and cutting-edge technology to anticipate the needs of tomorrow&apos;s aerospace industry. From supersonic flight to electric vertical takeoff, we are at the forefront of aviation&apos;s next chapter.
+                    Simple and powerful natural language assistant that answers in a few seconds, while staying grounded in our context.
                   </p>
-                  <ul className="space-y-3 mt-6">
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>AR-powered quality inspections for manufacturing</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>eVTOL door systems for urban air mobility</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>EWIS architecture for supersonic aircraft (Boom Overture)</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Satellite platform collaboration with Airbus Defence &amp; Space</span>
-                    </li>
-                  </ul>
                 </div>
                 <div>
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
                     <img src="/images/latecoere_innovation.jpg" alt="Latecoere Innovation - Boom Overture supersonic aircraft" className="w-full h-full object-cover" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 4: Global Presence */}
-              <div
-                id="global-presence"
-                data-section
-                className={`grid md:grid-cols-2 gap-12 md:gap-16 items-center transition-all duration-1000 md:grid-flow-dense ${
-                  isVisible("global-presence") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-                }`}
-              >
-                <div className="md:col-start-2 space-y-6">
-                  <div className="inline-block px-3 py-1 bg-[var(--color-accent-primary)]/10 rounded-full">
-                    <span className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wide">
-                      Global Presence
-                    </span>
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] leading-tight">
-                    A worldwide industrial footprint
-                  </h2>
-                  <p className="text-lg text-[var(--color-text-primary)] leading-relaxed">
-                    With subsidiaries and production sites across the globe, Latecoere operates close to its customers on every continent. Our international network ensures agility, quality, and on-time delivery for the world&apos;s most demanding aerospace programs.
-                  </p>
-                  <ul className="space-y-3 mt-6">
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Headquarters in Toulouse, France &mdash; the heart of European aerospace</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Production sites in Europe, North America, and North Africa</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Tier 1 partner to Airbus, Boeing, Bombardier, Embraer, and Dassault</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-[var(--color-text-primary)]">
-                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-primary)] mt-2" />
-                      <span>Over 5,000 employees across 13 countries</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="md:col-start-1 md:row-start-1">
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                    <img src="/images/latecoere_global.jpg" alt="Latecoere Global Presence - Subsidiaries around the world" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
@@ -298,16 +221,16 @@ export function AboutView() {
             <div className="mt-32 text-center">
               <div className="max-w-3xl mx-auto p-12 md:p-16 bg-[#0C1C3E] rounded-3xl shadow-xl">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Explore Our AI-Powered Tools
+                  Explore Intraqual
                 </h2>
                 <p className="text-lg text-white/90 mb-8">
-                  Discover the intelligent agents and agentic tools built for Latecoere operations.
+                  Interact with our knowledge base like never before.
                 </p>
                 <a
                   href="/tools"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0C1C3E] font-semibold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 group"
                 >
-                  Explore Tools
+                  Explore
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>

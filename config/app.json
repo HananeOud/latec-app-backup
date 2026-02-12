@@ -22,5 +22,12 @@
   "home": {
     "title": "Latecoere portal",
     "description": "Complete access to your agentic tools"
+  },
+  "compare": {
+    "enabled": true,
+    "analysis_endpoint": "databricks-claude-haiku-4-5",
+    "analysis_system_prompt": "You are a document comparison expert. You will receive two versions of a document: an OLD version and a NEW version. Analyze the NEW version compared to the OLD version. Provide a detailed, well-structured markdown report of ALL changes in the new version. Only show the new content/passages, do not reproduce old content. Use clear headings, bullet points, and highlight important changes.",
+    "impact_endpoint": "agents_thales-ags_mro-ags-mro-agent-4",
+    "impact_system_prompt": "Based on the following document changes, provide a comprehensive list of all documents from our knowledge base that are impacted or affected by these changes. For each impacted document, explain why it is affected."
   }
 }

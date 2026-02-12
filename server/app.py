@@ -18,7 +18,7 @@ from .config_loader import config_loader
 
 # Routers for organizing endpoints
 from .db import run_migrations
-from .routers import agent, chat, config, health
+from .routers import agent, chat, compare, config, health
 from .services.chat import init_storage
 
 # Configure logging for Databricks Apps monitoring
@@ -111,6 +111,7 @@ app.include_router(health.router, prefix=API_PREFIX, tags=['health'])
 app.include_router(config.router, prefix=API_PREFIX, tags=['configuration'])
 app.include_router(agent.router, prefix=API_PREFIX, tags=['agents'])
 app.include_router(chat.router, prefix=API_PREFIX, tags=['chat'])
+app.include_router(compare.router, prefix=API_PREFIX, tags=['compare'])
 
 # Production: Serve Vite static build
 # Vite builds to 'out' directory (configured in vite.config.ts)
