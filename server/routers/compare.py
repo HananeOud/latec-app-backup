@@ -1,8 +1,8 @@
 """Compare endpoints for document diff analysis and impact assessment.
 
 Provides two streaming SSE endpoints:
-1. /compare/analyze — Upload two PDFs, send pages as images to a vision-capable
-   LLM (e.g. databricks-claude-haiku-4-5) and stream a markdown diff.
+1. /compare/analyze — Upload two PDFs as native document blocks to a Claude
+   endpoint (e.g. databricks-claude-haiku-4-5) and stream a markdown diff.
 2. /compare/impact — Send the diff text to a RAG endpoint for impact analysis.
 
 Configuration is read from config/app.json under the "compare" key.
@@ -15,7 +15,6 @@ import logging
 import os
 from typing import Any, AsyncGenerator, Dict, List, Tuple
 
-import pymupdf  # type: ignore[import-untyped]
 import httpx
 from fastapi import APIRouter, File, Request, UploadFile
 from fastapi.responses import StreamingResponse
@@ -26,9 +25,6 @@ from ..config_loader import config_loader
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-
-# Maximum pages per PDF to send as images (Claude allows up to 100 images total)
-MAX_PAGES_PER_PDF = 20
 
 
 # =============================================================================
@@ -68,43 +64,9 @@ def _get_databricks_credentials(request: Request) -> Tuple[str, str]:
 # =============================================================================
 
 
-def _pdf_pages_to_base64_images(pdf_bytes: bytes, dpi: int = 150) -> List[str]:
-  """Render each PDF page as a PNG and return base64-encoded strings.
-
-  Args:
-    pdf_bytes: Raw PDF file content.
-    dpi: Resolution for rendering. 150 is a good balance of quality vs size.
-
-  Returns:
-    List of base64-encoded PNG strings (one per page, capped at MAX_PAGES_PER_PDF).
-  """
-  doc = pymupdf.open(stream=pdf_bytes, filetype='pdf')
-  images: List[str] = []
-  zoom = dpi / 72  # pymupdf default is 72 dpi
-  matrix = pymupdf.Matrix(zoom, zoom)
-
-  for i, page in enumerate(doc):
-    if i >= MAX_PAGES_PER_PDF:
-      logger.warning(
-        f'PDF has {len(doc)} pages, capping at {MAX_PAGES_PER_PDF} for the API call'
-      )
-      break
-    pixmap = page.get_pixmap(matrix=matrix)
-    png_bytes = pixmap.tobytes('png')
-    images.append(base64.b64encode(png_bytes).decode('ascii'))
-
-  doc.close()
-  return images
-
-
-def _extract_pdf_text(pdf_bytes: bytes) -> str:
-  """Extract all text from a PDF using pymupdf (fallback context)."""
-  doc = pymupdf.open(stream=pdf_bytes, filetype='pdf')
-  pages: List[str] = []
-  for page in doc:
-    pages.append(page.get_text())
-  doc.close()
-  return '\n\n'.join(pages)
+def _pdf_to_base64(pdf_bytes: bytes) -> str:
+  """Encode raw PDF bytes as a base64 string for the document content block."""
+  return base64.b64encode(pdf_bytes).decode('ascii')
 
 
 # =============================================================================
@@ -181,7 +143,7 @@ async def _stream_analysis_httpx(
   """Stream from a Databricks chat-completion endpoint via httpx.
 
   Uses the /serving-endpoints/{name}/invocations URL with streaming enabled.
-  This allows us to send multimodal content blocks (image_url) which the
+  This allows us to send native document content blocks which the
   MLflow deployments client does not support.
   """
   url = f'{host}/serving-endpoints/{endpoint_name}/invocations'
@@ -372,9 +334,8 @@ async def analyze_documents(
 ):
   """Compare two PDF documents and stream a markdown diff analysis.
 
-  Sends PDF pages as images (multimodal content blocks) to a vision-capable
-  endpoint (e.g. Claude Haiku) and streams the response back as SSE.
-  Also includes extracted text as fallback context.
+  Sends PDFs as native document content blocks to a Claude endpoint
+  (e.g. databricks-claude-haiku-4-5) and streams the response back as SSE.
   """
   try:
     cfg = _get_compare_config()
@@ -411,52 +372,35 @@ async def analyze_documents(
       media_type='text/event-stream',
     )
 
-  # Convert pages to images + extract text (for fallback context)
-  try:
-    old_images = _pdf_pages_to_base64_images(old_bytes)
-    new_images = _pdf_pages_to_base64_images(new_bytes)
-    old_text = _extract_pdf_text(old_bytes)
-    new_text = _extract_pdf_text(new_bytes)
-  except Exception as e:
-    logger.error(f'PDF processing failed: {e}')
-    return StreamingResponse(
-      _error_stream(f'Failed to process PDF files: {e}'),
-      media_type='text/event-stream',
-    )
+  # Encode PDFs as base64 for native document content blocks
+  old_b64 = _pdf_to_base64(old_bytes)
+  new_b64 = _pdf_to_base64(new_bytes)
 
   logger.info(
-    f'Processed PDFs: old={len(old_images)} pages, new={len(new_images)} pages, '
-    f'old_text={len(old_text)} chars, new_text={len(new_text)} chars'
+    f'Encoded PDFs: old={len(old_bytes)} bytes, new={len(new_bytes)} bytes'
   )
 
-  # Build multimodal content blocks
-  content_blocks: List[Dict[str, Any]] = []
-
-  # Old version: label + page images
-  content_blocks.append({'type': 'text', 'text': f'--- OLD VERSION ({old_file.filename}) ---'})
-  for img_b64 in old_images:
-    content_blocks.append({
-      'type': 'image_url',
-      'image_url': {'url': f'data:image/png;base64,{img_b64}'},
-    })
-
-  # New version: label + page images
-  content_blocks.append({'type': 'text', 'text': f'--- NEW VERSION ({new_file.filename}) ---'})
-  for img_b64 in new_images:
-    content_blocks.append({
-      'type': 'image_url',
-      'image_url': {'url': f'data:image/png;base64,{img_b64}'},
-    })
-
-  # Also include extracted text as additional context
-  content_blocks.append({
-    'type': 'text',
-    'text': (
-      f'\n\n--- EXTRACTED TEXT (for additional context) ---\n\n'
-      f'OLD VERSION TEXT:\n{old_text}\n\n'
-      f'NEW VERSION TEXT:\n{new_text}'
-    ),
-  })
+  # Build native document content blocks (Anthropic format supported by Databricks)
+  content_blocks: List[Dict[str, Any]] = [
+    {'type': 'text', 'text': f'--- OLD VERSION ({old_file.filename}) ---'},
+    {
+      'type': 'document',
+      'source': {
+        'type': 'base64',
+        'media_type': 'application/pdf',
+        'data': old_b64,
+      },
+    },
+    {'type': 'text', 'text': f'--- NEW VERSION ({new_file.filename}) ---'},
+    {
+      'type': 'document',
+      'source': {
+        'type': 'base64',
+        'media_type': 'application/pdf',
+        'data': new_b64,
+      },
+    },
+  ]
 
   messages: List[Dict[str, Any]] = []
   if system_prompt:
