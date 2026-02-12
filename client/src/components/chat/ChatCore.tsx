@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, ArrowDown } from "lucide-react";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
 import { FeedbackModal } from "@/components/modals/FeedbackModal";
@@ -99,9 +99,12 @@ export function ChatCore({
   >([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const activeStreamChatIdRef = useRef<string | undefined>(undefined);
   const abortReasonRef = useRef<"user_stopped" | "chat_switched" | null>(null);
+  const justSentMessageRef = useRef(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   // Load chat messages when chatId changes
   useEffect(() => {
@@ -138,9 +141,39 @@ export function ChatCore({
     }
   }, [chatId, currentSessionId]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Check if scroll container has content below the viewport
+  const isNearBottom = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return true;
+    const threshold = 100;
+    return container.scrollTop + container.clientHeight >= container.scrollHeight - threshold;
+  };
+
+  // Handle manual scroll events - hide button when user scrolls to bottom
+  const handleScroll = () => {
+    if (isNearBottom()) {
+      setShowScrollButton(false);
+    }
+  };
+
+  // When messages change: scroll once for user's own message, then never auto-scroll during streaming
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length === 0) {
+      setShowScrollButton(false);
+      return;
+    }
+
+    // User just sent a message - scroll to show it, then reset the flag
+    if (justSentMessageRef.current) {
+      justSentMessageRef.current = false;
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    // During streaming / new content: never auto-scroll, just show button if content overflows
+    if (!isNearBottom()) {
+      setShowScrollButton(true);
+    }
   }, [messages]);
 
   // Auto-send initial message if provided
@@ -160,6 +193,7 @@ export function ChatCore({
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setShowScrollButton(false);
   };
 
   const loadChatHistory = async (id: string) => {
@@ -239,6 +273,7 @@ export function ChatCore({
     if (!content.trim()) return;
 
     devLog("Sending message:", content);
+    justSentMessageRef.current = true;
 
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
@@ -680,7 +715,9 @@ export function ChatCore({
   return (
     <div className="flex flex-col h-full bg-transparent">
       <div
-        className={`flex-1 overflow-y-auto overflow-x-hidden bg-transparent ${compact ? "pb-2" : "pb-6"}`}
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className={`flex-1 overflow-y-auto overflow-x-hidden bg-transparent relative ${compact ? "pb-2" : "pb-6"}`}
       >
         {isLoadingHistory ? (
           <div className="flex flex-col items-center justify-center h-full">
@@ -704,6 +741,20 @@ export function ChatCore({
             />
             <div ref={messagesEndRef} />
           </>
+        )}
+
+        {/* "Continue below" floating button */}
+        {showScrollButton && (
+          <div className="sticky bottom-4 flex justify-center pointer-events-none z-10">
+            <button
+              onClick={scrollToBottom}
+              className="pointer-events-auto flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-background)] border border-[var(--color-border)]/60 shadow-[0_2px_12px_rgba(0,0,0,0.12)] backdrop-blur-md text-[0.8125rem] font-medium text-[var(--color-foreground)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.16)] hover:border-[var(--color-accent-primary)]/40 transition-all duration-200 cursor-pointer"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              <ArrowDown className="h-3.5 w-3.5" />
+              Continue below
+            </button>
+          </div>
         )}
       </div>
 

@@ -107,7 +107,7 @@ export function ChatInput({
 
   return (
     <div className={compact ? "px-3 py-2 bg-transparent" : "px-6 py-4 bg-transparent"}>
-      <div className={compact ? "" : "max-w-4xl mx-auto"}>
+      <div className={compact ? "" : "max-w-5xl mx-auto"}>
         <div className={`relative bg-[var(--color-background)]/70 backdrop-blur-xl backdrop-saturate-150 shadow-lg border border-[var(--color-border)]/40 focus-within:border-[var(--color-accent-primary)]/50 focus-within:shadow-xl transition-all duration-300 ${compact ? "rounded-2xl" : "rounded-3xl"}`}>
           {/* Main Input Area */}
           <div className={`flex items-end gap-2 ${compact ? "p-2.5" : "p-4"}`}>

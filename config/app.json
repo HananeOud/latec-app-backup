@@ -7,7 +7,7 @@
       "endpoint_name": "agents_thales-ags_mro-ags-mro-agent-4",
       "display_name": "Latecoere KA",
       "display_description": "Ask questions about your documents and knowledge base",
-      "question_examples": ["How long does the rust protection last with RustBlock Enamel"]
+      "question_examples": ["What tools do you have?"]
     },
     {
       "genie_space_id": "<YOUR_GENIE_SPACE_ID>",

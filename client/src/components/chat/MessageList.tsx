@@ -33,14 +33,14 @@ export function MessageList({
             className={`mb-3 text-[var(--color-text-heading)] tracking-[-0.03em] leading-tight ${compact ? "text-xl font-semibold" : "text-3xl font-bold"}`}
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            {agent?.chat_title || "AI Assistant"}
+            {agent?.chat_title || "Intraqual Knowledge Assistant"}
           </h2>
           <p
             className={`text-[var(--color-text-muted)] leading-relaxed ${compact ? "text-sm" : "text-[0.9375rem]"}`}
             style={{ fontFamily: "var(--font-body)", fontWeight: 400 }}
           >
             {agent?.chat_subtitle ||
-              "Start a conversation with your AI assistant."}
+              "Start a conversation with Intraqual."}
           </p>
         </div>
       </div>
@@ -48,7 +48,7 @@ export function MessageList({
   }
 
   return (
-    <div className={`flex flex-col w-full ${compact ? "gap-3 p-3" : "gap-5 p-4 max-w-4xl mx-auto"}`}>
+    <div className={`flex flex-col w-full ${compact ? "gap-3 p-3" : "gap-5 p-4 max-w-5xl mx-auto"}`}>
       {messages.map((message) => (
         <Message
           key={message.id}

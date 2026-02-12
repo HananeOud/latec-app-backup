@@ -102,7 +102,7 @@ export function Message({ message, onFeedback, onViewTrace, compact = false }: M
       {/* Message Content */}
       <div
         className={`min-w-0 ${isUser ? "items-end" : "items-start"}`}
-        style={{ maxWidth: compact ? "85%" : "70%" }}
+        style={{ maxWidth: compact ? "85%" : isUser ? "75%" : "100%" }}
       >
         <div
           className={`
