@@ -71,6 +71,39 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
   );
 }
 
+/**
+ * Strip footnotes and source references that Knowledge Assistants inject.
+ * Handles both HTML footnotes and GFM markdown footnotes.
+ */
+function stripFootnotes(text: string): string {
+  let cleaned = text;
+
+  // Remove HTML footnote sections: <section class="footnotes">...</section>
+  cleaned = cleaned.replace(
+    /<section[^>]*class="footnotes?"[^>]*>[\s\S]*?<\/section>/gi,
+    "",
+  );
+  // Remove standalone HTML footnote lists: <ol> blocks that contain footnote <li>s
+  cleaned = cleaned.replace(
+    /<ol[^>]*class="[^"]*footnote[^"]*"[^>]*>[\s\S]*?<\/ol>/gi,
+    "",
+  );
+  // Remove inline HTML footnote refs: <sup>[1]</sup>, <sup>1</sup>, <sup><a ...>1</a></sup>
+  cleaned = cleaned.replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, "");
+  // Remove other stray HTML tags (KA sometimes emits bare tags that react-markdown can't parse)
+  cleaned = cleaned.replace(/<\/?(?:section|sup|a\s+href="#fn)[^>]*>/gi, "");
+
+  // Remove GFM footnote definitions: [^1]: some text (at start of line)
+  cleaned = cleaned.replace(/^\[\^\d+\]:.*$/gm, "");
+  // Remove GFM inline footnote references: [^1]
+  cleaned = cleaned.replace(/\[\^\d+\]/g, "");
+
+  // Clean up excess blank lines left behind
+  cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
+
+  return cleaned.trim();
+}
+
 interface MarkdownRendererProps {
   content: string;
   className?: string;
@@ -84,6 +117,8 @@ export function MarkdownRenderer({
   content,
   className = "",
 }: MarkdownRendererProps) {
+  const cleanedContent = React.useMemo(() => stripFootnotes(content), [content]);
+
   return (
     <div
       className={`prose prose-sm max-w-none break-words text-[var(--color-text-primary)] ${className}`}
@@ -272,7 +307,7 @@ export function MarkdownRenderer({
           ),
         }}
       >
-        {content}
+        {cleanedContent}
       </ReactMarkdown>
     </div>
   );
