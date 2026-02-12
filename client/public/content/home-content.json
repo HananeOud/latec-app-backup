@@ -14,7 +14,7 @@
       ],
       "metrics": [
         { "value": 3000, "suffix": "+", "label": "Documents", "format": "number", "decimals": 0 },
-        { "value": 15, "label": "Seconds answers", "format": "number", "decimals": 0 },
+        { "value": 15, "label": "Second answers", "format": "number", "decimals": 0 },
         { "value": 0,  "label": "Mistake", "format": "number", "decimals": 0 }
       ],
       "visual": { "type": "globe" }
