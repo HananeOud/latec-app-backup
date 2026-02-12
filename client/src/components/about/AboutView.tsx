@@ -94,14 +94,11 @@ export function AboutView() {
           >
             <div className="px-6 py-4 bg-[var(--color-background)] rounded-xl shadow-2xl" style={{ opacity: 0.85 }}>
               <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-text-heading)] mb-3 leading-tight">
-                Latecoere: Lift Off for a New Era
+                Intraqual by Latecoere
               </h1>
               <p className="text-base md:text-lg text-[var(--color-text-primary)] leading-relaxed">
-                A century of aerospace excellence.
                 <br /><br />
-                A leader in the field of Aerostructures and Interconnection Systems, Latecoere works closely with major aircraft manufacturers and airlines, from design through to production.
-                <br /><br />
-                Operating in the aeronautics industry for over one hundred years, the Latecoere Group consistently invests in R&amp;T and new technology to develop cutting-edge solutions increasingly tailored to the industry&apos;s evolving requirements.
+                Changing the way we interact with our knowledge base at Latecoere
               </p>
             </div>
           </div>
