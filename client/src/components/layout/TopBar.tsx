@@ -53,7 +53,7 @@ export function TopBar({
   const tabs = [
     { id: "home" as const, label: "Home", href: "/" },
     { id: "chat" as const, label: "Chat", href: "/chat" },
-    { id: "tools" as const, label: "Agentic tools", href: "/tools" },
+    { id: "tools" as const, label: "Compare", href: "/tools" },
     { id: "about" as const, label: "About", href: "/about" },
   ];
 
