@@ -2,7 +2,6 @@ import { useState, useEffect, type ReactNode } from "react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { EditModePanel } from "@/components/modals/EditModePanel";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { useNavigation } from "@/contexts/NavigationContext";
 
 interface MainLayoutProps {

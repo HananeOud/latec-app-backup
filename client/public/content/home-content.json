@@ -23,18 +23,35 @@
       "id": "stakes",
       "subtitle": "The Features",
       "title": "What makes Intraqual unique",
-      "layout": "right",
-      "statements": [
-        "A single AOG event can cost an airline $150K per hour. Late deliveries cascade across the supply chain.",
-        "Unplanned repairs, inventory shortfalls, and manual processes erode margins that are already razor-thin.",
-        "Until now."
-      ],
-      "metrics": [
-        { "value": 150, "prefix": "$", "suffix": "K/hr", "label": "AOG cost per aircraft", "format": "currency", "decimals": 0 },
-        { "value": 29, "suffix": "%", "label": "Margin erosion from disruptions", "format": "number", "decimals": 0 },
-        { "value": 3.2, "prefix": "$", "suffix": "B", "label": "Annual industry MRO waste", "format": "currency", "decimals": 1 }
-      ],
-      "visual": { "type": "waterfall" }
+      "description": "A convergence of intelligent document retrieval, contextual understanding, and operational efficiency",
+      "layout": "cards",
+      "cards": [
+        {
+          "icon": "TrendingUp",
+          "title": "Instant Retrieval",
+          "value": "~15 sec",
+          "description": "Ask in natural language, get reliable answers in seconds"
+        },
+        {
+          "title": "Breaking Silos",
+          "icon": "Layers",
+          "value": "Cross Domain",
+          "description": "Quality, Production, Supply and Finance"
+        },
+        {
+          "title": "Universal",
+          "icon": "Brain",
+          "value": "Multilingual",
+          "description": "Use in French, English, Spanish, Bulgarian and Portugese"
+        },
+        
+        {
+          "title": "High-Confidence",
+          "icon": "Shield",
+          "value": "Reliable",
+          "description": "Verified sources, continuous improvement"
+        }
+      ]
     },
     {
       "id": "challenges",

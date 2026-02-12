@@ -1,10 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  TrendingUp,
+  Brain,
+  Layers,
+  Shield,
+  Zap,
+  Target,
+  Globe,
+  Lock,
+  type LucideIcon,
+} from "lucide-react";
 import { HomeSectionData } from "@/lib/types";
 import { AnimatedCounter } from "./AnimatedCounter";
 import { AerospaceGlobeVisual } from "./visuals/AerospaceGlobeVisual";
 import { StakesWaterfallVisual } from "./visuals/StakesWaterfallVisual";
 import { DataFragmentVisual } from "./visuals/DataFragmentVisual";
+
+// Icon mapping from string names to lucide components
+const iconMap: Record<string, LucideIcon> = {
+  TrendingUp,
+  Brain,
+  Layers,
+  Shield,
+  Zap,
+  Target,
+  Globe,
+  Lock,
+};
 
 interface HomeSectionProps {
   section: HomeSectionData;
@@ -38,7 +61,7 @@ export function HomeSection({
           }
         });
       },
-      { threshold: 0.2, rootMargin: "-50px" },
+      { threshold: 0.15, rootMargin: "-50px" },
     );
 
     if (sectionRef.current) {
@@ -48,8 +71,120 @@ export function HomeSection({
     return () => observer.disconnect();
   }, []);
 
+  // ── Cards layout ──────────────────────────────────────────────
+  if (section.layout === "cards" && section.cards) {
+    return (
+      <section
+        ref={sectionRef}
+        id={section.id}
+        className="relative min-h-screen flex flex-col px-6 md:px-12 lg:px-16"
+      >
+        <div className="flex-1 flex items-center py-16 md:py-24">
+          <div className="max-w-7xl mx-auto w-full">
+            {/* Centered header */}
+            <div
+              className={`text-center mb-16 transition-all duration-1000 ease-out ${
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-8"
+              }`}
+            >
+              <span className="text-xs font-semibold text-[var(--color-accent-primary)] uppercase tracking-widest">
+                {section.subtitle}
+              </span>
+              <h2 className="mt-4 text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--color-text-heading)] tracking-tight whitespace-pre-line">
+                {section.title}
+              </h2>
+              {section.description && (
+                <p className="mt-4 text-base md:text-lg text-[var(--color-text-muted)] max-w-2xl mx-auto leading-relaxed">
+                  {section.description}
+                </p>
+              )}
+            </div>
+
+            {/* 4-card grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {section.cards.map((card, idx) => {
+                const IconComponent = iconMap[card.icon] ?? Zap;
+                const isFirst = idx === 0;
+
+                return (
+                  <div
+                    key={idx}
+                    className={`relative rounded-xl p-6 flex flex-col gap-4 transition-all duration-700 ${
+                      isVisible
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-8"
+                    } ${
+                      isFirst
+                        ? "border border-[var(--color-text-muted)]/30 bg-[var(--color-text-heading)]/[0.03]"
+                        : "border border-[var(--color-text-muted)]/10"
+                    }`}
+                    style={{ transitionDelay: `${300 + idx * 120}ms` }}
+                  >
+                    {/* Icon */}
+                    <div className="text-[var(--color-text-muted)]">
+                      <IconComponent className="h-5 w-5" strokeWidth={1.5} />
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-lg font-semibold text-[var(--color-text-heading)]">
+                      {card.title}
+                    </h3>
+
+                    {/* Optional large value */}
+                    {card.value && (
+                      <div>
+                        <p className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] tracking-tight leading-none">
+                          {card.value}
+                        </p>
+                        {card.valueLabel && (
+                          <p className="mt-1 text-xs text-[var(--color-text-muted)] uppercase tracking-wide font-medium">
+                            {card.valueLabel}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Description */}
+                    {card.description && (
+                      <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                        {card.description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll to next arrow */}
+        {nextSectionId && (
+          <div className="pb-20 flex justify-center">
+            <button
+              onClick={handleScrollToNext}
+              className={`text-[var(--color-text-muted)] hover:text-[var(--color-accent-primary)] cursor-pointer group transition-opacity duration-500 ${
+                isVisible ? "opacity-100" : "opacity-0"
+              }`}
+              aria-label="Scroll to next section"
+            >
+              <ChevronDown
+                className="h-5 w-5 group-hover:translate-y-1 transition-transform"
+                style={{ animation: "scrollBounce 2s ease-in-out infinite" }}
+              />
+            </button>
+          </div>
+        )}
+      </section>
+    );
+  }
+
+  // ── Left / Right layout (existing) ───────────────────────────
+
   // Render visual component based on type
   const renderVisual = () => {
+    if (!section.visual) return null;
     switch (section.visual.type) {
       case "globe":
         return <AerospaceGlobeVisual isVisible={isVisible} />;
@@ -67,7 +202,7 @@ export function HomeSection({
     }
   };
 
-  const isGlobeVisual = section.visual.type === "globe";
+  const isGlobeVisual = section.visual?.type === "globe";
 
   // Content element
   const contentElement = (

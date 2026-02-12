@@ -214,14 +214,24 @@ export interface HomeVisual {
   sources?: string[];
 }
 
+export interface HomeCard {
+  icon: string;
+  title: string;
+  value?: string;
+  valueLabel?: string;
+  description?: string;
+}
+
 export interface HomeSectionData {
   id: string;
   subtitle: string;
   title: string;
-  layout: "left" | "right";
-  statements: string[];
-  metrics: HomeMetric[];
-  visual: HomeVisual;
+  description?: string;
+  layout: "left" | "right" | "cards";
+  statements?: string[];
+  metrics?: HomeMetric[];
+  visual?: HomeVisual;
+  cards?: HomeCard[];
 }
 
 export interface HomeHeroData {
