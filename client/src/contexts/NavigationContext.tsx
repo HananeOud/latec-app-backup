@@ -16,7 +16,7 @@ const devLog = (...args: unknown[]) => {
   }
 };
 
-export type TabType = 'home' | 'chat' | 'dashboard' | 'tools' | 'about';
+export type TabType = 'home' | 'chat' | 'tools' | 'about';
 
 interface NavigationContextType {
   // Active tab (derived from pathname)
@@ -66,7 +66,7 @@ function pathnameToTab(pathname: string): TabType {
   if (path === '' || path === 'home') {
     return 'home';
   }
-  if (['chat', 'dashboard', 'tools', 'about'].includes(path)) {
+  if (['chat', 'tools', 'about'].includes(path)) {
     return path as TabType;
   }
   return 'home';

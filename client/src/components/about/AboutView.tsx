@@ -94,7 +94,7 @@ export function AboutView() {
           >
             <div className="px-6 py-4 bg-[var(--color-background)] rounded-xl shadow-2xl" style={{ opacity: 0.85 }}>
               <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-text-heading)] mb-3 leading-tight">
-                Intraqual by Latecoere
+                Intraqual Knowledge Assistant
               </h1>
               <p className="text-base md:text-lg text-[var(--color-text-primary)] leading-relaxed">
                 <br /><br />

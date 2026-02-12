@@ -54,18 +54,10 @@ export interface HomeConfig {
   description: string;
 }
 
-export interface DashboardConfig {
-  title: string;
-  subtitle: string;
-  dashboardId: string;
-  showPadding: boolean;
-}
-
 export interface AppConfig {
   agents: AgentConfig[];
   branding: AppBranding;
   home: HomeConfig;
-  dashboard: DashboardConfig;
 }
 
 // Singleton cache - persists for entire app lifetime to avoid repeated API calls
@@ -99,7 +91,7 @@ export async function getAppConfig(): Promise<AppConfig> {
       const config = await response.json();
 
       // Validate required fields
-      if (!config.branding || !config.dashboard) {
+      if (!config.branding) {
         throw new Error("Invalid config structure");
       }
 
@@ -118,12 +110,6 @@ export async function getAppConfig(): Promise<AppConfig> {
         home: {
           title: "Databricks App Template",
           description: "Build production-ready AI applications with Databricks.",
-        },
-        dashboard: {
-          title: "Dashboard",
-          subtitle: "Analytics and insights",
-          dashboardId: "",
-          showPadding: true,
         },
       };
 

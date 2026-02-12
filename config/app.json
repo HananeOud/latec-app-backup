@@ -22,11 +22,5 @@
   "home": {
     "title": "Latecoere portal",
     "description": "Complete access to your agentic tools"
-  },
-  "dashboard": {
-    "title": "This is a very cool Latecoere Dashboard",
-    "subtitle": "And this is why it is a very cool one",
-    "dashboardId": "<YOUR_LAKEVIEW_DASHBOARD_ID>",
-    "showPadding": true
   }
 }

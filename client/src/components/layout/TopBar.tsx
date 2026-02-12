@@ -6,8 +6,8 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import { useAgents } from "@/hooks/useAgents";
 
 interface TopBarProps {
-  activeTab: "home" | "chat" | "dashboard" | "tools" | "about";
-  onTabChange?: (tab: "home" | "chat" | "dashboard" | "tools" | "about") => void; // Optional, Links handle navigation
+  activeTab: "home" | "chat" | "tools" | "about";
+  onTabChange?: (tab: "home" | "chat" | "tools" | "about") => void; // Optional, Links handle navigation
   onEditModeToggle: () => void;
 }
 
@@ -52,7 +52,6 @@ export function TopBar({
 
   const tabs = [
     { id: "home" as const, label: "Home", href: "/" },
-    { id: "dashboard" as const, label: "Dashboard", href: "/dashboard" },
     { id: "chat" as const, label: "Chat", href: "/chat" },
     { id: "tools" as const, label: "Agentic tools", href: "/tools" },
     { id: "about" as const, label: "About", href: "/about" },
