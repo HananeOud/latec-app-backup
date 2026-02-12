@@ -4,7 +4,7 @@
   "demo_catalog_id": "",
   "agents": [
     {
-      "endpoint_name": "<YOUR_KA_ENDPOINT_NAME>",
+      "endpoint_name": "agents_thales-ags_mro-ags-mro-agent-4",
       "display_name": "Latecoere KA",
       "display_description": "Ask questions about your documents and knowledge base",
       "question_examples": ["How long does the rust protection last with RustBlock Enamel"]
@@ -24,7 +24,7 @@
     "description": "Complete access to your agentic tools"
   },
   "dashboard": {
-    "title": "Analysis Dashboard",
+    "title": "This is a very cool Latecoere Dashboard",
     "subtitle": "And this is why it is a very cool one",
     "dashboardId": "<YOUR_LAKEVIEW_DASHBOARD_ID>",
     "showPadding": true

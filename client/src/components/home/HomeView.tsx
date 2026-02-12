@@ -1,229 +1,129 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Loader2, AlertCircle, BarChart3, MessageSquare } from "lucide-react";
-import { useAppConfig } from "@/contexts/AppConfigContext";
+import React, { useState, useEffect, useRef } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { useAgentsContext } from "@/contexts/AgentsContext";
 import { ChatWidget } from "@/components/chat/ChatWidget";
-import { Button } from "@/components/ui/button";
+import { HomeContent } from "@/lib/types";
+import { HomeHero } from "./HomeHero";
+import { HomeSection } from "./HomeSection";
+import { HomeBridge } from "./HomeBridge";
 
 export function HomeView() {
-  const { config, isLoading } = useAppConfig();
-  const { agents, agentErrors, loading: agentsLoading, error: globalError } = useAgentsContext();
+  const [content, setContent] = useState<HomeContent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const noAgentsConfigured = !agentsLoading && agents.length === 0 && !globalError;
+  const {
+    agentErrors,
+    loading: agentsLoading,
+    error: globalError,
+  } = useAgentsContext();
 
-  if (isLoading || !config) {
+  // Load content from JSON
+  useEffect(() => {
+    fetch("/content/home-content.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setContent(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load home content:", err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Scroll to first section
+  const handleScrollDown = () => {
+    if (scrollContainerRef.current && content?.sections?.[0]) {
+      const firstSection = scrollContainerRef.current.querySelector(
+        `#${content.sections[0].id}`,
+      );
+      if (firstSection) {
+        firstSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-[var(--color-text-muted)]">Loading...</div>
+      <div className="h-full w-full flex items-center justify-center">
+        <div className="text-[var(--color-text-muted)] animate-pulse">
+          Loading...
+        </div>
       </div>
     );
   }
 
-  const { home } = config;
-  const appName = (config as any).app_name;
-  const isDefaultAppName = appName === "databricks-app-template";
-  const isDefaultConfig = home.title === "Databricks App Template";
+  if (!content) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <div className="text-[var(--color-text-muted)]">
+          Failed to load content
+        </div>
+      </div>
+    );
+  }
+
+  // Determine if there are agent errors to show
+  const hasErrors =
+    (!agentsLoading && globalError) ||
+    (!agentsLoading && agentErrors.length > 0);
 
   return (
     <>
-      <div className="h-full flex items-start pt-32 px-12">
-        <div className="w-[70%] space-y-8">
-          {/* Decorative accent line */}
-          <div className="w-16 h-1 bg-[var(--color-accent-primary)] rounded-full" />
+      <div
+        ref={scrollContainerRef}
+        className="h-full w-full overflow-y-auto overflow-x-hidden"
+      >
+        {/* Hero Section */}
+        <HomeHero
+          title={content.hero.title}
+          subtitle={content.hero.subtitle}
+          onScrollDown={handleScrollDown}
+        />
 
-          {/* Large title */}
-          <h1 className="text-5xl font-bold text-[var(--color-text-heading)] leading-tight tracking-tight">
-            {home.title}
-          </h1>
+        {/* Content Sections */}
+        {content.sections.map((section, index) => {
+          const nextSection = content.sections[index + 1];
+          const nextSectionId = nextSection?.id ?? "cta-bridge";
 
-          {/* Description */}
-          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed w-full whitespace-pre-line max-w-2xl">
-            {home.description}
-          </p>
+          return (
+            <HomeSection
+              key={section.id}
+              section={section}
+              index={index}
+              nextSectionId={nextSectionId}
+            />
+          );
+        })}
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-4 pt-4">
-            <Button asChild size="lg">
-              <Link to="/dashboard">
-                <BarChart3 className="h-5 w-5" />
-                Analyze the business
-              </Link>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link to="/chat">
-                <MessageSquare className="h-5 w-5" />
-                Ask the AI what happened
-              </Link>
-            </Button>
-          </div>
-
-          {/* Agent status: loading */}
-          {agentsLoading && (
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-              <Loader2 className="h-5 w-5 text-[var(--color-accent-primary)] animate-spin" />
-              <span className="text-[var(--color-text-muted)]">Checking endpoint configuration...</span>
-            </div>
-          )}
-
-          {/* Agent status: global error */}
-          {!agentsLoading && globalError && (
-            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-2">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
-                <p className="text-lg font-medium text-[var(--color-error)]">Configuration Error</p>
-              </div>
-              <p className="text-sm text-[var(--color-error)]/80">{globalError.message}</p>
-            </div>
-          )}
-
-          {/* Agent status: no agents configured */}
-          {!agentsLoading && noAgentsConfigured && (
-            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-2">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
-                <p className="text-lg font-medium text-[var(--color-error)]">No Agents Configured</p>
-              </div>
-              <p className="text-sm text-[var(--color-error)]/80">
-                No agents are configured. Update{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
-                  config/app.json
-                </code>{" "}
-                to add at least one agent with{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
-                  endpoint_name
-                </code>{" "}
-                or{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-error)]/10 rounded text-xs font-mono text-[var(--color-error)]">
-                  mas_id
-                </code>.
-              </p>
-              <p className="text-xs text-[var(--color-error)]/70">
-                You can use foundation models directly:{" "}
-                <code className="px-1.5 py-0.5 bg-[var(--color-error)]/10 rounded font-mono">
-                  {'"agents": [{"endpoint_name": "databricks-gpt-5-2"}]'}
-                </code>
-              </p>
-            </div>
-          )}
-
-          {/* Agent status: agent-specific errors */}
-          {!agentsLoading && agentErrors.length > 0 && (
-            <div className="p-4 rounded-2xl bg-[var(--color-error)]/5 border border-[var(--color-error)]/20 shadow-lg space-y-3">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-[var(--color-error)]" />
-                <p className="text-lg font-medium text-[var(--color-error)]">Agent Configuration Errors</p>
-              </div>
-              <ul className="space-y-3">
-                {agentErrors.map((agent, idx) => (
-                  <li key={idx} className="p-3 bg-[var(--color-error)]/10 rounded-lg">
-                    <p className="text-sm font-medium text-[var(--color-error)]">
-                      {agent.display_name || agent.endpoint_name || "Unknown agent"}
-                    </p>
-                    <p className="text-xs text-[var(--color-error)]/70 mt-1 font-mono">
-                      {agent.error}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs text-[var(--color-error)]/80">
-                Check your{" "}
-                <code className="px-1.5 py-0.5 bg-[var(--color-error)]/10 rounded font-mono">config/app.json</code>{" "}
-                and verify the endpoint names or MAS IDs are correct.
-              </p>
-            </div>
-          )}
-
-          {/* Config instructions - only show when using default config */}
-          {isDefaultConfig && (
-            <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] backdrop-blur-xl border border-[var(--color-border)] shadow-lg space-y-3">
-              <p className="text-base font-medium text-[var(--color-text-primary)]">To configure your project:</p>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-[var(--color-text-muted)]">
-                <li>
-                  Open{" "}
-                  <code className="px-2.5 py-1 bg-[var(--color-accent-primary)]/10 backdrop-blur-sm rounded-lg text-sm font-mono text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20">
-                    config/app.json
-                  </code>
-                </li>
-                <li>
-                  Configure your agent using{" "}
-                  <code className="px-2.5 py-1 bg-[var(--color-accent-primary)]/10 backdrop-blur-sm rounded-lg text-sm font-mono text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20">
-                    endpoint_name
-                  </code>{" "}
-                  (any serving endpoint) or{" "}
-                  <code className="px-2.5 py-1 bg-[var(--color-accent-primary)]/10 backdrop-blur-sm rounded-lg text-sm font-mono text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20">
-                    mas_id
-                  </code>{" "}
-                  (Multi-Agent Supervisor ID)
-                </li>
-                <li>
-                  Customize{" "}
-                  <code className="px-2.5 py-1 bg-[var(--color-accent-primary)]/10 backdrop-blur-sm rounded-lg text-sm font-mono text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20">
-                    home
-                  </code>
-                  {" "}(this page) and{" "}
-                  <code className="px-2.5 py-1 bg-[var(--color-accent-primary)]/10 backdrop-blur-sm rounded-lg text-sm font-mono text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20">
-                    branding
-                  </code>
-                  {" "}(top menu)
-                </li>
-              </ol>
-              <p className="text-sm text-[var(--color-text-muted)] mt-4">
-                See{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-accent-primary)]/10 rounded text-xs font-mono text-[var(--color-accent-primary)]">
-                  config/app.example.json
-                </code>{" "}
-                for all available options.
-              </p>
-            </div>
-          )}
-
-          {/* Tracker configuration - only show when using default app_name */}
-          {isDefaultAppName && (
-            <div className="p-4 rounded-2xl bg-[var(--color-warning)]/5 border border-[var(--color-warning)]/20 shadow-lg space-y-3">
-              <p className="text-lg font-medium text-[var(--color-warning)]">Tracker Configuration</p>
-              <p className="text-sm text-[var(--color-text-primary)]">
-                To track your app usage, update{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono text-[var(--color-warning)]">
-                  app_name
-                </code>{" "}
-                in{" "}
-                <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono text-[var(--color-warning)]">
-                  config/app.json
-                </code>{" "}
-                to match your repository name for easy reconciliation.
-              </p>
-              <ul className="text-sm text-[var(--color-text-muted)] space-y-2 list-disc list-inside">
-                <li>
-                  Set{" "}
-                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">enable_tracker</code>
-                  {" "}to{" "}
-                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">true</code>
-                  {" "}or{" "}
-                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">false</code>
-                </li>
-                <li>
-                  Optionally set{" "}
-                  <code className="px-2 py-0.5 bg-[var(--color-warning)]/10 rounded text-xs font-mono">demo_catalog_id</code>
-                  {" "}if your demo is in the Demo Catalog
-                </li>
-              </ul>
-              <p className="text-xs text-[var(--color-text-muted)]">
-                Usage is tracked and anonymized at team level. See{" "}
-                <a
-                  href="https://pypi.org/project/dbdemos-tracker/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:opacity-80"
-                >
-                  dbdemos-tracker
-                </a>{" "}
-                for details.
-              </p>
-            </div>
-          )}
-        </div>
+        {/* CTA Bridge */}
+        <HomeBridge
+          title={content.cta.title}
+          primaryButton={content.cta.primaryButton}
+          secondaryLink={content.cta.secondaryLink}
+        />
       </div>
+
+      {/* Floating agent error banner */}
+      {hasErrors && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 max-w-lg w-full px-4">
+          <div className="p-3 rounded-xl bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 backdrop-blur-xl shadow-lg">
+            <div className="flex items-center gap-2">
+              {agentsLoading ? (
+                <Loader2 className="h-4 w-4 text-[var(--color-accent-primary)] animate-spin flex-shrink-0" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-[var(--color-error)] flex-shrink-0" />
+              )}
+              <p className="text-xs text-[var(--color-error)] truncate">
+                {globalError
+                  ? globalError.message
+                  : `${agentErrors.length} agent${agentErrors.length > 1 ? "s" : ""} failed to load — check config/app.json`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Chat Widget */}
       <ChatWidget />

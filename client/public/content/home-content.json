@@ -1,0 +1,70 @@
+{
+  "hero": {
+    "title": "Intraqual Knowledge\nAssistant",
+    "subtitle": "Transforming Intraqual documents access at scale"
+  },
+  "sections": [
+    {
+      "id": "scale",
+      "subtitle": "Company Wide Scale",
+      "title": "The Scale",
+      "layout": "left",
+      "statements": [
+        "Intraqual has the potential to substantially improve the way we interact with our knowledge base at Latecoere"
+      ],
+      "metrics": [
+        { "value": 3000, "suffix": "+", "label": "Documents", "format": "number", "decimals": 0 },
+        { "value": 15, "label": "Seconds answers", "format": "number", "decimals": 0 },
+        { "value": 0,  "label": "Mistake", "format": "number", "decimals": 0 }
+      ],
+      "visual": { "type": "globe" }
+    },
+    {
+      "id": "stakes",
+      "subtitle": "The Features",
+      "title": "What makes Intraqual unique",
+      "layout": "right",
+      "statements": [
+        "A single AOG event can cost an airline $150K per hour. Late deliveries cascade across the supply chain.",
+        "Unplanned repairs, inventory shortfalls, and manual processes erode margins that are already razor-thin.",
+        "Until now."
+      ],
+      "metrics": [
+        { "value": 150, "prefix": "$", "suffix": "K/hr", "label": "AOG cost per aircraft", "format": "currency", "decimals": 0 },
+        { "value": 29, "suffix": "%", "label": "Margin erosion from disruptions", "format": "number", "decimals": 0 },
+        { "value": 3.2, "prefix": "$", "suffix": "B", "label": "Annual industry MRO waste", "format": "currency", "decimals": 1 }
+      ],
+      "visual": { "type": "waterfall" }
+    },
+    {
+      "id": "challenges",
+      "subtitle": "The Challenge",
+      "title": "Data Without\nConnection",
+      "layout": "left",
+      "statements": [
+        "Critical information is scattered across SAP, AMOS, Skywise, proprietary ERPs, and countless spreadsheets.",
+        "Engineers spend more time searching for data than acting on it. Decisions are delayed. Insights are lost.",
+        "This portal changes that — connecting every data source through AI-powered agents that understand your operations."
+      ],
+      "metrics": [
+        { "value": 12, "suffix": "+", "label": "Disconnected data systems", "format": "number", "decimals": 0 },
+        { "value": 40, "suffix": "%", "label": "Time spent searching for data", "format": "number", "decimals": 0 }
+      ],
+      "visual": {
+        "type": "fragmentation",
+        "sources": ["SAP", "AMOS", "Skywise", "ERP", "APIs", "Excel", "ISEDIS", "CIRIUM", "Customs DB", "Quality DB", "PLM", "MES"]
+      }
+    }
+  ],
+  "cta": {
+    "title": "Ready to unlock\nyour operational intelligence?",
+    "primaryButton": {
+      "label": "Start a conversation",
+      "action": "/chat"
+    },
+    "secondaryLink": {
+      "label": "Explore the dashboard",
+      "action": "/dashboard"
+    }
+  }
+}
