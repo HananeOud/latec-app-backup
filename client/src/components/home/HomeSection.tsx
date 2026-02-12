@@ -102,8 +102,8 @@ export function HomeSection({
               )}
             </div>
 
-            {/* 4-card grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Card grid */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${section.cards.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-5`}>
               {section.cards.map((card, idx) => {
                 const IconComponent = iconMap[card.icon] ?? Zap;
                 const isFirst = idx === 0;
@@ -132,10 +132,30 @@ export function HomeSection({
                       {card.title}
                     </h3>
 
-                    {/* Optional large value */}
-                    {card.value && (
+                    {/* Animated counter metric */}
+                    {card.metric && card.metric.value !== null && (
                       <div>
-                        <p className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] tracking-tight leading-none">
+                        <p className="text-3xl md:text-4xl font-bold text-[var(--color-accent-primary)] tracking-tight leading-none">
+                          <AnimatedCounter
+                            value={card.metric.value}
+                            prefix={card.metric.prefix}
+                            suffix={card.metric.suffix}
+                            format={card.metric.format}
+                            decimals={card.metric.decimals ?? 0}
+                          />
+                        </p>
+                        {card.metric.label && (
+                          <p className="mt-1 text-xs text-[var(--color-text-muted)] uppercase tracking-wide font-medium">
+                            {card.metric.label}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Optional static large value */}
+                    {!card.metric && card.value && (
+                      <div>
+                        <p className="text-3xl md:text-4xl font-bold text-[var(--color-accent-primary)] tracking-tight leading-none">
                           {card.value}
                         </p>
                         {card.valueLabel && (

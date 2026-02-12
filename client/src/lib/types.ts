@@ -220,6 +220,7 @@ export interface HomeCard {
   value?: string;
   valueLabel?: string;
   description?: string;
+  metric?: HomeMetric;
 }
 
 export interface HomeSectionData {

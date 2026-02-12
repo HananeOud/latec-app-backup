@@ -54,34 +54,37 @@
       ]
     },
     {
-      "id": "challenges",
-      "subtitle": "The Challenge",
-      "title": "Data Without\nConnection",
-      "layout": "left",
-      "statements": [
-        "Critical information is scattered across SAP, AMOS, Skywise, proprietary ERPs, and countless spreadsheets.",
-        "Engineers spend more time searching for data than acting on it. Decisions are delayed. Insights are lost.",
-        "This portal changes that — connecting every data source through AI-powered agents that understand your operations."
-      ],
-      "metrics": [
-        { "value": 12, "suffix": "+", "label": "Disconnected data systems", "format": "number", "decimals": 0 },
-        { "value": 40, "suffix": "%", "label": "Time spent searching for data", "format": "number", "decimals": 0 }
-      ],
-      "visual": {
-        "type": "fragmentation",
-        "sources": ["SAP", "AMOS", "Skywise", "ERP", "APIs", "Excel", "ISEDIS", "CIRIUM", "Customs DB", "Quality DB", "PLM", "MES"]
-      }
+      "id": "impact",
+      "subtitle": "The Results",
+      "title": "Driving Tangible Impact",
+      "layout": "cards",
+      "cards": [
+        {
+          "icon": "TrendingUp",
+          "title": "Productivity",
+          "metric": { "value": 7400, "label": "Hours saved annually", "format": "number", "decimals": 0 },
+          "description": "Hours saved annually"
+        },
+        {
+          "icon": "Target",
+          "title": "Cost Reduction",
+          "metric": { "value": 300, "prefix": "~", "suffix": "k €", "label": "Annual cost saving", "format": "number", "decimals": 0 },
+          "description": "Annual cost saving or reduction"
+        },
+        {
+          "icon": "Shield",
+          "title": "CNQ",
+          "value": "Fewer",
+          "description": "Quality issues"
+        }
+      ]
     }
   ],
   "cta": {
-    "title": "Ready to unlock\nyour operational intelligence?",
+    "title": "Let's See Intraqual in Action",
     "primaryButton": {
       "label": "Start a conversation",
       "action": "/chat"
-    },
-    "secondaryLink": {
-      "label": "Explore the dashboard",
-      "action": "/dashboard"
     }
   }
 }
